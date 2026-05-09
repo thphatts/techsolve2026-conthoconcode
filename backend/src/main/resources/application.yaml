@@ -35,10 +35,12 @@ app:
   # Thư mục lưu trữ ảnh hóa đơn
   upload-dir: "uploads/receipts"
   ai:
-    api-key: "local-no-key"
+    api-key: ${OPENROUTER_API_KEY:your-default-key-here}
+    openrouter-model: google/gemini-2.0-flash-lite-001
     model: "llama3.2-vision"
     base-url: "http://localhost:11434/api/chat"
-    bill-scan-prompt: "Bạn là một chuyên gia đọc hóa đơn siêu thị. Hãy đọc ảnh hóa đơn này và trả về duy nhất một JSON object chứa mảng 'items' gồm các trường: product_name, quantity, price, estimated_expiry_days. Chỉ trả về JSON, không giải thích. LƯU Ý BẮT BUỘC: Bạn phải trả về định dạng JSON hợp lệ tuyệt đối. KHÔNG được sử dụng các ký tự escape Unicode (như \\uXXXX hoặc \\N) cho các ký tự tiếng Việt. Hãy xuất thẳng văn bản tiếng Việt chuẩn UTF-8."
-    logging:
+    bill-scan-prompt: "Bạn là một chuyên gia đọc hóa đơn và phân loại hàng hóa. Nhiệm vụ của bạn là phân tích ảnh hóa đơn và CHỈ trích xuất các mặt hàng là THỰC PHẨM hoặc ĐỒ UỐNG. Hãy TỰ ĐỘNG LOẠI BỎ các mặt hàng không phải đồ ăn như đồ gia dụng, hóa mỹ phẩm, dụng cụ, đồ điện tử hoặc đồ dùng cá nhân (Ví dụ: Nếu có 'thịt bò', 'trứng', 'sữa' thì giữ lại; nếu có 'kem đánh răng', 'dao', 'bột giặt', 'nồi' thì phải bỏ qua). Trả về duy nhất một JSON object chứa mảng 'items' gồm các trường: product_name, quantity, price, estimated_expiry_days. Chỉ trả về JSON, không giải thích. LƯU Ý BẮT BUỘC: Định dạng JSON phải hợp lệ, không dùng ký tự escape Unicode, trả về tiếng Việt chuẩn UTF-8."
+
+logging:
   level:
     hackathon.fridgeai: DEBUG
