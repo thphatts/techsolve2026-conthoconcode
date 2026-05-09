@@ -1,8 +1,11 @@
 package hackathon.fridgeai.security;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -16,32 +19,32 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
-
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter) {
-        this.jwtAuthFilter = jwtAuthFilter;
-    }
+    private final CustomUserDetailsService userDetailsService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // Cấu hình từng bước rõ ràng để tránh lỗi cú pháp IDE
-        http.csrf(AbstractHttpConfigurer::disable);
-        http.cors(Customizer.withDefaults());
-        
-        http.authorizeHttpRequests(auth -> 
-            auth.requestMatchers("/api/v1/**").permitAll()
-                .anyRequest().authenticated()
-        );
-        
-        http.sessionManagement(sess -> 
-            sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        );
-        
-        http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-
+        http.csrf(AbstractHttpConfigurer::disable)
+                .cors(Customizer.withDefaults()) // Cho phép CORS đi qua không bị block
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/v1/auth/**", "/api/v1/test/public", "/api/v1/scan/**", "/error")
+                        .permitAll()
+                        .anyRequest().authenticated())
+                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authenticationProvider(authenticationProvider())
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
+    }
+
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
     }
 
     @Bean
