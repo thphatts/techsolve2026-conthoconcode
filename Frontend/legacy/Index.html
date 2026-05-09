@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Trang Chủ – Smart Fridge</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: #b8a050;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    /* ── Phone shell ── */
+    .phone {
+      width: 375px;
+      height: 720px;
+      border: 8px solid #222;
+      border-radius: 40px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      background: #fdf5c0;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    /* ── Status bar ── */
+    .sb {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 24px 4px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #333;
+      position: relative;
+      flex-shrink: 0;
+      background: transparent;
+    }
+
+    .sb-notch {
+      width: 120px;
+      height: 24px;
+      background: #111;
+      border-radius: 0 0 16px 16px;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .sb-battery {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .battery-icon {
+      width: 20px;
+      height: 10px;
+      border: 1.5px solid #333;
+      border-radius: 2px;
+      position: relative;
+    }
+
+    .battery-icon::after {
+      content: '';
+      position: absolute;
+      right: -3px;
+      top: 2px;
+      width: 2px;
+      height: 4px;
+      background: #333;
+      border-radius: 0 1px 1px 0;
+    }
+
+    .battery-level {
+      height: 100%;
+      width: 87%;
+      background: #4ade80;
+    }
+
+    /* ── TOP: cảm xúc + người ── */
+    .top-bar {
+      display: flex;
+      justify-content: flex-end;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 4px 18px;
+      flex-shrink: 0;
+    }
+
+    .person-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: #fff;
+      border: 2px solid #333;
+      border-radius: 12px;
+      padding: 4px 8px;
+      font-size: 11px;
+      font-weight: 900;
+      color: #333;
+      box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
+    }
+
+    .person-box .icon {
+      font-size: 22px;
+      color: #5b3e9a;
+    }
+
+    .emotion-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .emo-label {
+      font-size: 12px;
+      font-weight: 900;
+      color: #333;
+    }
+
+    .emo-bar-wrap {
+      width: 90px;
+      height: 12px;
+      border: 2px solid #333;
+      border-radius: 10px;
+      background: #fff;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .emo-fill {
+      height: 100%;
+      width: 50%;
+      background: linear-gradient(90deg, #4ade80, #fdd835, #ff6b6b);
+      border-radius: 8px;
+    }
+
+    .emo-emoji {
+      font-size: 18px;
+      margin-top: 2px;
+    }
+
+    /* ── ROOM ── */
+    .room {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      border-top: 3px solid #333;
+      background: url('../assets/background.png') center bottom/cover no-repeat;
+    }
+
+    /* Tủ lạnh */
+    .fridge-link {
+      position: absolute;
+      left: 10px;
+      bottom: 60px;
+      width: 180px;
+      z-index: 5;
+      text-decoration: none;
+      transition: transform 0.2s;
+    }
+
+    .fridge-link:hover {
+      transform: scale(1.05);
+    }
+
+    .fridge-link img {
+      width: 100%;
+      image-rendering: pixelated;
+    }
+
+    /* Mèo area */
+    .cat-area {
+      position: absolute;
+      right: 30px;
+      bottom: 50px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 10;
+      animation: bounce 3s infinite ease-in-out;
+    }
+
+    @keyframes bounce {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+    .bubble {
+      background: #fff;
+      border: 3px solid #222;
+      border-radius: 20px;
+      padding: 10px 15px;
+      font-size: 16px;
+      font-weight: 900;
+      color: #111;
+      line-height: 1.2;
+      text-align: center;
+      position: relative;
+      margin-bottom: 15px;
+      box-shadow: 4px 4px 0 #222;
+      white-space: nowrap;
+    }
+
+    .bubble::after {
+      content: '';
+      position: absolute;
+      bottom: -15px;
+      left: 20px;
+      width: 0;
+      height: 0;
+      border-left: 12px solid transparent;
+      border-right: 6px solid transparent;
+      border-top: 15px solid #222;
+    }
+
+    .bubble::before {
+      content: '';
+      position: absolute;
+      bottom: -9px;
+      left: 22px;
+      width: 0;
+      height: 0;
+      border-left: 9px solid transparent;
+      border-right: 4px solid transparent;
+      border-top: 10px solid #fff;
+      z-index: 1;
+    }
+
+    .cat-img {
+      width: 140px;
+      image-rendering: pixelated;
+    }
+
+    /* ── BOTTOM NAV ── */
+    .bottom-nav {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 10px 10px 25px;
+      background: #fff;
+      border-top: 3px solid #222;
+      flex-shrink: 0;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #777;
+      text-decoration: none;
+      flex: 1;
+      transition: color 0.2s;
+    }
+
+    .nav-item.active {
+      color: #e67e22;
+    }
+
+    .nav-icon {
+      font-size: 24px;
+    }
+
+    .nav-fab-container {
+      flex: 0 0 70px;
+      display: flex;
+      justify-content: center;
+      position: relative;
+    }
+
+    .nav-fab {
+      width: 60px;
+      height: 60px;
+      background: #1a1a1a;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 28px;
+      margin-top: -45px;
+      border: 3px solid #222;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .nav-fab:hover {
+      transform: scale(1.1);
+    }
+
+    /* Toast */
+    .toast {
+      position: absolute;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%) translateY(10px);
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      padding: 8px 20px;
+      border-radius: 25px;
+      font-size: 14px;
+      font-weight: 700;
+      opacity: 0;
+      transition: all 0.3s;
+      z-index: 100;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="phone">
+
+    <!-- Status bar -->
+    <div class="sb">
+      <div class="sb-time">10:09</div>
+      <div class="sb-notch"></div>
+      <div class="sb-battery">
+        <span>🔋</span>
+        <span>87%</span>
+      </div>
+    </div>
+
+    <!-- Top bar -->
+    <div class="top-bar">
+      <div class="person-box">
+        <span class="icon">👤</span>
+        <span>Người</span>
+      </div>
+      <div class="emotion-box">
+        <div class="emo-label">Tình cảm</div>
+        <div class="emo-bar-wrap">
+          <div class="emo-fill" id="emoFill" style="width: 40%;"></div>
+        </div>
+        <div class="emo-emoji" id="emoEmoji">😐</div>
+      </div>
+    </div>
+
+    <!-- Main Scene -->
+    <div class="room">
+      <!-- Tủ lạnh -->
+      <a href="tu_lanh.html" class="fridge-link">
+        <img src="../assets/tulanh.png" alt="Tủ lạnh" />
+      </a>
+
+      <!-- Mèo -->
+      <div class="cat-area">
+        <div class="bubble">
+          mio,<br />nhau đã.
+        </div>
+        <img src="../assets/meodung.gif" alt="Mèo" class="cat-img" />
+      </div>
+    </div>
+
+    <!-- Bottom Nav -->
+    <div class="bottom-nav">
+      <a href="Index.html" class="nav-item active">
+        <span class="nav-icon">🏠</span>
+        <span>Trang chủ</span>
+      </a>
+      <a href="Danh_sach_thuc_pham.html" class="nav-item">
+        <span class="nav-icon">📋</span>
+        <span>Thực phẩm</span>
+      </a>
+
+      <div class="nav-fab-container">
+        <div class="nav-fab" id="camBtn">📷</div>
+      </div>
+
+      <a href="#" class="nav-item">
+        <span class="nav-icon">🍳</span>
+        <span>Công thức</span>
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">⚙️</span>
+        <span>Cài đặt</span>
+      </a>
+    </div>
+
+    <div class="toast" id="toast"></div>
+  </div>
+
+  <script>
+    // Emotion cycling
+    const emotions = [
+      { w: '20%', e: '😴' }, { w: '40%', e: '😐' }, { w: '65%', e: '😊' },
+      { w: '85%', e: '😄' }, { w: '100%', e: '🥰' }
+    ];
+    let ei = 2;
+    const fill = document.getElementById('emoFill');
+    const emoji = document.getElementById('emoEmoji');
+    function updateEmo() {
+      fill.style.width = emotions[ei].w;
+      emoji.textContent = emotions[ei].e;
+    }
+    updateEmo();
+    setInterval(() => { ei = (ei + 1) % emotions.length; updateEmo(); }, 5000);
+
+    // Camera button → navigate
+    document.getElementById('camBtn').addEventListener('click', () => {
+      showToast('📷 Khởi động camera...');
+      setTimeout(() => { window.location.href = 'tu_lanh.html'; }, 700);
+    });
+
+    // Toast
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2200);
+    }
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Danh Sách Thực Phẩm</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    :root{
+      --accent:#00e5a0;--warn:#f6c90e;--danger:#ff5e57;
+      --bg:#0d1117;--surface:#161b22;--card:#1c2230;
+      --border:#2d3748;--text:#e8eaf6;--muted:#8892a4;
+    }
+    body{
+      font-family:'Nunito',sans-serif;
+      background:var(--bg);color:var(--text);
+      display:flex;align-items:center;justify-content:center;
+      min-height:100vh;
+    }
+    .phone{
+      width:375px;height:720px;
+      background:var(--surface);
+      border-radius:36px;border:3px solid var(--border);
+      overflow:hidden;display:flex;flex-direction:column;
+      box-shadow:0 24px 60px #000a;
+    }
+
+    /* Status bar */
+    .sb{
+      display:flex;justify-content:space-between;align-items:center;
+      padding:10px 20px 4px;font-size:11px;font-weight:700;
+      color:var(--muted);position:relative;flex-shrink:0;
+    }
+    .notch{
+      width:96px;height:22px;background:var(--bg);
+      border-radius:0 0 14px 14px;
+      position:absolute;top:0;left:50%;transform:translateX(-50%);
+    }
+
+    /* Header */
+    .hdr{
+      display:flex;align-items:center;gap:10px;
+      padding:8px 16px 6px;flex-shrink:0;
+    }
+    .back{
+      background:var(--card);border:1px solid var(--border);
+      color:var(--accent);border-radius:10px;
+      padding:5px 12px;font-size:12px;font-weight:800;
+      cursor:pointer;font-family:'Nunito',sans-serif;
+      text-decoration:none;
+    }
+    .back:hover{background:#0d2a1f;}
+    .hdr h1{font-size:16px;font-weight:900;flex:1;text-align:center;}
+    .hdr h1 span{color:var(--accent);}
+
+    /* Stats row */
+    .stats{display:flex;gap:7px;padding:6px 14px;flex-shrink:0;}
+    .sc{
+      flex:1;background:var(--card);border:1px solid var(--border);
+      border-radius:12px;padding:8px 10px;
+      display:flex;flex-direction:column;gap:2px;
+    }
+    .sc .si{font-size:17px;}
+    .sc .sv{font-size:15px;font-weight:900;}
+    .sc .sl{font-size:9px;color:var(--muted);font-weight:700;text-transform:uppercase;}
+    .sc.g .sv{color:var(--accent);}
+    .sc.y .sv{color:var(--warn);}
+    .sc.r .sv{color:var(--danger);}
+
+    /* Search bar */
+    .search{
+      margin:4px 14px;padding:9px 14px;
+      background:var(--card);border:1px solid var(--border);
+      border-radius:12px;display:flex;align-items:center;gap:8px;
+      flex-shrink:0;
+    }
+    .search input{
+      flex:1;background:none;border:none;outline:none;
+      color:var(--text);font-size:13px;font-family:'Nunito',sans-serif;
+    }
+    .search input::placeholder{color:var(--muted);}
+
+    /* Filter tabs */
+    .tabs{
+      display:flex;gap:6px;padding:4px 14px;
+      overflow-x:auto;flex-shrink:0;
+    }
+    .tabs::-webkit-scrollbar{display:none;}
+    .tab{
+      padding:5px 12px;border-radius:18px;
+      font-size:11px;font-weight:800;white-space:nowrap;
+      cursor:pointer;border:2px solid var(--border);
+      background:var(--card);color:var(--muted);
+      transition:all .15s;
+    }
+    .tab.active{
+      background:var(--accent);color:#000;border-color:var(--accent);
+    }
+
+    /* Food list */
+    .food-list{
+      flex:1;overflow-y:auto;
+      padding:6px 14px 10px;
+      display:flex;flex-direction:column;gap:8px;
+    }
+    .food-list::-webkit-scrollbar{width:3px;}
+    .food-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+
+    .fi{
+      background:var(--card);border:1px solid var(--border);
+      border-radius:14px;padding:12px 12px;
+      display:flex;align-items:center;gap:10px;
+      cursor:pointer;transition:transform .15s,border-color .15s;
+    }
+    .fi:hover{transform:translateX(4px);border-color:var(--accent);}
+    .fi.warn-item{border-left:3px solid var(--warn);}
+    .fi.danger-item{border-left:3px solid var(--danger);}
+
+    .ficon{
+      width:44px;height:44px;border-radius:12px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:22px;flex-shrink:0;
+    }
+    .finfo{flex:1;}
+    .fname{font-size:13px;font-weight:800;}
+    .fmeta{font-size:10px;color:var(--muted);margin-top:2px;}
+    .fmeta span{margin-right:8px;}
+
+    .fbadge{
+      padding:4px 9px;border-radius:12px;
+      font-size:10px;font-weight:800;
+      white-space:nowrap;
+    }
+    .ok{background:#0d2a1f;color:#4ade80;}
+    .wn{background:#2e2300;color:var(--warn);}
+    .dn{background:#2e0d0a;color:var(--danger);}
+
+    /* Expiry days */
+    .days{
+      font-size:10px;font-weight:700;
+      margin-top:3px;
+    }
+    .days.ok{background:none;color:#4ade80;padding:0;}
+    .days.wn{background:none;color:var(--warn);padding:0;}
+    .days.dn{background:none;color:var(--danger);padding:0;}
+
+    /* Add button */
+    .add-btn{
+      margin:4px 14px;padding:11px;
+      background:linear-gradient(135deg,var(--accent),#00b4d8);
+      border:none;border-radius:14px;
+      color:#000;font-size:13px;font-weight:900;
+      cursor:pointer;font-family:'Nunito',sans-serif;
+      display:flex;align-items:center;justify-content:center;gap:6px;
+      transition:opacity .15s;flex-shrink:0;
+    }
+    .add-btn:hover{opacity:.88;}
+
+    /* Bottom nav */
+    .bnav{
+      display:flex;justify-content:space-around;align-items:center;
+      padding:8px 12px 18px;background:var(--card);
+      border-top:1px solid var(--border);flex-shrink:0;
+    }
+    .ni{
+      display:flex;flex-direction:column;align-items:center;
+      gap:2px;font-size:9px;color:var(--muted);font-weight:700;
+      cursor:pointer;text-decoration:none;transition:color .15s;
+    }
+    .ni .ico{font-size:19px;}
+    .ni.act{color:var(--accent);}
+    .ni.act .ico{filter:drop-shadow(0 0 5px var(--accent));}
+    .fab{
+      width:46px;height:46px;border-radius:50%;
+      background:linear-gradient(135deg,var(--accent),#00b4d8);
+      border:none;font-size:20px;cursor:pointer;
+      box-shadow:0 0 14px #00e5a055;
+      transition:transform .15s;margin-top:-18px;
+    }
+    .fab:hover{transform:scale(1.1);}
+
+    /* Modal thêm món */
+    .modal-bg{
+      display:none;position:absolute;inset:0;
+      background:#000a;z-index:100;
+      align-items:flex-end;
+    }
+    .modal-bg.open{display:flex;}
+    .modal{
+      width:100%;background:var(--card);
+      border-radius:20px 20px 0 0;
+      padding:20px 18px 30px;
+      border-top:1px solid var(--border);
+    }
+    .modal h3{font-size:15px;font-weight:900;margin-bottom:14px;}
+    .modal input,.modal select{
+      width:100%;padding:9px 12px;margin-bottom:10px;
+      background:var(--surface);border:1px solid var(--border);
+      border-radius:10px;color:var(--text);
+      font-size:13px;font-family:'Nunito',sans-serif;outline:none;
+    }
+    .modal-btns{display:flex;gap:8px;margin-top:4px;}
+    .modal-btns button{
+      flex:1;padding:10px;border-radius:10px;
+      font-size:13px;font-weight:800;cursor:pointer;
+      font-family:'Nunito',sans-serif;border:none;
+    }
+    .btn-cancel{background:var(--border);color:var(--muted);}
+    .btn-save{background:var(--accent);color:#000;}
+  </style>
+</head>
+<body>
+<div class="phone" style="position:relative;">
+
+  <div class="sb">
+    <span>10:09</span>
+    <div class="notch"></div>
+    <span>🔋 87%</span>
+  </div>
+
+  <div class="hdr">
+    <a href="Index.html" class="back">← Về nhà</a>
+    <h1>📋 <span>Thực Phẩm</span></h1>
+    <a href="tu_lanh.html" class="back">Tủ lạnh</a>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="sc g"><span class="si">✅</span><span class="sv">9</span><span class="sl">Còn tốt</span></div>
+    <div class="sc y"><span class="si">⏰</span><span class="sv">3</span><span class="sl">Sắp hết</span></div>
+    <div class="sc r"><span class="si">🚨</span><span class="sv">1</span><span class="sl">Hết hạn</span></div>
+  </div>
+
+  <!-- Search -->
+  <div class="search">
+    <span>🔍</span>
+    <input type="text" id="searchInput" placeholder="Tìm thực phẩm..." oninput="filterFood()"/>
+  </div>
+
+  <!-- Filter tabs -->
+  <div class="tabs">
+    <div class="tab active" onclick="setTab(this,'all')">Tất cả</div>
+    <div class="tab" onclick="setTab(this,'ok')">✅ Còn tốt</div>
+    <div class="tab" onclick="setTab(this,'warn')">⚠️ Sắp hết</div>
+    <div class="tab" onclick="setTab(this,'danger')">🚨 Hết hạn</div>
+  </div>
+
+  <!-- Food list -->
+  <div class="food-list" id="foodList"></div>
+
+  <!-- Add button -->
+  <button class="add-btn" onclick="openModal()">
+    ＋ Thêm thực phẩm mới
+  </button>
+
+  <!-- Bottom nav -->
+  <div class="bnav">
+    <a href="Index.html" class="ni"><span class="ico">🏠</span><span>Trang chủ</span></a>
+    <a href="Danh_sach_thuc_pham.html" class="ni act"><span class="ico">📋</span><span>Thực phẩm</span></a>
+    <a href="tu_lanh.html"><button class="fab">📷</button></a>
+    <a href="#" class="ni"><span class="ico">🍳</span><span>Công thức</span></a>
+    <a href="#" class="ni"><span class="ico">⚙️</span><span>Cài đặt</span></a>
+  </div>
+
+  <!-- Modal thêm món -->
+  <div class="modal-bg" id="modalBg">
+    <div class="modal">
+      <h3>➕ Thêm thực phẩm</h3>
+      <input type="text" id="mName" placeholder="Tên thực phẩm (vd: Cà rốt 🥕)"/>
+      <input type="text" id="mQty" placeholder="Số lượng (vd: 3 củ)"/>
+      <input type="date" id="mExp"/>
+      <div class="modal-btns">
+        <button class="btn-cancel" onclick="closeModal()">Huỷ</button>
+        <button class="btn-save" onclick="addFood()">Lưu</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── Data ──────────────────────────────
+const foods = [
+  {icon:'🥚',bg:'#1a2e1a',name:'Trứng gà',qty:'6 quả',exp:'2026-05-12',status:'ok'},
+  {icon:'🍅',bg:'#2e1a1a',name:'Cà chua',qty:'4 quả',exp:'2026-05-10',status:'warn'},
+  {icon:'🥛',bg:'#1a1a2e',name:'Sữa tươi',qty:'1 hộp',exp:'2026-05-09',status:'danger'},
+  {icon:'🥦',bg:'#1e2a1a',name:'Bông cải xanh',qty:'1 cây',exp:'2026-05-15',status:'ok'},
+  {icon:'🧀',bg:'#2a2210',name:'Phô mai',qty:'200g',exp:'2026-05-11',status:'warn'},
+  {icon:'🍗',bg:'#2e1e0a',name:'Thịt gà',qty:'500g',exp:'2026-05-13',status:'ok'},
+  {icon:'🐟',bg:'#0a1e2e',name:'Cá hồi',qty:'300g',exp:'2026-05-10',status:'warn'},
+  {icon:'🥕',bg:'#2e1a0a',name:'Cà rốt',qty:'5 củ',exp:'2026-05-18',status:'ok'},
+  {icon:'🍋',bg:'#2a2a0a',name:'Chanh',qty:'4 quả',exp:'2026-05-20',status:'ok'},
+  {icon:'🧅',bg:'#2a1e0a',name:'Hành tây',qty:'2 củ',exp:'2026-05-25',status:'ok'},
+];
+
+let currentTab = 'all';
+let searchQ = '';
+
+function daysLeft(exp){
+  const d = Math.round((new Date(exp)-new Date())/(1000*60*60*24));
+  return d;
+}
+function statusLabel(s){
+  if(s==='ok') return 'Còn tốt';
+  if(s==='warn') return 'Sắp hết hạn';
+  return 'Hết hạn!';
+}
+
+function renderList(){
+  const list = document.getElementById('foodList');
+  let data = foods.filter(f=>{
+    if(currentTab!=='all' && f.status!==currentTab) return false;
+    if(searchQ && !f.name.toLowerCase().includes(searchQ.toLowerCase())) return false;
+    return true;
+  });
+  if(data.length===0){
+    list.innerHTML='<div style="text-align:center;color:var(--muted);padding:30px;font-size:13px;">Không tìm thấy thực phẩm nào 🐱</div>';
+    return;
+  }
+  list.innerHTML = data.map(f=>{
+    const d = daysLeft(f.exp);
+    const dText = d<0 ? `Đã hết hạn ${Math.abs(d)} ngày` : d===0 ? 'Hôm nay hết hạn!' : `Còn ${d} ngày`;
+    const dcls = f.status;
+    const expFmt = new Date(f.exp).toLocaleDateString('vi-VN');
+    return `<div class="fi ${f.status==='warn'?'warn-item':f.status==='danger'?'danger-item':''}">
+      <div class="ficon" style="background:${f.bg}">${f.icon}</div>
+      <div class="finfo">
+        <div class="fname">${f.name}</div>
+        <div class="fmeta">
+          <span>📦 ${f.qty}</span>
+          <span>📅 HH: ${expFmt}</span>
+        </div>
+        <div class="days ${dcls}">${dText}</div>
+      </div>
+      <span class="fbadge ${f.status==='ok'?'ok':f.status==='warn'?'wn':'dn'}">${statusLabel(f.status)}</span>
+    </div>`;
+  }).join('');
+}
+
+function setTab(el, tab){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  currentTab = tab;
+  renderList();
+}
+
+function filterFood(){
+  searchQ = document.getElementById('searchInput').value;
+  renderList();
+}
+
+function openModal(){
+  document.getElementById('modalBg').classList.add('open');
+  // Set default exp date to today+7
+  const d = new Date(); d.setDate(d.getDate()+7);
+  document.getElementById('mExp').value = d.toISOString().split('T')[0];
+}
+function closeModal(){
+  document.getElementById('modalBg').classList.remove('open');
+}
+function addFood(){
+  const name = document.getElementById('mName').value.trim();
+  const qty  = document.getElementById('mQty').value.trim();
+  const exp  = document.getElementById('mExp').value;
+  if(!name||!qty||!exp){ alert('Vui lòng điền đầy đủ thông tin!'); return; }
+  const d = daysLeft(exp);
+  const status = d<0 ? 'danger' : d<=3 ? 'warn' : 'ok';
+  foods.unshift({icon:'🍱',bg:'#1a1a2a',name,qty,exp,status});
+  closeModal();
+  renderList();
+  document.getElementById('mName').value='';
+  document.getElementById('mQty').value='';
+}
+
+// Initial render
+renderList();
+</script>
+</body>
+</html>

@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Tủ Lạnh Thông Minh</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --accent: #00e5a0;
+      --warn: #f6c90e;
+      --danger: #ff5e57;
+      --bg: #0d1117;
+      --surface: #161b22;
+      --card: #1c2230;
+      --border: #2d3748;
+      --text: #e8eaf6;
+      --muted: #8892a4;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: #0d1117;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .phone {
+      width: 375px;
+      height: 720px;
+      background: var(--surface);
+      border-radius: 36px;
+      border: 3px solid #2d3748;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 24px 60px #000a;
+    }
+
+    /* Status bar */
+    .sb {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px 4px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .notch {
+      width: 96px;
+      height: 22px;
+      background: var(--bg);
+      border-radius: 0 0 14px 14px;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 16px 4px;
+      flex-shrink: 0;
+    }
+
+    .back-btn {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--accent);
+      border-radius: 10px;
+      padding: 5px 12px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      font-family: 'Nunito', sans-serif;
+      text-decoration: none;
+      transition: background .15s;
+    }
+
+    .back-btn:hover {
+      background: #0d2a1f;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .logo-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--accent), #00b4d8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+    }
+
+    .logo h1 {
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .logo h1 span {
+      color: var(--accent);
+    }
+
+    .avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #7c5cbf, #c471ed);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      border: 2px solid var(--accent);
+    }
+
+    /* Emotion strip */
+    .emo-strip {
+      margin: 2px 14px 6px;
+      background: var(--card);
+      border-radius: 12px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .emo-strip .lbl {
+      font-size: 10px;
+      color: var(--muted);
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .chips {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+      margin-top: 3px;
+    }
+
+    .chip {
+      padding: 3px 8px;
+      border-radius: 14px;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .chip.h {
+      background: #1a3a2a;
+      color: #4ade80;
+    }
+
+    .chip.n {
+      background: #3a2a10;
+      color: var(--warn);
+    }
+
+    .chip.c {
+      background: #1a2a3a;
+      color: #60a5fa;
+    }
+
+    .ptag {
+      margin-left: auto;
+      font-size: 11px;
+      color: var(--accent);
+      font-weight: 800;
+      background: #0d2a1f;
+      padding: 3px 8px;
+      border-radius: 12px;
+    }
+
+    /* Camera card */
+    .cam-wrap {
+      padding: 0 14px;
+      flex-shrink: 0;
+    }
+
+    .cam-card {
+      border-radius: 16px;
+      overflow: hidden;
+      position: relative;
+      background: #0a1a10;
+      border: 1px solid var(--border);
+      height: 190px;
+    }
+
+    .cam-bg {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 40% 60%, #c8f56a22, #00e5a010 50%, transparent 80%),
+        linear-gradient(160deg, #0a1a10, #091410);
+    }
+
+    .sh {
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      height: 2px;
+      background: #2a4a30;
+      border-radius: 2px;
+    }
+
+    .fd {
+      position: absolute;
+      opacity: .85;
+    }
+
+    .scan-line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      animation: scan 2s linear infinite;
+      box-shadow: 0 0 8px var(--accent);
+    }
+
+    @keyframes scan {
+      0% {
+        top: 10%
+      }
+
+      100% {
+        top: 90%
+      }
+    }
+
+    .corners span {
+      position: absolute;
+      width: 15px;
+      height: 15px;
+      border-color: var(--accent);
+      border-style: solid;
+    }
+
+    .corners span:nth-child(1) {
+      top: 8px;
+      left: 8px;
+      border-width: 2px 0 0 2px;
+      border-radius: 3px 0 0 0;
+    }
+
+    .corners span:nth-child(2) {
+      top: 8px;
+      right: 8px;
+      border-width: 2px 2px 0 0;
+      border-radius: 0 3px 0 0;
+    }
+
+    .corners span:nth-child(3) {
+      bottom: 8px;
+      left: 8px;
+      border-width: 0 0 2px 2px;
+      border-radius: 0 0 0 3px;
+    }
+
+    .corners span:nth-child(4) {
+      bottom: 8px;
+      right: 8px;
+      border-width: 0 2px 2px 0;
+      border-radius: 0 0 3px 0;
+    }
+
+    .cat-float {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: catb 2.5s ease-in-out infinite;
+    }
+
+    @keyframes catb {
+
+      0%,
+      100% {
+        transform: translateX(-50%) translateY(0);
+      }
+
+      50% {
+        transform: translateX(-50%) translateY(-6px);
+      }
+    }
+
+    .sbubble {
+      background: #fff;
+      color: #111;
+      border-radius: 10px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 800;
+      position: relative;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      box-shadow: 0 3px 8px #0006;
+    }
+
+    .sbubble::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 5px solid transparent;
+      border-top-color: #fff;
+      border-bottom: none;
+    }
+
+    .cat-em {
+      font-size: 40px;
+      filter: drop-shadow(0 3px 8px #00e5a040);
+    }
+
+    .cam-lbl {
+      position: absolute;
+      bottom: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 9px;
+      color: var(--accent);
+      font-weight: 700;
+      letter-spacing: 1px;
+      background: #0009;
+      padding: 1px 8px;
+      border-radius: 12px;
+    }
+
+    /* Stats */
+    .stats {
+      display: flex;
+      gap: 7px;
+      padding: 7px 14px;
+      flex-shrink: 0;
+    }
+
+    .sc {
+      flex: 1;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .sc .si {
+      font-size: 17px;
+    }
+
+    .sc .sv {
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    .sc .sl {
+      font-size: 9px;
+      color: var(--muted);
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .sc.g .sv {
+      color: var(--accent);
+    }
+
+    .sc.y .sv {
+      color: var(--warn);
+    }
+
+    .sc.p .sv {
+      color: #c471ed;
+    }
+
+    /* Suggest */
+    .sug {
+      margin: 2px 14px;
+      background: linear-gradient(135deg, #0d2a20, #0a1e30);
+      border: 1px solid #1e4a3a;
+      border-radius: 16px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .sug-cat {
+      font-size: 28px;
+    }
+
+    .sug h3 {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    .sug p {
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 1px;
+    }
+
+    .sug-btn {
+      margin-left: auto;
+      background: var(--accent);
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 10px;
+      font-weight: 800;
+      cursor: pointer;
+      font-family: 'Nunito', sans-serif;
+      white-space: nowrap;
+    }
+
+    .sug-btn:hover {
+      opacity: .85;
+    }
+
+    /* Section header */
+    .sec-hdr {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 18px 4px;
+      flex-shrink: 0;
+    }
+
+    .sec-hdr h2 {
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .sec-hdr a {
+      font-size: 11px;
+      color: var(--accent);
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    /* Food list */
+    .food-list {
+      padding: 0 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .food-list::-webkit-scrollbar {
+      width: 3px;
+    }
+
+    .food-list::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 3px;
+    }
+
+    .fi {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 9px 11px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      cursor: pointer;
+      transition: transform .15s, border-color .15s;
+    }
+
+    .fi:hover {
+      transform: translateX(4px);
+      border-color: var(--accent);
+    }
+
+    .ficon {
+      width: 36px;
+      height: 36px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+      flex-shrink: 0;
+    }
+
+    .finfo {
+      flex: 1;
+    }
+
+    .fname {
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .fmeta {
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 1px;
+    }
+
+    .fbadge {
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    .ok {
+      background: #0d2a1f;
+      color: #4ade80;
+    }
+
+    .wn {
+      background: #2e2300;
+      color: var(--warn);
+    }
+
+    .dn {
+      background: #2e0d0a;
+      color: var(--danger);
+    }
+
+    /* ══ BIỂU ĐỒ THỨC PHẨM ══ */
+    .chart-box {
+      margin: 4px 14px 6px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 14px 10px;
+      flex-shrink: 0;
+    }
+
+    .chart-title {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      margin-bottom: 10px;
+    }
+
+    .chart-cols {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-around;
+      height: 80px;
+      gap: 10px;
+    }
+
+    .chart-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      flex: 1;
+    }
+
+    .chart-bar-wrap {
+      width: 100%;
+      background: #ffffff12;
+      border-radius: 6px 6px 0 0;
+      display: flex;
+      align-items: flex-end;
+      height: 60px;
+    }
+
+    .chart-bar {
+      width: 100%;
+      border-radius: 6px 6px 0 0;
+      transition: height .5s ease;
+      position: relative;
+    }
+
+    .chart-bar.good {
+      background: linear-gradient(180deg, #4ade80, #16a34a);
+    }
+
+    .chart-bar.warn {
+      background: linear-gradient(180deg, #fde047, #ca8a04);
+    }
+
+    .chart-bar.danger {
+      background: linear-gradient(180deg, #f87171, #dc2626);
+    }
+
+    .chart-val {
+      font-size: 13px;
+      font-weight: 900;
+      color: var(--text);
+    }
+
+    .chart-lbl {
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    /* Bottom nav */
+    .bnav {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 8px 12px 18px;
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .ni {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      font-size: 9px;
+      color: var(--muted);
+      font-weight: 700;
+      cursor: pointer;
+      transition: color .15s;
+      text-decoration: none;
+    }
+
+    .ni .ico {
+      font-size: 19px;
+    }
+
+    .ni.act {
+      color: var(--accent);
+    }
+
+    .ni.act .ico {
+      filter: drop-shadow(0 0 5px var(--accent));
+    }
+
+    .fab {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), #00b4d8);
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      box-shadow: 0 0 14px #00e5a055;
+      transition: transform .15s;
+      margin-top: -18px;
+    }
+
+    .fab:hover {
+      transform: scale(1.1);
+    }
+
+    /* ── Take-out button on food items ── */
+    .take-btn {
+      background: linear-gradient(135deg, #00e5a0, #00b4d8);
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      padding: 4px 9px;
+      font-size: 10px;
+      font-weight: 800;
+      cursor: pointer;
+      font-family: 'Nunito', sans-serif;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: opacity .15s;
+    }
+
+    .take-btn:hover {
+      opacity: .85;
+    }
+
+    .take-btn:disabled {
+      background: #2d3748;
+      color: var(--muted);
+      cursor: not-allowed;
+    }
+
+    /* ── Take-out modal ── */
+    .take-modal-bg {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      z-index: 200;
+      align-items: flex-end;
+    }
+
+    .take-modal-bg.open {
+      display: flex;
+    }
+
+    .take-modal {
+      width: 100%;
+      background: var(--card);
+      border-radius: 20px 20px 0 0;
+      padding: 20px 18px 30px;
+      border-top: 1px solid var(--border);
+      animation: slideUp .25s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(100%);
+      }
+
+      to {
+        transform: translateY(0);
+      }
+    }
+
+    .take-modal h3 {
+      font-size: 15px;
+      font-weight: 900;
+      margin-bottom: 6px;
+    }
+
+    .take-modal .tm-sub {
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+
+    .qty-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      margin: 14px 0;
+    }
+
+    .qty-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--border);
+      border: none;
+      color: var(--text);
+      font-size: 22px;
+      font-weight: 900;
+      cursor: pointer;
+      font-family: 'Nunito', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .15s;
+    }
+
+    .qty-btn:hover {
+      background: #3d4f6a;
+    }
+
+    .qty-display {
+      font-size: 32px;
+      font-weight: 900;
+      min-width: 50px;
+      text-align: center;
+      color: var(--accent);
+    }
+
+    .take-modal-btns {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .take-modal-btns button {
+      flex: 1;
+      padding: 11px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      font-family: 'Nunito', sans-serif;
+      border: none;
+    }
+
+    .btn-cancel {
+      background: var(--border);
+      color: var(--muted);
+    }
+
+    .btn-confirm {
+      background: linear-gradient(135deg, var(--accent), #00b4d8);
+      color: #000;
+    }
+
+    /* ── Toast ── */
+    .toast-msg {
+      position: absolute;
+      bottom: 90px;
+      left: 50%;
+      transform: translateX(-50%) translateY(10px);
+      background: rgba(0, 229, 160, 0.15);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      padding: 8px 18px;
+      border-radius: 24px;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+      z-index: 300;
+      opacity: 0;
+      transition: opacity .25s, transform .25s;
+      pointer-events: none;
+    }
+
+    .toast-msg.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="phone">
+
+    <div class="sb">
+      <span>10:09</span>
+      <div class="notch"></div>
+      <span>🔋 87%</span>
+    </div>
+
+    <div class="header">
+      <a href="Index.html" class="back-btn">← Trang chủ</a>
+      <div class="logo">
+        <div class="logo-icon">🧊</div>
+        <h1>Smart<span>Fridge</span></h1>
+      </div>
+      <div class="avatar">👤</div>
+    </div>
+
+    <div class="emo-strip">
+      <div>
+        <div class="lbl">Tính cảm xúc</div>
+        <div class="chips">
+          <span class="chip h">😊 Vui</span>
+          <span class="chip n">😋 Đói</span>
+          <span class="chip c">😌 Bình thường</span>
+        </div>
+      </div>
+      <div class="ptag">👤 Người 1</div>
+    </div>
+
+    <div class="cam-wrap">
+      <!-- Biểu đồ thức phẩm 3 cột (Đã di chuyển lên đây) -->
+      <div class="chart-box" style="margin: 20px 0 0; border: none; background: none;">
+        <div class="chart-title" style="margin-bottom: 20px;">📊 Tình trạng thực phẩm</div>
+        <div class="chart-cols">
+          <!-- Cột Còn tốt -->
+          <div class="chart-col">
+            <span class="chart-val" style="color:#4ade80">8</span>
+            <div class="chart-bar-wrap">
+              <div class="chart-bar good" style="height:80%"></div>
+            </div>
+            <span class="chart-lbl">✅ Còn tốt</span>
+          </div>
+          <!-- Cột Sắp hết hạn -->
+          <div class="chart-col">
+            <span class="chart-val" style="color:#fde047">3</span>
+            <div class="chart-bar-wrap">
+              <div class="chart-bar warn" style="height:37%"></div>
+            </div>
+            <span class="chart-lbl">⚠️ Sắp hết</span>
+          </div>
+          <!-- Cột Hết hạn -->
+          <div class="chart-col">
+            <span class="chart-val" style="color:#f87171">1</span>
+            <div class="chart-bar-wrap">
+              <div class="chart-bar danger" style="height:12%"></div>
+            </div>
+            <span class="chart-lbl">🚨 Hết hạn</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="sc g"><span class="si">🥦</span><span class="sv">12</span><span class="sl">Thực phẩm</span></div>
+      <div class="sc y"><span class="si">⚠️</span><span class="sv">3</span><span class="sl">Sắp hết hạn</span></div>
+      <div class="sc p"><span class="si">🌡️</span><span class="sv">4°C</span><span class="sl">Nhiệt độ</span></div>
+    </div>
+
+
+
+    <div class="sug">
+      <span class="sug-cat">🐱</span>
+      <div>
+        <h3>Gợi ý hôm nay</h3>
+        <p>Cà chua & trứng sắp hết hạn!<br />Làm trứng chiên cà chua đi nào~</p>
+      </div>
+      <button class="sug-btn" onclick="alert('🍳 Công thức:\n1. Đập 3 trứng\n2. Chiên cà chua\n3. Trộn đều. Ngon!')">Xem
+        CT</button>
+    </div>
+
+    <div class="sec-hdr">
+      <h2>📋 Thực phẩm trong tủ</h2>
+      <a href="Danh_sach_thuc_pham.html">Xem tất cả →</a>
+    </div>
+
+    <div class="take-modal-bg" id="takeModalBg">
+      <div class="take-modal">
+        <h3 id="tmTitle">🍱 Lấy đồ ra nấu</h3>
+        <div class="tm-sub" id="tmSub">Hiện có: <strong id="tmAvail"></strong></div>
+        <div class="qty-row">
+          <button class="qty-btn" onclick="changeQty(-1)">−</button>
+          <div class="qty-display" id="tmQty">1</div>
+          <button class="qty-btn" onclick="changeQty(1)">+</button>
+        </div>
+        <div class="take-modal-btns">
+          <button class="btn-cancel" onclick="closeTakeModal()">Huỷ</button>
+          <button class="btn-confirm" onclick="confirmTake()">✅ Xác nhận lấy</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast-msg" id="toastMsg"></div>
+
+  </div>
+  <script>
+    // ── Food data (có số lượng dạng số) ──────────────────
+    const foods = [
+      { icon: '🥚', bg: '#1a2e1a', name: 'Trứng gà', qty: 6, unit: 'quả', exp: '12/05/2026', status: 'ok' },
+      { icon: '🍅', bg: '#2e1a1a', name: 'Cà chua', qty: 4, unit: 'quả', exp: '10/05/2026', status: 'wn' },
+      { icon: '🥛', bg: '#1a1a2e', name: 'Sữa tươi', qty: 1, unit: 'hộp', exp: '09/05/2026', status: 'dn' },
+      { icon: '🥦', bg: '#1e2a1a', name: 'Bông cải', qty: 1, unit: 'cây', exp: '15/05/2026', status: 'ok' },
+    ];
+
+    let activeFoodIdx = null;
+    let takeQty = 1;
+
+    function renderFoods() {
+      const list = document.getElementById('foodList');
+      list.innerHTML = foods.map((f, i) => {
+        const isEmpty = f.qty <= 0;
+        const badge = isEmpty
+          ? `<span class="fbadge dn">Hết</span>`
+          : f.status === 'ok'
+            ? `<span class="fbadge ok">Tốt</span>`
+            : f.status === 'wn'
+              ? `<span class="fbadge wn">Sắp hết</span>`
+              : `<span class="fbadge dn">Hết hạn!</span>`;
+        return `
+      <div class="fi" style="${isEmpty ? 'opacity:.45' : ''}">
+        <div class="ficon" style="background:${f.bg}">${f.icon}</div>
+        <div class="finfo">
+          <div class="fname">${f.name}</div>
+          <div class="fmeta">${f.qty} ${f.unit} · HH: ${f.exp}</div>
+        </div>
+        ${badge}
+        <button class="take-btn" onclick="openTakeModal(${i})" ${isEmpty ? 'disabled' : ''}>🍳 Lấy ra</button>
+      </div>`;
+      }).join('');
+    }
+
+    function openTakeModal(idx) {
+      activeFoodIdx = idx;
+      takeQty = 1;
+      const f = foods[idx];
+      document.getElementById('tmTitle').textContent = `${f.icon} Lấy ${f.name} ra nấu`;
+      document.getElementById('tmAvail').textContent = `${f.qty} ${f.unit}`;
+      document.getElementById('tmQty').textContent = takeQty;
+      document.getElementById('takeModalBg').classList.add('open');
+    }
+
+    function closeTakeModal() {
+      document.getElementById('takeModalBg').classList.remove('open');
+      activeFoodIdx = null;
+    }
+
+    function changeQty(delta) {
+      if (activeFoodIdx === null) return;
+      const max = foods[activeFoodIdx].qty;
+      takeQty = Math.max(1, Math.min(max, takeQty + delta));
+      document.getElementById('tmQty').textContent = takeQty;
+    }
+
+    function confirmTake() {
+      if (activeFoodIdx === null) return;
+      const f = foods[activeFoodIdx];
+      f.qty -= takeQty;
+      closeTakeModal();
+      renderFoods();
+      showToast(`✅ Đã lấy ${takeQty} ${f.unit} ${f.name} ra nấu!`);
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toastMsg');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2500);
+    }
+
+    function showScan() {
+      const sl = document.querySelector('.scan-line');
+      sl.style.animationDuration = '.3s';
+      sl.style.boxShadow = '0 0 20px #00e5a0,0 0 40px #00e5a066';
+      setTimeout(() => {
+        sl.style.animationDuration = '2s';
+        sl.style.boxShadow = '0 0 8px #00e5a0';
+        showToast('📷 Quét xong! Tìm thấy 12 món thực phẩm.');
+      }, 1000);
+    }
+
+    // Đóng modal khi click ra ngoài
+    document.getElementById('takeModalBg').addEventListener('click', function (e) {
+      if (e.target === this) closeTakeModal();
+    });
+
+    renderFoods();
+  </script>
+</body>
+
+</html>
