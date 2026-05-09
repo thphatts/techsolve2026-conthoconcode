@@ -1198,3 +1198,32 @@ body {
   background: var(--border);
   border-radius: 4px;
 }
+
+/* ── ĐÁP ỨNG MỌI MÀN HÌNH ĐIỆN THOẠI THẬT (RESPONSIVE) ── */
+@media screen and (max-width: 600px) {
+  body {
+    align-items: flex-start;
+    /* Căn lên trên cùng */
+    background: #fdf5c0;
+    /* Đổi nền web trùng với màu nền ứng dụng */
+  }
+
+  .phone {
+    width: 100vw;
+    /* Rộng 100% màn hình */
+    height: 100dvh;
+    /* Cao 100% màn hình (chuẩn cho cả Safari iPhone) */
+    border: none;
+    /* Bỏ viền đen giả */
+    border-radius: 0;
+    /* Bỏ bo góc giả */
+    box-shadow: none;
+    /* Bỏ bóng đổ */
+  }
+
+  /* Ẩn cái "tai thỏ" giả đi vì màn hình điện thoại thật đã có sẵn */
+  .notch,
+  .sb-notch {
+    display: none;
+  }
+}
