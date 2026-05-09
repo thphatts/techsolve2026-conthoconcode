@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Danh Sách Thực Phẩm – Smart Fridge</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: #b8a050;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    /* ── Phone shell ── */
+    .phone {
+      width: 375px;
+      height: 720px;
+      border: 8px solid #222;
+      border-radius: 40px;
+      overflow: hidden;
+      position: relative;
+      background: #fff;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Header ── */
+    .header {
+      position: relative;
+      width: 100%;
+      height: 110px;
+      flex-shrink: 0;
+    }
+
+    .header-bg {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      image-rendering: pixelated;
+    }
+
+    .add-btn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      width: 60px;
+      height: 75px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none;
+      color: #000;
+    }
+
+    .add-btn img {
+      width: 45px;
+      height: auto;
+      image-rendering: pixelated;
+    }
+
+    .add-btn span {
+      font-size: 9px;
+      font-weight: 800;
+      margin-top: 2px;
+      text-align: center;
+      line-height: 1;
+    }
+
+    /* ── Content ── */
+    .content {
+      flex: 1;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      background: #f0faff; /* Light blueish tint */
+    }
+
+    .date {
+      font-size: 18px;
+      font-weight: 900;
+      color: #333;
+    }
+
+    .note-area {
+      position: relative;
+      width: 100%;
+      height: 45px;
+      display: flex;
+      align-items: center;
+      padding: 0 15px;
+    }
+
+    .note-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: fill;
+      image-rendering: pixelated;
+      z-index: 0;
+    }
+
+    .note-area span {
+      position: relative;
+      z-index: 1;
+      font-size: 16px;
+      font-weight: 800;
+      color: #333;
+    }
+
+    /* ── Food Items ── */
+    .food-items {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .food-row {
+      background: #e6edf0;
+      border-radius: 12px;
+      height: 55px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      box-shadow: 0 2px 0 rgba(0,0,0,0.05);
+    }
+
+    .food-row span {
+      font-size: 20px;
+      font-weight: 900;
+      color: #000;
+    }
+
+    .edit-icon {
+      width: 24px;
+      image-rendering: pixelated;
+      cursor: pointer;
+    }
+
+    .empty-row {
+      background: #e6edf0;
+      border-radius: 12px;
+      height: 55px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0 20px;
+      opacity: 0.8;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="phone">
+    <!-- Header -->
+    <header class="header">
+      <img src="../assets/Food-list/iPhone 13 & 14 - 4 (1).png" alt="Header" class="header-bg" />
+      <a href="Index.html" class="add-btn">
+        <img src="../assets/Food-list/Exit.png" alt="Add to Fridge" />
+        <span>Add to Fridge</span>
+      </a>
+    </header>
+
+    <!-- Main Content -->
+    <div class="content">
+      <p class="date" id="dateDisplay">Ngày mua: 9/9/2026</p>
+
+      <!-- Note Area -->
+      <div class="note-area">
+        <img src="../assets/Food-list/Food-frame.png" alt="Note Frame" class="note-bg" />
+        <span>Type note:</span>
+      </div>
+
+      <!-- Food List Items -->
+      <div class="food-items">
+        <div class="food-row">
+          <span>Cà chua</span>
+          <img src="../assets/Food-list/Edit.png" alt="Edit" class="edit-icon" />
+        </div>
+        <div class="food-row">
+          <span>Thịt bò</span>
+          <img src="../assets/Food-list/Edit.png" alt="Edit" class="edit-icon" />
+        </div>
+        
+        <!-- Empty Rows to match design -->
+        <div class="empty-row">
+          <img src="../assets/Food-list/Edit.png" alt="Edit" class="edit-icon" />
+        </div>
+        <div class="empty-row">
+          <img src="../assets/Food-list/Edit.png" alt="Edit" class="edit-icon" />
+        </div>
+        <div class="empty-row">
+          <img src="../assets/Food-list/Edit.png" alt="Edit" class="edit-icon" />
+        </div>
+        <div class="empty-row">
+          <img src="../assets/Food-list/Edit.png" alt="Edit" class="edit-icon" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Add logic if needed, e.g., edit name or add to fridge animation
+    document.querySelector('.add-btn').addEventListener('click', (e) => {
+      e.preventDefault();
+      alert("Đã thêm thực phẩm vào tủ lạnh!");
+      window.location.href = 'Index.html';
+    });
+
+    // Update real-time date
+    function updateDate() {
+      const now = new Date();
+      const d = String(now.getDate()).padStart(2, '0');
+      const m = String(now.getMonth() + 1).padStart(2, '0');
+      const y = now.getFullYear();
+      document.getElementById('dateDisplay').textContent = `Ngày mua: ${d}/${m}/${y}`;
+    }
+    updateDate();
+  </script>
+</body>
+
+</html>
