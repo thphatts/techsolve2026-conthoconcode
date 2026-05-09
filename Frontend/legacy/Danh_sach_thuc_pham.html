@@ -1,335 +1,647 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>Danh Sách Thực Phẩm</title>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet" />
   <style>
-    *{box-sizing:border-box;margin:0;padding:0;}
-    :root{
-      --accent:#e67e22;--warn:#fdd835;--danger:#ff6b6b;
-      --bg:#b8a050;--surface:#fdf5c0;--card:#fff;
-      --border:#333;--text:#333;--muted:#777;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
-    body{
-      font-family:'Nunito',sans-serif;
-      background:var(--bg);color:var(--text);
-      display:flex;align-items:center;justify-content:center;
-      min-height:100vh;
+
+    :root {
+      --accent: #00e5a0;
+      --warn: #fdd835;
+      --danger: #ff6b6b;
+      --bg: #b8a050;
+      --surface: #fdf5c0;
+      --card: #fff;
+      --border: #222;
+      --text: #222;
+      --muted: #777;
     }
-    .phone{
-      width:375px;height:720px;
-      background:var(--surface);
-      border-radius:40px;border:8px solid #222;
-      overflow:hidden;display:flex;flex-direction:column;
-      box-shadow:0 24px 60px rgba(0,0,0,0.5);
+
+    body {
+      font-family: 'VT323', monospace;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      letter-spacing: 0.5px;
+    }
+
+    /* ── Phone shell Pixel ── */
+    .phone {
+      width: 375px;
+      height: 812px;
+      background: var(--surface);
+      border-radius: 0;
+      border: 4px solid var(--border);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.2);
+      position: relative;
     }
 
     /* Status bar */
-    .sb{
-      display:flex;justify-content:space-between;align-items:center;
-      padding:12px 24px 4px;font-size:13px;font-weight:700;
-      color:#333;position:relative;flex-shrink:0;
+    .sb {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 24px 4px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #333;
+      position: relative;
+      flex-shrink: 0;
       background: transparent;
     }
-    .notch{
-      width:120px;height:24px;background:#111;
-      border-radius:0 0 16px 16px;
-      position:absolute;top:0;left:50%;transform:translateX(-50%);
+
+    .notch {
+      width: 120px;
+      height: 24px;
+      background: #111;
+      border-radius: 0;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
     }
 
     /* Header */
-    .hdr{
-      display:flex;align-items:center;gap:10px;
-      padding:8px 16px 6px;flex-shrink:0;
-    }
-    .back{
-      background:#fff;border:2px solid #333;
-      color:#333;border-radius:12px;
-      padding:5px 12px;font-size:11px;font-weight:900;
-      cursor:pointer;font-family:'Nunito',sans-serif;
-      text-decoration:none;
-      box-shadow: 2px 2px 0 rgba(0,0,0,0.1);
-    }
-    .back:hover{background:#f8f8f8; transform: scale(1.05);}
-    .hdr h1{font-size:16px;font-weight:900;flex:1;text-align:center;}
-    .hdr h1 span{color:var(--accent);}
-
-    /* Stats row */
-    .stats{display:flex;gap:7px;padding:6px 14px;flex-shrink:0;}
-    .sc{
-      flex:1;background:var(--card);border:1px solid var(--border);
-      border-radius:12px;padding:8px 10px;
-      display:flex;flex-direction:column;gap:2px;
-    }
-    .sc .si{font-size:17px;}
-    .sc .sv{font-size:15px;font-weight:900;}
-    .sc .sl{font-size:9px;color:var(--muted);font-weight:700;text-transform:uppercase;}
-    .sc.g .sv{color:var(--accent);}
-    .sc.y .sv{color:var(--warn);}
-    .sc.r .sv{color:var(--danger);}
-
-    /* Search bar */
-    .search{
-      margin:4px 14px;padding:9px 14px;
-      background:var(--card);border:1px solid var(--border);
-      border-radius:12px;display:flex;align-items:center;gap:8px;
-      flex-shrink:0;
-    }
-    .search input{
-      flex:1;background:none;border:none;outline:none;
-      color:var(--text);font-size:13px;font-family:'Nunito',sans-serif;
-    }
-    .search input::placeholder{color:var(--muted);}
-
-    /* Filter tabs */
-    .tabs{
-      display:flex;gap:6px;padding:4px 14px;
-      overflow-x:auto;flex-shrink:0;
-    }
-    .tabs::-webkit-scrollbar{display:none;}
-    .tab{
-      padding:5px 12px;border-radius:18px;
-      font-size:11px;font-weight:800;white-space:nowrap;
-      cursor:pointer;border:2px solid var(--border);
-      background:var(--card);color:var(--muted);
-      transition:all .15s;
-    }
-    .tab.active{
-      background:var(--accent);color:#000;border-color:var(--accent);
+    .hdr {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 16px 6px;
+      flex-shrink: 0;
     }
 
-    /* Food list */
-    .food-list{
-      flex:1;overflow-y:auto;
-      padding:6px 14px 10px;
-      display:flex;flex-direction:column;gap:8px;
+    /* Nút Back Pixel */
+    .back {
+      background: #fff;
+      border: 3px solid var(--border);
+      color: var(--text);
+      border-radius: 0;
+      padding: 6px 14px;
+      font-size: 18px;
+      font-weight: 900;
+      cursor: pointer;
+      font-family: 'VT323', monospace;
+      text-decoration: none;
+      box-shadow: 2px 2px 0 var(--border);
+      transition: transform 0.1s, box-shadow 0.1s;
     }
-    .food-list::-webkit-scrollbar{width:3px;}
-    .food-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
 
-    .fi{
-      background:var(--card);border:1px solid var(--border);
-      border-radius:14px;padding:12px 12px;
-      display:flex;align-items:center;gap:10px;
-      cursor:pointer;transition:transform .15s,border-color .15s;
+    .back:active {
+      transform: translate(2px, 2px);
+      box-shadow: 0 0 0 var(--border);
     }
-    .fi:hover{transform:translateX(4px);border-color:var(--accent);}
-    .fi.warn-item{border-left:3px solid var(--warn);}
-    .fi.danger-item{border-left:3px solid var(--danger);}
 
-    .ficon{
-      width:44px;height:44px;border-radius:12px;
-      display:flex;align-items:center;justify-content:center;
-      font-size:22px;flex-shrink:0;
+    .hdr h1 {
+      font-size: 24px;
+      font-weight: 900;
+      flex: 1;
+      text-align: center;
     }
-    .finfo{flex:1;}
-    .fname{font-size:13px;font-weight:800;}
-    .fmeta{font-size:10px;color:var(--muted);margin-top:2px;}
-    .fmeta span{margin-right:8px;}
 
-    .fbadge{
-      padding:4px 9px;border-radius:12px;
-      font-size:10px;font-weight:800;
-      white-space:nowrap;
+    .hdr h1 span {
+      color: #ff85a2;
     }
-    .ok{background:#dcfce7;color:#166534;}
-    .wn{background:#fef9c3;color:#854d0e;}
-    .dn{background:#fee2e2;color:#991b1b;}
 
-    /* Expiry days */
-    .days{
-      font-size:10px;font-weight:700;
-      margin-top:3px;
+    .fridge-header-img {
+      width: 35px;
+      height: 45px;
+      object-fit: contain;
+      image-rendering: pixelated;
+      cursor: pointer;
     }
-    .days.ok{background:none;color:#4ade80;padding:0;}
-    .days.wn{background:none;color:var(--warn);padding:0;}
-    .days.dn{background:none;color:var(--danger);padding:0;}
 
-    /* Add button */
-    .add-btn{
-      margin:4px 14px;padding:11px;
-      background:#fff;
-      border:2px solid #333;border-radius:14px;
-      color:#333;font-size:13px;font-weight:900;
-      cursor:pointer;font-family:'Nunito',sans-serif;
-      display:flex;align-items:center;justify-content:center;gap:6px;
-      transition:all .15s;flex-shrink:0;
-      box-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+    /* ── Stats row Pixel ── */
+    .stats {
+      display: flex;
+      gap: 10px;
+      padding: 6px 14px;
+      flex-shrink: 0;
     }
-    .add-btn:hover{background:#f8f8f8;transform:translateY(-2px);}
 
-    /* Bottom nav */
-    .bnav{
-      display:flex;justify-content:space-around;align-items:center;
-      padding:10px 10px 25px;background:#fff;
-      border-top:3px solid #222;flex-shrink:0;
+    .sc {
+      flex: 1;
+      background: var(--card);
+      border: 3px solid var(--border);
+      border-radius: 0;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      box-shadow: 4px 4px 0 var(--border);
     }
-    .ni{
-      display:flex;flex-direction:column;align-items:center;
-      gap:4px;font-size:11px;color:#777;font-weight:800;
-      cursor:pointer;text-decoration:none;transition:color .15s;
+
+    .sc .si {
+      font-size: 20px;
+    }
+
+    .sc .sv {
+      font-size: 24px;
+      font-weight: 900;
+    }
+
+    .sc .sl {
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .sc.g .sv {
+      color: #4ade80;
+    }
+
+    .sc.y .sv {
+      color: var(--warn);
+    }
+
+    .sc.r .sv {
+      color: var(--danger);
+    }
+
+    /* ── Search bar Pixel ── */
+    .search {
+      margin: 10px 14px;
+      padding: 8px 14px;
+      background: var(--card);
+      border: 3px solid var(--border);
+      border-radius: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+      box-shadow: 4px 4px 0 var(--border);
+    }
+
+    .search span {
+      font-size: 20px;
+    }
+
+    .search input {
+      flex: 1;
+      background: none;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-size: 20px;
+      font-family: 'VT323', monospace;
+    }
+
+    .search input::placeholder {
+      color: var(--muted);
+    }
+
+    /* ── Filter tabs Pixel ── */
+    .tabs {
+      display: flex;
+      gap: 10px;
+      padding: 4px 14px 12px;
+      overflow-x: auto;
+      flex-shrink: 0;
+      /* Thêm con trỏ chuột hình bàn tay để báo hiệu kéo được */
+      cursor: grab;
+    }
+
+    /* Đổi hình bàn tay khi đang nhấn giữ */
+    .tabs:active {
+      cursor: grabbing;
+    }
+
+    .tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .tab {
+      padding: 6px 14px;
+      border-radius: 0;
+      font-size: 18px;
+      font-weight: 800;
+      white-space: nowrap;
+      border: 3px solid var(--border);
+      background: var(--card);
+      color: var(--muted);
+      box-shadow: 2px 2px 0 var(--border);
+      transition: transform .1s, box-shadow .1s;
+      /* Ngăn chặn bôi đen text khi kéo chuột */
+      user-select: none;
+    }
+
+    .tab:active {
+      transform: translate(2px, 2px);
+      box-shadow: 0 0 0 var(--border);
+    }
+
+    .tab.active {
+      background: #ff85a2;
+      color: #fff;
+      border-color: var(--border);
+    }
+
+    /* ── Food list Pixel ── */
+    .food-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 6px 14px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .food-list::-webkit-scrollbar {
+      width: 0px;
+    }
+
+    .fi {
+      background: var(--card);
+      border: 3px solid var(--border);
+      border-radius: 0;
+      padding: 12px 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      box-shadow: 4px 4px 0 var(--border);
+      transition: transform .1s, box-shadow .1s;
+      margin-bottom: 2px;
+    }
+
+    .fi:active {
+      transform: translate(4px, 4px);
+      box-shadow: 0 0 0 var(--border);
+    }
+
+    .fi.warn-item {
+      border-left: 8px solid var(--warn);
+    }
+
+    .fi.danger-item {
+      border-left: 8px solid var(--danger);
+    }
+
+    .fi.ok-item {
+      border-left: 8px solid #4ade80;
+    }
+
+    .ficon {
+      width: 48px;
+      height: 48px;
+      border-radius: 0;
+      border: 3px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      flex-shrink: 0;
+      background: #222;
+    }
+
+    .finfo {
       flex: 1;
     }
-    .ni .ico{font-size:24px;}
-    .ni.act{color:var(--accent);}
-    .fab{
-      width:56px;height:56px;border-radius:50%;
-      background:#1a1a1a;
-      border:3px solid #222;font-size:24px;cursor:pointer;
-      box-shadow:0 4px 10px rgba(0,0,0,0.3);
-      transition:transform .15s;margin-top:-40px;
-      color: #fff;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .fab:hover{transform:scale(1.15);}
 
-    /* Modal thêm món */
-    .modal-bg{
-      display:none;position:absolute;inset:0;
-      background:#000a;z-index:100;
-      align-items:flex-end;
+    .fname {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text);
     }
-    .modal-bg.open{display:flex;}
-    .modal{
-      width:100%;background:var(--card);
-      border-radius:20px 20px 0 0;
-      padding:20px 18px 30px;
-      border-top:1px solid var(--border);
+
+    .fmeta {
+      font-size: 16px;
+      color: var(--muted);
+      margin-top: 4px;
     }
-    .modal h3{font-size:15px;font-weight:900;margin-bottom:14px;}
-    .modal input,.modal select{
-      width:100%;padding:9px 12px;margin-bottom:10px;
-      background:var(--surface);border:1px solid var(--border);
-      border-radius:10px;color:var(--text);
-      font-size:13px;font-family:'Nunito',sans-serif;outline:none;
+
+    .fmeta span {
+      margin-right: 8px;
     }
-    .modal-btns{display:flex;gap:8px;margin-top:4px;}
-    .modal-btns button{
-      flex:1;padding:10px;border-radius:10px;
-      font-size:13px;font-weight:800;cursor:pointer;
-      font-family:'Nunito',sans-serif;border:none;
+
+    .fbadge {
+      padding: 6px 10px;
+      border-radius: 0;
+      border: 3px solid var(--border);
+      font-size: 15px;
+      font-weight: 800;
+      white-space: nowrap;
     }
-    .btn-cancel{background:var(--border);color:var(--muted);}
-    .btn-save{background:var(--accent);color:#000;}
+
+    .ok {
+      background: #0f3f26;
+      color: #4ade80;
+    }
+
+    .wn {
+      background: #422a00;
+      color: #fdd835;
+    }
+
+    .dn {
+      background: #4a0f0f;
+      color: #ff6b6b;
+    }
+
+    .days {
+      font-size: 15px;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    .days.ok {
+      color: #4ade80;
+    }
+
+    .days.warn {
+      color: var(--warn);
+    }
+
+    .days.danger {
+      color: var(--danger);
+    }
+
+    /* ── Add button Pixel ── */
+    .add-btn {
+      margin: 4px 14px 10px;
+      padding: 12px;
+      background: #fff;
+      border: 3px solid var(--border);
+      border-radius: 0;
+      color: var(--text);
+      font-size: 20px;
+      font-weight: 900;
+      cursor: pointer;
+      font-family: 'VT323', monospace;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      box-shadow: 4px 4px 0 var(--border);
+      transition: transform .1s, box-shadow .1s;
+      flex-shrink: 0;
+    }
+
+    .add-btn:active {
+      transform: translate(4px, 4px);
+      box-shadow: 0 0 0 var(--border);
+    }
+
+    /* ── Bottom nav Pixel ── */
+    .bnav {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 10px 10px 24px;
+      background: #fff;
+      border-top: 4px solid var(--border);
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .nav-img-row {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      width: 100%;
+      position: relative;
+      z-index: 2;
+    }
+
+    .nav-img-row img {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+      image-rendering: pixelated;
+      cursor: pointer;
+    }
+
+    .nav-img-row img.center-btn {
+      width: 60px;
+      height: 60px;
+      margin-top: -15px;
+    }
+
+    /* ── Modal thêm món Pixel ── */
+    .modal-bg {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 100;
+      align-items: flex-end;
+    }
+
+    .modal-bg.open {
+      display: flex;
+    }
+
+    .modal {
+      width: 100%;
+      background: var(--card);
+      border-radius: 0;
+      padding: 24px 18px 40px;
+      border-top: 4px solid var(--border);
+    }
+
+    .modal h3 {
+      font-size: 24px;
+      font-weight: 900;
+      margin-bottom: 14px;
+    }
+
+    .modal input,
+    .modal select {
+      width: 100%;
+      padding: 10px 12px;
+      margin-bottom: 14px;
+      background: var(--surface);
+      border: 3px solid var(--border);
+      border-radius: 0;
+      color: var(--text);
+      font-size: 20px;
+      font-family: 'VT323', monospace;
+      outline: none;
+      box-shadow: inset 2px 2px 0 rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-btns {
+      display: flex;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .modal-btns button {
+      flex: 1;
+      padding: 12px;
+      border-radius: 0;
+      border: 3px solid var(--border);
+      font-size: 20px;
+      font-weight: 800;
+      cursor: pointer;
+      font-family: 'VT323', monospace;
+      box-shadow: 4px 4px 0 var(--border);
+      transition: transform .1s, box-shadow .1s;
+    }
+
+    .modal-btns button:active {
+      transform: translate(4px, 4px);
+      box-shadow: 0 0 0 var(--border);
+    }
+
+    .btn-cancel {
+      background: #fff;
+      color: var(--text);
+    }
+
+    .btn-save {
+      background: var(--cyan);
+      color: #000;
+    }
   </style>
 </head>
+
 <body>
-<div class="phone" style="position:relative;">
+  <div class="phone" style="position:relative;">
 
-  <div class="sb">
-    <span>10:09</span>
-    <div class="notch"></div>
-    <span>🔋 87%</span>
-  </div>
+    <div class="sb">
+      <span>10:09</span>
+      <div class="notch"></div>
+      <span>🔋 87%</span>
+    </div>
 
-  <div class="hdr">
-    <a href="Index.html" class="back">← Về nhà</a>
-    <h1>📋 <span>Thực Phẩm</span></h1>
-    <a href="tu_lanh.html" class="back">Tủ lạnh</a>
-  </div>
+    <div class="hdr">
+      <a href="tu_lanh.html" class="back">← Tủ lạnh</a>
+      <img src="../assets/tulanh.png" class="fridge-header-img" id="fridgeHeaderImg" alt="Tủ lạnh"
+        onclick="location.href='Index.html'" />
+      <h1>Smart<span>Fridge</span></h1>
+    </div>
 
-  <!-- Stats -->
-  <div class="stats">
-    <div class="sc g"><span class="si">✅</span><span class="sv">9</span><span class="sl">Còn tốt</span></div>
-    <div class="sc y"><span class="si">⏰</span><span class="sv">3</span><span class="sl">Sắp hết</span></div>
-    <div class="sc r"><span class="si">🚨</span><span class="sv">1</span><span class="sl">Hết hạn</span></div>
-  </div>
-
-  <!-- Search -->
-  <div class="search">
-    <span>🔍</span>
-    <input type="text" id="searchInput" placeholder="Tìm thực phẩm..." oninput="filterFood()"/>
-  </div>
-
-  <!-- Filter tabs -->
-  <div class="tabs">
-    <div class="tab active" onclick="setTab(this,'all')">Tất cả</div>
-    <div class="tab" onclick="setTab(this,'ok')">✅ Còn tốt</div>
-    <div class="tab" onclick="setTab(this,'warn')">⚠️ Sắp hết</div>
-    <div class="tab" onclick="setTab(this,'danger')">🚨 Hết hạn</div>
-  </div>
-
-  <!-- Food list -->
-  <div class="food-list" id="foodList"></div>
-
-  <!-- Add button -->
-  <button class="add-btn" onclick="openModal()">
-    ＋ Thêm thực phẩm mới
-  </button>
-
-  <!-- Bottom nav -->
-  <div class="bnav">
-    <a href="Index.html" class="ni"><span class="ico">🏠</span><span>Trang chủ</span></a>
-    <a href="Danh_sach_thuc_pham.html" class="ni act"><span class="ico">📋</span><span>Thực phẩm</span></a>
-    <a href="tu_lanh.html"><button class="fab">📷</button></a>
-    <a href="#" class="ni"><span class="ico">🍳</span><span>Công thức</span></a>
-    <a href="#" class="ni"><span class="ico">⚙️</span><span>Cài đặt</span></a>
-  </div>
-
-  <!-- Modal thêm món -->
-  <div class="modal-bg" id="modalBg">
-    <div class="modal">
-      <h3>➕ Thêm thực phẩm</h3>
-      <input type="text" id="mName" placeholder="Tên thực phẩm (vd: Cà rốt 🥕)"/>
-      <input type="text" id="mQty" placeholder="Số lượng (vd: 3 củ)"/>
-      <input type="date" id="mExp"/>
-      <div class="modal-btns">
-        <button class="btn-cancel" onclick="closeModal()">Huỷ</button>
-        <button class="btn-save" onclick="addFood()">Lưu</button>
+    <div class="stats">
+      <div class="sc g"><span class="si">✅</span><span class="sv" id="s-good">0</span><span class="sl">Còn tốt</span>
+      </div>
+      <div class="sc y"><span class="si">⏰</span><span class="sv" id="s-warn">0</span><span class="sl">Sắp hết</span>
+      </div>
+      <div class="sc r"><span class="si">🚨</span><span class="sv" id="s-danger">0</span><span class="sl">Hết hạn</span>
       </div>
     </div>
+
+    <div class="search">
+      <span>🔍</span>
+      <input type="text" id="searchInput" placeholder="Tìm thực phẩm..." oninput="filterFood()" />
+    </div>
+
+    <div class="tabs" id="tabsContainer">
+      <div class="tab active" onclick="setTab(this,'all')">Tất cả</div>
+      <div class="tab" onclick="setTab(this,'ok')">✅ Còn tốt</div>
+      <div class="tab" onclick="setTab(this,'warn')">⚠️ Sắp hết</div>
+      <div class="tab" onclick="setTab(this,'danger')">🚨 Hết hạn</div>
+    </div>
+
+    <div class="food-list" id="foodList"></div>
+
+    <button class="add-btn" onclick="openModal()">
+      ＋ Thêm thực phẩm mới
+    </button>
+
+    <div class="bnav">
+      <div class="nav-img-row">
+        <img src="../assets/nuttrangchu.png" alt="Trang chủ" onclick="location.href='Index.html'" />
+        <img src="../assets/nutthucpham.png" alt="Thực phẩm" onclick="location.href='Danh_sach_thuc_pham.html'" />
+        <img src="../assets/nutchup.png" alt="Chụp ảnh" class="center-btn" onclick="location.href='tu_lanh.html'" />
+        <img src="../assets/nutvi.png" alt="Ví" />
+        <img src="../assets/nutcaidat.png" alt="Cài đặt" />
+      </div>
+    </div>
+
+    <div class="modal-bg" id="modalBg">
+      <div class="modal">
+        <h3>➕ Thêm thực phẩm</h3>
+        <input type="text" id="mName" placeholder="Tên thực phẩm (vd: Cà rốt 🥕)" />
+        <input type="text" id="mQty" placeholder="Số lượng (vd: 3 củ)" />
+        <input type="date" id="mExp" />
+        <div class="modal-btns">
+          <button class="btn-cancel" onclick="closeModal()">Huỷ</button>
+          <button class="btn-save" onclick="addFood()">Lưu</button>
+        </div>
+      </div>
+    </div>
+
   </div>
 
-</div>
+  <script>
+    // ── Data ──────────────────────────────
+    const foods = [
+      { icon: '🥚', bg: '#1a2e1a', name: 'Trứng gà', qty: '6 quả', exp: '2026-05-12', status: 'ok' },
+      { icon: '🍅', bg: '#2e1a1a', name: 'Cà chua', qty: '4 quả', exp: '2026-05-10', status: 'warn' },
+      { icon: '🥛', bg: '#1a1a2e', name: 'Sữa tươi', qty: '1 hộp', exp: '2026-05-09', status: 'danger' },
+      { icon: '🥦', bg: '#1e2a1a', name: 'Bông cải xanh', qty: '1 cây', exp: '2026-05-15', status: 'ok' },
+      { icon: '🧀', bg: '#2a2210', name: 'Phô mai', qty: '200g', exp: '2026-05-11', status: 'warn' },
+      { icon: '🍗', bg: '#2e1e0a', name: 'Thịt gà', qty: '500g', exp: '2026-05-13', status: 'ok' },
+      { icon: '🐟', bg: '#0a1e2e', name: 'Cá hồi', qty: '300g', exp: '2026-05-10', status: 'warn' },
+      { icon: '🥕', bg: '#2e1a0a', name: 'Cà rốt', qty: '5 củ', exp: '2026-05-18', status: 'ok' },
+      { icon: '🍋', bg: '#2a2a0a', name: 'Chanh', qty: '4 quả', exp: '2026-05-20', status: 'ok' },
+      { icon: '🧅', bg: '#2a1e0a', name: 'Hành tây', qty: '2 củ', exp: '2026-05-25', status: 'ok' },
+    ];
 
-<script>
-// ── Data ──────────────────────────────
-const foods = [
-  {icon:'🥚',bg:'#1a2e1a',name:'Trứng gà',qty:'6 quả',exp:'2026-05-12',status:'ok'},
-  {icon:'🍅',bg:'#2e1a1a',name:'Cà chua',qty:'4 quả',exp:'2026-05-10',status:'warn'},
-  {icon:'🥛',bg:'#1a1a2e',name:'Sữa tươi',qty:'1 hộp',exp:'2026-05-09',status:'danger'},
-  {icon:'🥦',bg:'#1e2a1a',name:'Bông cải xanh',qty:'1 cây',exp:'2026-05-15',status:'ok'},
-  {icon:'🧀',bg:'#2a2210',name:'Phô mai',qty:'200g',exp:'2026-05-11',status:'warn'},
-  {icon:'🍗',bg:'#2e1e0a',name:'Thịt gà',qty:'500g',exp:'2026-05-13',status:'ok'},
-  {icon:'🐟',bg:'#0a1e2e',name:'Cá hồi',qty:'300g',exp:'2026-05-10',status:'warn'},
-  {icon:'🥕',bg:'#2e1a0a',name:'Cà rốt',qty:'5 củ',exp:'2026-05-18',status:'ok'},
-  {icon:'🍋',bg:'#2a2a0a',name:'Chanh',qty:'4 quả',exp:'2026-05-20',status:'ok'},
-  {icon:'🧅',bg:'#2a1e0a',name:'Hành tây',qty:'2 củ',exp:'2026-05-25',status:'ok'},
-];
+    let currentTab = 'all';
+    let searchQ = '';
 
-let currentTab = 'all';
-let searchQ = '';
+    function daysLeft(exp) {
+      const d = Math.round((new Date(exp) - new Date()) / (1000 * 60 * 60 * 24));
+      return d;
+    }
+    function statusLabel(s) {
+      if (s === 'ok') return 'Còn tốt';
+      if (s === 'warn') return 'Sắp hết hạn';
+      return 'Hết hạn!';
+    }
 
-function daysLeft(exp){
-  const d = Math.round((new Date(exp)-new Date())/(1000*60*60*24));
-  return d;
-}
-function statusLabel(s){
-  if(s==='ok') return 'Còn tốt';
-  if(s==='warn') return 'Sắp hết hạn';
-  return 'Hết hạn!';
-}
+    function updateStats() {
+      let good = 0, warn = 0, danger = 0;
+      foods.forEach(f => {
+        if (f.status === 'ok') good++;
+        else if (f.status === 'warn') warn++;
+        else if (f.status === 'danger') danger++;
+      });
+      document.getElementById('s-good').textContent = good;
+      document.getElementById('s-warn').textContent = warn;
+      document.getElementById('s-danger').textContent = danger;
+    }
 
-function renderList(){
-  const list = document.getElementById('foodList');
-  let data = foods.filter(f=>{
-    if(currentTab!=='all' && f.status!==currentTab) return false;
-    if(searchQ && !f.name.toLowerCase().includes(searchQ.toLowerCase())) return false;
-    return true;
-  });
-  if(data.length===0){
-    list.innerHTML='<div style="text-align:center;color:var(--muted);padding:30px;font-size:13px;">Không tìm thấy thực phẩm nào 🐱</div>';
-    return;
-  }
-  list.innerHTML = data.map(f=>{
-    const d = daysLeft(f.exp);
-    const dText = d<0 ? `Đã hết hạn ${Math.abs(d)} ngày` : d===0 ? 'Hôm nay hết hạn!' : `Còn ${d} ngày`;
-    const dcls = f.status;
-    const expFmt = new Date(f.exp).toLocaleDateString('vi-VN');
-    return `<div class="fi ${f.status==='warn'?'warn-item':f.status==='danger'?'danger-item':''}">
-      <div class="ficon" style="background:${f.bg}">${f.icon}</div>
+    function renderList() {
+      const list = document.getElementById('foodList');
+      let data = foods.filter(f => {
+        if (currentTab !== 'all' && f.status !== currentTab) return false;
+        if (searchQ && !f.name.toLowerCase().includes(searchQ.toLowerCase())) return false;
+        return true;
+      });
+
+      if (data.length === 0) {
+        list.innerHTML = '<div style="text-align:center;color:var(--muted);padding:30px;font-size:18px;">Không tìm thấy thực phẩm nào 🐱</div>';
+        return;
+      }
+
+      list.innerHTML = data.map(f => {
+        const d = daysLeft(f.exp);
+        const dText = d < 0 ? `Đã hết hạn ${Math.abs(d)} ngày` : d === 0 ? 'Hôm nay hết hạn!' : `Còn ${d} ngày`;
+        const dcls = f.status;
+        const expFmt = new Date(f.exp).toLocaleDateString('vi-VN');
+
+        const borderClass = f.status === 'ok' ? 'ok-item' : (f.status === 'warn' ? 'warn-item' : 'danger-item');
+        const badgeClass = f.status === 'ok' ? 'ok' : (f.status === 'warn' ? 'wn' : 'dn');
+
+        return `<div class="fi ${borderClass}">
+      <div class="ficon">${f.icon}</div>
       <div class="finfo">
         <div class="fname">${f.name}</div>
         <div class="fmeta">
@@ -338,48 +650,95 @@ function renderList(){
         </div>
         <div class="days ${dcls}">${dText}</div>
       </div>
-      <span class="fbadge ${f.status==='ok'?'ok':f.status==='warn'?'wn':'dn'}">${statusLabel(f.status)}</span>
+      <span class="fbadge ${badgeClass}">${statusLabel(f.status)}</span>
     </div>`;
-  }).join('');
-}
+      }).join('');
+    }
 
-function setTab(el, tab){
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  el.classList.add('active');
-  currentTab = tab;
-  renderList();
-}
+    function setTab(el, tab) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
+      currentTab = tab;
+      renderList();
+    }
 
-function filterFood(){
-  searchQ = document.getElementById('searchInput').value;
-  renderList();
-}
+    function filterFood() {
+      searchQ = document.getElementById('searchInput').value;
+      renderList();
+    }
 
-function openModal(){
-  document.getElementById('modalBg').classList.add('open');
-  // Set default exp date to today+7
-  const d = new Date(); d.setDate(d.getDate()+7);
-  document.getElementById('mExp').value = d.toISOString().split('T')[0];
-}
-function closeModal(){
-  document.getElementById('modalBg').classList.remove('open');
-}
-function addFood(){
-  const name = document.getElementById('mName').value.trim();
-  const qty  = document.getElementById('mQty').value.trim();
-  const exp  = document.getElementById('mExp').value;
-  if(!name||!qty||!exp){ alert('Vui lòng điền đầy đủ thông tin!'); return; }
-  const d = daysLeft(exp);
-  const status = d<0 ? 'danger' : d<=3 ? 'warn' : 'ok';
-  foods.unshift({icon:'🍱',bg:'#1a1a2a',name,qty,exp,status});
-  closeModal();
-  renderList();
-  document.getElementById('mName').value='';
-  document.getElementById('mQty').value='';
-}
+    function openModal() {
+      document.getElementById('modalBg').classList.add('open');
+      const d = new Date(); d.setDate(d.getDate() + 7);
+      document.getElementById('mExp').value = d.toISOString().split('T')[0];
+    }
 
-// Initial render
-renderList();
-</script>
+    function closeModal() {
+      document.getElementById('modalBg').classList.remove('open');
+    }
+
+    function addFood() {
+      const name = document.getElementById('mName').value.trim();
+      const qty = document.getElementById('mQty').value.trim();
+      const exp = document.getElementById('mExp').value;
+      if (!name || !qty || !exp) { alert('Vui lòng điền đầy đủ thông tin!'); return; }
+      const d = daysLeft(exp);
+      const status = d < 0 ? 'danger' : d <= 3 ? 'warn' : 'ok';
+
+      foods.unshift({ icon: '🍱', bg: '#1a1a2a', name, qty, exp, status });
+      closeModal();
+      renderList();
+      updateStats();
+
+      document.getElementById('mName').value = '';
+      document.getElementById('mQty').value = '';
+    }
+
+    // Hover tủ lạnh ở Header
+    const fridgeHeader = document.getElementById('fridgeHeaderImg');
+    if (fridgeHeader) {
+      fridgeHeader.addEventListener('mouseenter', () => {
+        fridgeHeader.src = '../assets/tulanhmo.gif';
+      });
+      fridgeHeader.addEventListener('mouseleave', () => {
+        fridgeHeader.src = '../assets/tulanh.png';
+      });
+    }
+
+    // Lắng nghe click ra ngoài modal để đóng
+    document.getElementById('modalBg').addEventListener('click', function (e) {
+      if (e.target === this) closeModal();
+    });
+
+    // ── XỬ LÝ KÉO TRƯỢT CHUỘT CHO TABS ──
+    const tabsContainer = document.getElementById('tabsContainer');
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+
+    tabsContainer.addEventListener('mousedown', (e) => {
+      isDown = true;
+      startX = e.pageX - tabsContainer.offsetLeft;
+      scrollLeft = tabsContainer.scrollLeft;
+    });
+    tabsContainer.addEventListener('mouseleave', () => {
+      isDown = false;
+    });
+    tabsContainer.addEventListener('mouseup', () => {
+      isDown = false;
+    });
+    tabsContainer.addEventListener('mousemove', (e) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - tabsContainer.offsetLeft;
+      const walk = (x - startX) * 2; // Tốc độ trượt (nhân 2 để lướt nhanh hơn)
+      tabsContainer.scrollLeft = scrollLeft - walk;
+    });
+
+    // Initial render
+    updateStats();
+    renderList();
+  </script>
 </body>
+
 </html>
