@@ -38,23 +38,31 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        // 2. Tách Token (Bỏ chữ "Bearer " ở đầu đi)
-        jwt = authHeader.substring(7);
-        userEmail = jwtService.extractUsername(jwt);
+        try {
+            // 2. Tách Token (Bỏ chữ "Bearer " ở đầu đi)
+            jwt = authHeader.substring(7);
+            userEmail = jwtService.extractUsername(jwt);
 
-        // 3. Nếu có Email và người dùng này chưa được xác thực
-        if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
+            // 3. Nếu có Email và người dùng này chưa được xác thực
+            if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
 
-            // 4. Nếu Token đúng là của người này và chưa hết hạn
-            if (jwtService.isTokenValid(jwt, userDetails)) {
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                // 4. Nếu Token đúng là của người này và chưa hết hạn
+                if (jwtService.isTokenValid(jwt, userDetails)) {
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                            userDetails, null, userDetails.getAuthorities());
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                // Mở cửa cho đi vào hệ thống
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+                    // Mở cửa cho đi vào hệ thống
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
             }
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json;charset=UTF-8");
+            response.getWriter().write(
+                    "{\"status\": 401, \"message\": \"Token không hợp lệ hoặc đã hết hạn! Vui lòng đăng nhập lại.\"}");
+            return; // Dừng Filter lại
         }
         filterChain.doFilter(request, response);
     }

@@ -19,6 +19,12 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
         format-sql: true
 
+  # Cấu hình nới lỏng dung lượng upload file ảnh
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
+
   # Cấu hình JWT Token cho Authentication
   jwt:
     secret: "404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970" # Khóa bí mật 256-bit Base64
