@@ -32,9 +32,13 @@ spring:
 
   # Thêm phần này vào dưới cùng của application.yml
 app:
+  # Thư mục lưu trữ ảnh hóa đơn
+  upload-dir: "uploads/receipts"
   ai:
-    # Tạm thời bạn có thể để một chuỗi bất kỳ để app chạy lên,
-    # sau này có key thật từ Google AI Studio thì paste vào đây
-    api-key: "AIzaSyAHHYVzEoNzCdjxrzdcfwp_3OIjRMB6zjY"
-    model: "gemini-1.5-flash"
-    bill-scan-prompt: "Bạn là một chuyên gia đọc hóa đơn siêu thị. Hãy đọc ảnh hóa đơn này và trả về JSON chứa mảng 'items' gồm các trường: product_name (tên món hàng), quantity (số lượng), price (giá một đơn vị), estimated_expiry_days (số ngày hết hạn ước tính dựa trên loại đồ ăn, ví dụ thịt là 3-5 ngày, rau là 5-7 ngày). Chỉ trả về JSON hợp lệ."
+    api-key: "local-no-key"
+    model: "llama3.2-vision"
+    base-url: "http://localhost:11434/api/chat"
+    bill-scan-prompt: "Bạn là một chuyên gia đọc hóa đơn siêu thị. Hãy đọc ảnh hóa đơn này và trả về duy nhất một JSON object chứa mảng 'items' gồm các trường: product_name, quantity, price, estimated_expiry_days. Chỉ trả về JSON, không giải thích. LƯU Ý BẮT BUỘC: Bạn phải trả về định dạng JSON hợp lệ tuyệt đối. KHÔNG được sử dụng các ký tự escape Unicode (như \\uXXXX hoặc \\N) cho các ký tự tiếng Việt. Hãy xuất thẳng văn bản tiếng Việt chuẩn UTF-8."
+    logging:
+  level:
+    hackathon.fridgeai: DEBUG

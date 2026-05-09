@@ -1,5 +1,6 @@
 package hackathon.fridgeai.controller;
 
+import hackathon.fridgeai.dto.BillDetailResponse;
 import hackathon.fridgeai.entity.BillItem;
 import hackathon.fridgeai.entity.FridgeItem;
 import hackathon.fridgeai.service.BillService;
@@ -18,6 +19,13 @@ import java.util.List;
 public class BillController {
 
     private final BillService billService;
+
+    // API Lấy thông tin chi tiết hóa đơn (bao gồm ảnh, trạng thái và danh sách
+    // items)
+    @GetMapping("/{billId}")
+    public ResponseEntity<BillDetailResponse> getBillDetail(@PathVariable Long billId) {
+        return ResponseEntity.ok(billService.getBillDetail(billId));
+    }
 
     // API Lấy danh sách các món đồ AI đã quét ra từ 1 hóa đơn
     @GetMapping("/{billId}/items")

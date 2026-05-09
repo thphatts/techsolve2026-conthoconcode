@@ -1,6 +1,7 @@
 package hackathon.fridgeai.service;
 
 import hackathon.fridgeai.dto.AiReceiptResponse;
+import hackathon.fridgeai.dto.BillDetailResponse;
 import hackathon.fridgeai.entity.Bill;
 import hackathon.fridgeai.entity.BillItem;
 import hackathon.fridgeai.entity.Fridge;
@@ -72,6 +73,22 @@ public class BillService {
 
         public List<BillItem> getItemsByBill(Long billId) {
                 return billItemRepository.findByBillId(billId);
+        }
+
+        @Transactional(readOnly = true)
+        public BillDetailResponse getBillDetail(Long billId) {
+                Bill bill = billRepository.findById(billId)
+                                .orElseThrow(() -> new RuntimeException("Không tìm thấy hóa đơn ID: " + billId));
+
+                return BillDetailResponse.builder()
+                                .id(bill.getId())
+                                .imageUrl(bill.getImageUrl())
+                                .status(bill.getStatus())
+                                .scannedAt(bill.getScannedAt())
+                                .fridgeId(bill.getFridge().getId())
+                                .aiRawJson(bill.getAiRawJson())
+                                .items(bill.getItems())
+                                .build();
         }
 
         @Transactional

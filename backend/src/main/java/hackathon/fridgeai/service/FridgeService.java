@@ -5,6 +5,8 @@ import hackathon.fridgeai.enums.EventType;
 import hackathon.fridgeai.enums.FridgeItemStatus;
 import hackathon.fridgeai.repository.FridgeItemRepository;
 import hackathon.fridgeai.repository.FridgeRepository;
+import hackathon.fridgeai.repository.FridgeMemberRepository;
+import hackathon.fridgeai.enums.FridgeMemberRole;
 import hackathon.fridgeai.repository.GamificationLogRepository;
 import hackathon.fridgeai.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,7 @@ public class FridgeService {
         private final FridgeRepository fridgeRepository;
         private final UserRepository userRepository;
         private final GamificationLogRepository gamificationLogRepository;
+        private final FridgeMemberRepository fridgeMemberRepository;
 
         // Lấy các chỉ số Gamification từ file application.yml
         @Value("${app.gamification.points-consumed-before-expiry:10}")
@@ -76,7 +79,8 @@ public class FridgeService {
                         gamificationLogRepository.save(logEntry);
 
                         // 2. Cập nhật tổng điểm cho User
-                        user.setTotalPoints(user.getTotalPoints() + pointsConsumedBonus);
+                        user.setTotalPoints((user.getTotalPoints() != null ? user.getTotalPoints() : 0)
+                                        + pointsConsumedBonus);
                         userRepository.save(user);
 
                         // Thay vì user.getUsername(), hãy sửa thành user.getName()
@@ -112,5 +116,33 @@ public class FridgeService {
 
                 log.info("Thêm món đồ {} vào tủ lạnh {} thành công.", product.getName(), fridgeId);
                 return fridgeItemRepository.save(newItem);
+        }
+
+        /**
+         * Tạo một tủ lạnh mới và gán người tạo làm OWNER
+         */
+        @Transactional
+        public Fridge createFridge(Long userId) {
+                User user = userRepository.findById(userId)
+                                .orElseThrow(() -> new RuntimeException("Không tìm thấy User."));
+
+                // 1. Tạo bản ghi Tủ lạnh mới và gán các thông tin bắt buộc
+                Fridge newFridge = Fridge.builder()
+                                .name("Tủ lạnh của " + user.getName())
+                                .owner(user)
+                                .build();
+
+                Fridge savedFridge = fridgeRepository.save(newFridge);
+
+                // 2. Thêm người tạo vào danh sách thành viên với quyền OWNER
+                FridgeMember ownerMember = FridgeMember.builder()
+                                .fridge(savedFridge)
+                                .user(user)
+                                .role(FridgeMemberRole.OWNER)
+                                .build();
+                fridgeMemberRepository.save(ownerMember);
+
+                log.info("User {} đã tạo tủ lạnh mới với ID: {}", user.getName(), savedFridge.getId());
+                return savedFridge;
         }
 }

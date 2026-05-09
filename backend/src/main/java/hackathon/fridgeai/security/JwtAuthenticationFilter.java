@@ -41,6 +41,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             // 2. Tách Token (Bỏ chữ "Bearer " ở đầu đi)
             jwt = authHeader.substring(7);
+
+            // Nếu token rỗng hoặc quá ngắn, bỏ qua không xử lý
+            if (jwt.isBlank()) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
             userEmail = jwtService.extractUsername(jwt);
 
             // 3. Nếu có Email và người dùng này chưa được xác thực

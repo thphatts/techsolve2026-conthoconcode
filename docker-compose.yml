@@ -22,6 +22,8 @@ services:
     environment:
       # Ghi đè cấu hình DB URL trỏ đến tên service `mysql-db` thay vì localhost
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/fridgeai_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=thphat08122007
     depends_on:
       - mysql-db # Đảm bảo MySQL chạy lên trước khi App khởi động
 

@@ -8,6 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
-    // Tự động sinh SQL tìm sản phẩm theo tên chính xác
     Optional<Product> findByName(String name);
 }

@@ -8,6 +8,5 @@ import java.util.List;
 
 @Repository
 public interface GamificationLogRepository extends JpaRepository<GamificationLog, Long> {
-    // Để sau này làm bảng xếp hạng hoặc lịch sử
     List<GamificationLog> findByUserIdOrderByCreatedAtDesc(Long userId);
 }
