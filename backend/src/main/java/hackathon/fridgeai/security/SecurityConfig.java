@@ -31,8 +31,6 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults()) // Cho phép CORS đi qua không bị block
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/**").permitAll() // Các API đăng nhập không cần token
-                        .requestMatchers("/api/v1/scan/**", "/api/v1/fridges/**", "/api/v1/notifications/**")
-                        .permitAll() // TẠM THỜI mở cho Hackathon Frontend test nhanh, có thể chỉnh lại sau.
                         .anyRequest().authenticated())
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())

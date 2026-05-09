@@ -7,7 +7,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.Collections;
 
 @Data
 @AllArgsConstructor
@@ -17,8 +16,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Tạm thời chưa chia role admin/user nên trả về rỗng
-        return Collections.emptyList();
+        return user.getAuthorities(); // Lấy trực tiếp quyền (ROLE_USER) đã định nghĩa trong entity User
     }
 
     @Override
