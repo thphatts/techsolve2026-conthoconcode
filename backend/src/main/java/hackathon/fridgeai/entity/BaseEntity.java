@@ -12,6 +12,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
 
+// base entity
 @Getter
 @Setter
 @MappedSuperclass
