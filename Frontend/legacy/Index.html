@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>Trang Chủ – Smart Fridge</title>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet" />
   <style>
     * {
       box-sizing: border-box;
@@ -14,26 +14,27 @@
     }
 
     body {
-      font-family: 'Nunito', sans-serif;
+      font-family: 'VT323', monospace;
       background: #b8a050;
       display: flex;
       align-items: center;
       justify-content: center;
       min-height: 100vh;
+      letter-spacing: 0.5px;
     }
 
-    /* ── Phone shell ── */
+    /* ── Phone shell (Pixel hóa: viền 4px, không bo góc) ── */
     .phone {
       width: 375px;
       height: 812px;
-      border: 8px solid #222;
-      border-radius: 40px;
+      border: 4px solid #222;
+      border-radius: 0;
       overflow: hidden;
       position: relative;
       display: flex;
       flex-direction: column;
       background: #fdf5c0;
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+      box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.2);
     }
 
     /* ── Status bar ── */
@@ -42,8 +43,7 @@
       justify-content: space-between;
       align-items: center;
       padding: 12px 24px 4px;
-      font-size: 13px;
-      font-weight: 700;
+      font-size: 16px;
       color: #333;
       position: relative;
       flex-shrink: 0;
@@ -54,7 +54,7 @@
       width: 120px;
       height: 24px;
       background: #111;
-      border-radius: 0 0 16px 16px;
+      border-radius: 0;
       position: absolute;
       top: 0;
       left: 50%;
@@ -67,23 +67,22 @@
       gap: 4px;
     }
 
+    /* Icon pin pixel */
     .battery-icon {
-      width: 20px;
-      height: 10px;
-      border: 1.5px solid #333;
-      border-radius: 2px;
+      width: 22px;
+      height: 12px;
+      border: 2px solid #333;
       position: relative;
     }
 
     .battery-icon::after {
       content: '';
       position: absolute;
-      right: -3px;
+      right: -4px;
       top: 2px;
       width: 2px;
       height: 4px;
       background: #333;
-      border-radius: 0 1px 1px 0;
     }
 
     .battery-level {
@@ -92,76 +91,12 @@
       background: #4ade80;
     }
 
-    /* ── TOP: cảm xúc + người ── */
-    .top-bar {
-      display: flex;
-      justify-content: flex-end;
-      align-items: flex-start;
-      gap: 12px;
-      padding: 4px 18px;
-      flex-shrink: 0;
-    }
-
-    .person-box {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      background: #fff;
-      border: 2px solid #333;
-      border-radius: 12px;
-      padding: 4px 8px;
-      font-size: 11px;
-      font-weight: 900;
-      color: #333;
-      box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
-    }
-
-    .person-box .icon {
-      font-size: 22px;
-      color: #5b3e9a;
-    }
-
-    .emotion-box {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
-    }
-
-    .emo-label {
-      font-size: 12px;
-      font-weight: 900;
-      color: #333;
-    }
-
-    .emo-bar-wrap {
-      width: 90px;
-      height: 12px;
-      border: 2px solid #333;
-      border-radius: 10px;
-      background: #fff;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .emo-fill {
-      height: 100%;
-      width: 50%;
-      background: linear-gradient(90deg, #4ade80, #fdd835, #ff6b6b);
-      border-radius: 8px;
-    }
-
-    .emo-emoji {
-      font-size: 18px;
-      margin-top: 2px;
-    }
-
     /* ── ROOM ── */
     .room {
       flex: 1;
       position: relative;
       overflow: hidden;
-      border-top: 3px solid #333;
+      border-top: 4px solid #333;
       background: url('../assets/background.png') center 8% / cover no-repeat;
     }
 
@@ -170,8 +105,6 @@
       position: absolute;
       z-index: 1;
     }
-
-
 
     /* Tủ lạnh */
     .fridge-link {
@@ -227,137 +160,85 @@
       flex-shrink: 0;
     }
 
-    /* Bong bóng thoại – nằm trên đầu mèo */
+    /* Bong bóng thoại Pixel – vuông vức, bóng đổ cứng */
     .bubble {
       background: #fff;
-      border: 3px solid #222;
-      border-radius: 20px;
-      padding: 10px 15px;
-      font-size: 16px;
-      font-weight: 900;
+      border: 4px solid #222;
+      border-radius: 0;
+      /* Bỏ bo góc */
+      padding: 8px 16px;
+      font-family: 'VT323', monospace;
+      font-size: 26px;
+      /* Chữ to chuẩn pixel */
+      font-weight: normal;
       color: #111;
       line-height: 1.2;
       text-align: center;
       position: relative;
-      margin-bottom: 15px;
-      box-shadow: 4px 4px 0 #222;
+      margin-bottom: 25px;
+      box-shadow: 6px 6px 0 #222;
+      /* Bóng đổ nét cứng */
       white-space: nowrap;
-      right: -50px;
+      right: -40px;
       top: 10px;
+      letter-spacing: 1px;
     }
 
-    /* Đuôi bong bóng trỏ xuống dưới */
+    /* Đuôi bong bóng dạng góc vuông cứng (Pixel style) */
     .bubble::after {
       content: '';
       position: absolute;
-      bottom: -15px;
+      bottom: -16px;
       left: 20px;
-      width: 0;
-      height: 0;
-      border-left: 12px solid transparent;
-      border-right: 6px solid transparent;
-      border-top: 15px solid #222;
+      border-top: 16px solid #222;
+      border-right: 16px solid transparent;
     }
 
     .bubble::before {
       content: '';
       position: absolute;
-      bottom: -9px;
-      left: 22px;
-      width: 0;
-      height: 0;
-      border-left: 9px solid transparent;
-      border-right: 4px solid transparent;
+      bottom: -8px;
+      left: 24px;
       border-top: 10px solid #fff;
+      border-right: 10px solid transparent;
       z-index: 1;
     }
 
     /* ── BOTTOM NAV ── */
     .bottom-nav {
       display: flex;
-      flex-direction: column;
       background: #fff;
-      border-top: 3px solid #222;
+      border-top: 4px solid #222;
+      padding: 12px 10px 24px;
       flex-shrink: 0;
-    }
-
-    .nav-top-row {
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      padding: 8px 10px 4px;
     }
 
     .nav-img-row {
       display: flex;
       justify-content: space-around;
       align-items: center;
-      padding: 4px 10px 14px;
+      width: 100%;
+      position: relative;
+      z-index: 2;
     }
 
     .nav-img-row img {
-      width: 40px;
-      height: 40px;
+      width: 48px;
+      height: 48px;
       object-fit: contain;
       image-rendering: pixelated;
       cursor: pointer;
-      transition: transform 0.15s;
+      transition: transform 0.1s;
     }
 
-    .nav-img-row img:hover {
-      transform: scale(1.15);
+    .nav-img-row img:active {
+      transform: scale(0.9);
     }
 
-    .nav-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      font-size: 11px;
-      font-weight: 800;
-      color: #777;
-      text-decoration: none;
-      flex: 1;
-      transition: color 0.2s;
-    }
-
-    .nav-item.active {
-      color: #e67e22;
-    }
-
-    .nav-icon {
-      width: 32px;
-      height: 32px;
-      object-fit: contain;
-      image-rendering: pixelated;
-    }
-
-    .nav-fab-container {
-      flex: 0 0 70px;
-      display: flex;
-      justify-content: center;
-      position: relative;
-    }
-
-    .nav-fab {
+    .nav-img-row img.center-btn {
       width: 60px;
       height: 60px;
-      background: #1a1a1a;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      font-size: 28px;
-      margin-top: -45px;
-      border: 3px solid #222;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-      cursor: pointer;
-      transition: transform 0.2s;
-    }
-
-    .nav-fab:hover {
-      transform: scale(1.1);
+      margin-top: -15px;
     }
 
     /* ── Camera Modal ── */
@@ -416,12 +297,14 @@
       right: 20px;
       background: rgba(0, 0, 0, 0.5);
       color: #fff;
-      border: 2px solid #fff;
-      padding: 5px 12px;
-      border-radius: 8px;
+      border: 4px solid #fff;
+      border-radius: 0;
+      padding: 6px 14px;
       cursor: pointer;
       font-weight: 700;
-      z-index: 1001;
+      font-size: 20px;
+      font-family: 'VT323', monospace;
+      z-index: 1005;
     }
 
     .cam-capture-btn {
@@ -447,16 +330,19 @@
       bottom: 100px;
       left: 50%;
       transform: translateX(-50%) translateY(10px);
-      background: rgba(0, 0, 0, 0.8);
-      color: #fff;
-      padding: 8px 20px;
-      border-radius: 25px;
-      font-size: 14px;
-      font-weight: 700;
+      background: #000;
+      color: #00e5a0;
+      border: 4px solid #00e5a0;
+      padding: 10px 20px;
+      border-radius: 0;
+      font-size: 20px;
+      font-family: 'VT323', monospace;
       opacity: 0;
       transition: all 0.3s;
       z-index: 100;
       pointer-events: none;
+      white-space: nowrap;
+      box-shadow: 6px 6px 0 rgba(0, 229, 160, 0.3);
     }
 
     .toast.show {
@@ -469,7 +355,6 @@
 <body>
   <div class="phone">
 
-    <!-- Status bar -->
     <div class="sb">
       <div class="sb-time">10:09</div>
       <div class="sb-notch"></div>
@@ -479,29 +364,11 @@
       </div>
     </div>
 
-    <!-- Top bar -->
-    <div class="top-bar">
-      <div class="person-box">
-        <span class="icon">👤</span>
-        <span>Người</span>
-      </div>
-      <div class="emotion-box">
-        <div class="emo-label">Tình cảm</div>
-        <div class="emo-bar-wrap">
-          <div class="emo-fill" id="emoFill" style="width: 40%;"></div>
-        </div>
-        <div class="emo-emoji" id="emoEmoji">😐</div>
-      </div>
-    </div>
-
-    <!-- Main Scene -->
     <div class="room">
-      <!-- Tủ lạnh -->
       <a href="tu_lanh.html" class="fridge-link">
         <img src="../assets/tulanh.png" alt="Tủ lạnh" id="fridgeImg" />
       </a>
 
-      <!-- Mèo -->
       <div class="cat-area">
         <div class="bubble">
           Hôm nay ăn gì nè?
@@ -510,19 +377,16 @@
       </div>
     </div>
 
-    <!-- Bottom Nav -->
     <div class="bottom-nav">
-      <!-- Tầng dưới: bảng nút pixel art -->
       <div class="nav-img-row">
         <img src="../assets/nuttrangchu.png" alt="Trang chủ" onclick="location.href='Index.html'" />
         <img src="../assets/nutthucpham.png" alt="Thực phẩm" onclick="location.href='Danh_sach_thuc_pham.html'" />
-        <img src="../assets/nutchup.png" alt="Chụp ảnh" id="camBtnImg" />
-        <img src="../assets/nutvi.png" alt="Ví" />
+        <img src="../assets/nutchup.png" alt="Chụp ảnh" id="camBtnImg" class="center-btn" />
+        <img src="../assets/nutvi.png" alt="Ví" onclick="location.href='vi.html'" />
         <img src="../assets/nutcaidat.png" alt="Cài đặt" />
       </div>
     </div>
 
-    <!-- Camera Modal -->
     <div class="cam-modal" id="camModal">
       <video id="camStream" autoplay playsinline></video>
       <img src="../assets/manhinhchupbill.png" class="cam-full-img" alt="Giao diện chụp hóa đơn" />
@@ -536,21 +400,6 @@
   </div>
 
   <script>
-    // Emotion cycling
-    const emotions = [
-      { w: '20%', e: '😴' }, { w: '40%', e: '😐' }, { w: '65%', e: '😊' },
-      { w: '85%', e: '😄' }, { w: '100%', e: '🥰' }
-    ];
-    let ei = 2;
-    const fill = document.getElementById('emoFill');
-    const emoji = document.getElementById('emoEmoji');
-    function updateEmo() {
-      fill.style.width = emotions[ei].w;
-      emoji.textContent = emotions[ei].e;
-    }
-    updateEmo();
-    setInterval(() => { ei = (ei + 1) % emotions.length; updateEmo(); }, 5000);
-
     // Fridge hover effect
     const fridgeImg = document.getElementById('fridgeImg');
     fridgeImg.addEventListener('mouseenter', () => {
