@@ -30,7 +30,11 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults()) // Cho phép CORS đi qua không bị block
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/auth/**").permitAll() // Các API đăng nhập không cần token
+                        .requestMatchers("/api/v1/auth/**", "/api/v1/test/public", "/api/v1/scan/**").permitAll() // Các
+                                                                                                                  // API
+                                                                                                                  // không
+                                                                                                                  // cần
+                        // token
                         .anyRequest().authenticated())
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
