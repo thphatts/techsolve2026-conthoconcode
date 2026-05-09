@@ -1,7 +1,6 @@
 package hackathon.fridgeai.entity;
 
 import jakarta.persistence.*;
-import hackathon.fridgeai.entity.GamificationLog;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
