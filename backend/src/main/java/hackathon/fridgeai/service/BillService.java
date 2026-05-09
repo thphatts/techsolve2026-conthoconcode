@@ -1,86 +1,159 @@
 package hackathon.fridgeai.service;
 
-import hackathon.fridgeai.dto.AiReceiptItem;
 import hackathon.fridgeai.dto.AiReceiptResponse;
-import hackathon.fridgeai.entity.*;
+import hackathon.fridgeai.dto.BillDetailResponse;
+import hackathon.fridgeai.entity.Bill;
+import hackathon.fridgeai.entity.BillItem;
+import hackathon.fridgeai.entity.Fridge;
+import hackathon.fridgeai.entity.FridgeItem;
+import hackathon.fridgeai.entity.Product;
+import hackathon.fridgeai.entity.User;
 import hackathon.fridgeai.enums.BillStatus;
+import hackathon.fridgeai.enums.FridgeItemStatus;
+import hackathon.fridgeai.repository.BillItemRepository;
 import hackathon.fridgeai.repository.BillRepository;
+import hackathon.fridgeai.repository.FridgeItemRepository;
 import hackathon.fridgeai.repository.FridgeRepository;
 import hackathon.fridgeai.repository.ProductRepository;
 import hackathon.fridgeai.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class BillService {
 
-        private final BillRepository billRepository;
+        private final BillItemRepository billItemRepository;
+        private final FridgeItemRepository fridgeItemRepository;
         private final ProductRepository productRepository;
+        private final BillRepository billRepository;
         private final UserRepository userRepository;
         private final FridgeRepository fridgeRepository;
 
-        /**
-         * Hàm này nhận kết quả từ AI, map với Database và lưu lại hóa đơn
-         */
         @Transactional
-        public Bill processAndSaveAiReceipt(Long userId, Long fridgeId, String imageUrl, AiReceiptResponse aiResponse,
-                        Map<String, Object> rawJson) {
+        public FridgeItem confirmBillItem(Long billItemId, LocalDate expiresAt) {
+                BillItem billItem = billItemRepository.findById(billItemId)
+                                .orElseThrow(() -> new RuntimeException("Không tìm thấy món hàng trong hóa đơn."));
 
-                // 1. Tìm User và Fridge (Trong thực tế Hackathon, bạn có thể hardcode ID 1L để
-                // test cho nhanh)
+                if (billItem.getConfirmed()) {
+                        throw new RuntimeException("Món hàng này đã được xác nhận và thêm vào tủ lạnh rồi!");
+                }
+
+                // Nếu AI quét ra món mới chưa có trong DB Products, tự động tạo mới
+                Product product = billItem.getProduct();
+                if (product == null) {
+                        product = Product.builder()
+                                        .name(billItem.getRawNameFromAi())
+                                        .category(billItem.getCategory()) // Gán category từ AI vào Product mới
+                                        .defaultShelfLife(shelfLifeSuggestion(billItem.getCategory()))
+                                        .build();
+                        product = productRepository.save(product);
+                        billItem.setProduct(product);
+                }
+
+                // Tính toán ngày hết hạn: Ưu tiên AI suggestion > Product default > 3 ngày
+                Integer shelfLife = (product.getDefaultShelfLife() != null) ? product.getDefaultShelfLife() : 3;
+
+                // Nếu lúc confirm người dùng không nhập ngày, ta sẽ tính toán tự động
+                LocalDate calculatedExpiry = (expiresAt != null) ? expiresAt : LocalDate.now().plusDays(shelfLife);
+
+                FridgeItem fridgeItem = FridgeItem.builder().fridge(billItem.getBill().getFridge()).product(product)
+                                .addedBy(billItem.getBill().getUser()).quantity(billItem.getQuantity())
+                                .purchasePrice(billItem.getUnitPrice())
+                                .expiresAt(calculatedExpiry)
+                                .status(FridgeItemStatus.FRESH).build();
+
+                // Đánh dấu đã chốt
+                billItem.setConfirmed(true);
+                billItemRepository.save(billItem);
+                return fridgeItemRepository.save(fridgeItem);
+        }
+
+        public List<BillItem> getItemsByBill(Long billId) {
+                return billItemRepository.findByBillId(billId);
+        }
+
+        @Transactional(readOnly = true)
+        public BillDetailResponse getBillDetail(Long billId) {
+                Bill bill = billRepository.findById(billId)
+                                .orElseThrow(() -> new RuntimeException("Không tìm thấy hóa đơn ID: " + billId));
+
+                return BillDetailResponse.builder()
+                                .id(bill.getId())
+                                .imageUrl(bill.getImageUrl())
+                                .status(bill.getStatus())
+                                .scannedAt(bill.getScannedAt())
+                                .fridgeId(bill.getFridge().getId())
+                                .aiRawJson(bill.getAiRawJson())
+                                .items(bill.getItems())
+                                .build();
+        }
+
+        @Transactional
+        public void processAndSaveAiReceipt(Long userId, Long fridgeId, String imageUrl, AiReceiptResponse aiResponse,
+                        Map<String, Object> aiRawJson) {
                 User user = userRepository.findById(userId)
-                                .orElseThrow(() -> new RuntimeException("Không tìm thấy User"));
+                                .orElseThrow(() -> new RuntimeException("Không tìm thấy User."));
                 Fridge fridge = fridgeRepository.findById(fridgeId)
-                                .orElseThrow(() -> new RuntimeException("Không tìm thấy Fridge"));
+                                .orElseThrow(() -> new RuntimeException("Không tìm thấy Fridge."));
 
-                // 2. Tạo hóa đơn mới
-                Bill newBill = Bill.builder()
+                // 1. Tạo hóa đơn mới (Bill)
+                Bill bill = Bill.builder()
                                 .user(user)
                                 .fridge(fridge)
                                 .imageUrl(imageUrl)
-                                .aiRawJson(rawJson) // Lưu lại JSON gốc để debug
-                                .status(BillStatus.PENDING) // Đang chờ user review
+                                .aiRawJson(aiRawJson)
+                                .status(BillStatus.PENDING)
                                 .build();
 
-                // 3. Xử lý từng món đồ AI đọc được
-                if (aiResponse != null && aiResponse.getItems() != null) {
-                        // Khởi tạo danh sách an toàn, phòng trường hợp Builder không tự khởi tạo List
-                        if (newBill.getItems() == null) {
-                                newBill.setItems(new ArrayList<>());
-                        }
+                // 2. Chuyển đổi các món AI đọc được thành BillItem
+                List<BillItem> billItems = aiResponse.getItems().stream().map(aiItem -> {
+                        // Tìm xem trong DB đã có món này chưa, nếu chưa thì để null để người dùng tự
+                        // xác nhận
+                        Product product = productRepository.findByName(aiItem.getProductName()).orElse(null);
 
-                        for (AiReceiptItem aiItem : aiResponse.getItems()) {
+                        return BillItem.builder()
+                                        .bill(bill)
+                                        .product(product)
+                                        .category(aiItem.getCategory()) // Lưu thông tin phân loại từ AI
+                                        .rawNameFromAi(aiItem.getProductName())
+                                        .quantity(aiItem.getQuantity() != null ? aiItem.getQuantity().doubleValue()
+                                                        : 1.0)
+                                        .unitPrice(aiItem.getPrice())
+                                        .totalPrice(aiItem.getPrice() != null && aiItem.getQuantity() != null
+                                                        ? aiItem.getPrice().multiply(
+                                                                        BigDecimal.valueOf(aiItem.getQuantity()))
+                                                        : null)
+                                        .confirmed(false)
+                                        .build();
+                }).collect(Collectors.toList());
 
-                                // Cố gắng tìm sản phẩm trong "Từ điển" Product bằng tên AI đọc được
-                                Product matchedProduct = productRepository.findByName(aiItem.getProductName())
-                                                .orElse(null);
+                bill.setItems(billItems);
+                billRepository.save(bill); // Nhờ cấu hình CascadeType.ALL, lệnh này sẽ tự động lưu cả Bill và các
+                                           // BillItem
+        }
 
-                                // Tạo chi tiết hóa đơn
-                                BillItem billItem = BillItem.builder()
-                                                .bill(newBill)
-                                                .product(matchedProduct) // Có thể là null nếu đây là món lạ
-                                                .rawNameFromAi(aiItem.getProductName())
-                                                .quantity(aiItem.getQuantity() != null
-                                                                ? aiItem.getQuantity().doubleValue()
-                                                                : 1.0)
-                                                .unitPrice(aiItem.getPrice())
-                                                .confirmed(false) // Yêu cầu user xác nhận
-                                                .build();
-
-                                // Thêm vào danh sách của Bill
-                                newBill.getItems().add(billItem);
-                        }
-                }
-
-                // 4. Lưu tất cả vào Database (Vì có CascadeType.ALL, lưu Bill sẽ tự động lưu
-                // các BillItem bên trong)
-                return billRepository.save(newBill);
+        /**
+         * Hàm phụ trợ để gán shelf life mặc định dựa trên category nếu AI không đoán
+         * được
+         */
+        private Integer shelfLifeSuggestion(String category) {
+                if (category == null)
+                        return 3;
+                return switch (category.toLowerCase()) {
+                        case "thịt", "hải sản" -> 3;
+                        case "rau củ", "trái cây" -> 5;
+                        case "sữa", "bơ sữa" -> 7;
+                        case "đồ khô", "gia vị" -> 180;
+                        case "đồ uống" -> 30;
+                        default -> 3;
+                };
         }
 }

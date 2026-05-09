@@ -1,6 +1,7 @@
 package hackathon.fridgeai.entity;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -21,6 +22,7 @@ public class BillItem extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "bill_id", nullable = false)
+    @JsonIgnoreProperties("items") // Chặn không cho in ngược lại danh sách items của Bill
     private Bill bill;
 
     // Tại sao optional = true? Vì có thể AI đọc ra một món đồ lạ chưa từng có trong
@@ -34,6 +36,10 @@ public class BillItem extends BaseEntity {
     // 250G")
     @Column(name = "raw_name_from_ai", nullable = false, length = 200)
     private String rawNameFromAi;
+
+    // Lưu loại sản phẩm AI phân loại (thịt, rau, sữa...) để hiển thị icon
+    @Column(length = 50)
+    private String category;
 
     @Column(nullable = false)
     @Builder.Default

@@ -1,6 +1,7 @@
 package hackathon.fridgeai.entity;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -47,9 +48,11 @@ public class Product extends BaseEntity {
 
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
     @Builder.Default
+    @JsonIgnore
     private List<FridgeItem> fridgeItems = new ArrayList<>();
 
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
     @Builder.Default
+    @JsonIgnore
     private List<RecipeIngredient> recipeIngredients = new ArrayList<>();
 }

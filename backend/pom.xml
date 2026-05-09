@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.5.14</version>
+		<version>3.4.2</version>
 	</parent>
 	
 	<groupId>hackathon</groupId>
@@ -67,6 +67,7 @@
 			<artifactId>spring-boot-starter-webflux</artifactId>
 		</dependency>
 
+		<!-- Fix lỗi DNS trên MacOS M2 Pro -->
 		<!-- 5. TIỆN ÍCH (Lombok, Validator) -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -84,7 +85,12 @@
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 			<version>2.5.0</version>
 		</dependency>
-
+		<dependency>
+    <groupId>io.netty</groupId>
+    <artifactId>netty-resolver-dns-native-macos</artifactId>
+    <classifier>osx-aarch_64</classifier>
+    <scope>runtime</scope>
+</dependency>
 		<!-- 7. TESTING -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -94,6 +100,13 @@
 	</dependencies>
 
 	<build>
+		<extensions>
+			<extension>
+				<groupId>kr.motd.maven</groupId>
+				<artifactId>os-maven-plugin</artifactId>
+				<version>1.7.1</version>
+			</extension>
+		</extensions>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

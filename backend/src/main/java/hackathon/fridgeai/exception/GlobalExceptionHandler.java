@@ -5,6 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -33,6 +35,29 @@ public class GlobalExceptionHandler {
                 .timestamp(Instant.now())
                 .build();
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
+    // Xử lý lỗi thiếu tham số trong Request (Ví dụ: thiếu userId hoặc file)
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<ErrorResponse> handleMissingParams(MissingServletRequestParameterException ex) {
+        ErrorResponse error = ErrorResponse.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message("Thiếu tham số bắt buộc: " + ex.getParameterName())
+                .timestamp(Instant.now())
+                .build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    // Xử lý lỗi sai kiểu dữ liệu tham số (Ví dụ: userId truyền vào là chữ thay vì
+    // số)
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponse> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
+        ErrorResponse error = ErrorResponse.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message("Tham số '" + ex.getName() + "' không đúng định dạng dữ liệu!")
+                .timestamp(Instant.now())
+                .build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
     // Xử lý các lỗi logic chung (Ví dụ: RuntimeException "Email đã được sử dụng")

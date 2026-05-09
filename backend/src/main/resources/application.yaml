@@ -19,6 +19,12 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
         format-sql: true
 
+  # Cấu hình nới lỏng dung lượng upload file ảnh
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
+
   # Cấu hình JWT Token cho Authentication
   jwt:
     secret: "404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970" # Khóa bí mật 256-bit Base64
@@ -26,9 +32,15 @@ spring:
 
   # Thêm phần này vào dưới cùng của application.yml
 app:
+  # Thư mục lưu trữ ảnh hóa đơn
+  upload-dir: "uploads/receipts"
   ai:
-    # Tạm thời bạn có thể để một chuỗi bất kỳ để app chạy lên,
-    # sau này có key thật từ Google AI Studio thì paste vào đây
-    api-key: "AIzaSyAHHYVzEoNzCdjxrzdcfwp_3OIjRMB6zjY"
-    model: "gemini-1.5-flash"
-    bill-scan-prompt: "Bạn là một chuyên gia đọc hóa đơn siêu thị. Hãy đọc ảnh hóa đơn này và trả về JSON chứa mảng 'items' gồm các trường: product_name (tên món hàng), quantity (số lượng), price (giá một đơn vị), estimated_expiry_days (số ngày hết hạn ước tính dựa trên loại đồ ăn, ví dụ thịt là 3-5 ngày, rau là 5-7 ngày). Chỉ trả về JSON hợp lệ."
+    api-key: ${OPENROUTER_API_KEY:your-default-key-here}
+    openrouter-model: google/gemini-2.0-flash-lite-001
+    model: "llama3.2-vision"
+    base-url: "http://localhost:11434/api/chat"
+    bill-scan-prompt: "Bạn là một chuyên gia đọc hóa đơn và an toàn thực phẩm. Hãy trích xuất các mặt hàng THỰC PHẨM/ĐỒ UỐNG từ ảnh. Loại bỏ đồ gia dụng/mỹ phẩm. Với mỗi món, hãy dự đoán 'estimated_expiry_days' dựa trên tính chất sản phẩm (ví dụ: rau củ: 3-5 ngày, thịt tươi: 2-3 ngày, đồ hộp: 365 ngày). Trả về JSON object có mảng 'items' gồm: product_name, quantity, price, estimated_expiry_days, category (ví dụ: 'Thịt', 'Rau củ', 'Sữa', 'Đồ khô'). Chỉ trả về JSON, không giải thích, tiếng Việt UTF-8."
+
+logging:
+  level:
+    hackathon.fridgeai: DEBUG

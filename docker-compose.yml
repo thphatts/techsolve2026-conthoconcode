@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # 1. Cấu hình container cho MySQL
   mysql-db:
@@ -12,18 +10,30 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql # Lưu trữ data để không bị mất khi tắt container
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
 
   # 2. Cấu hình container cho Spring Boot App
   fridgeai-app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: fridgeai_backend
     ports:
       - "8080:8080"
     environment:
       # Ghi đè cấu hình DB URL trỏ đến tên service `mysql-db` thay vì localhost
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/fridgeai_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=thphat08122007
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+    volumes:
+      - ./uploads:/app/uploads # Đồng bộ ảnh hóa đơn ra thư mục uploads ở máy thật
     depends_on:
-      - mysql-db # Đảm bảo MySQL chạy lên trước khi App khởi động
+      mysql-db:
+        condition: service_healthy # Chỉ chạy App khi DB đã thực sự "khỏe mạnh"
 
 # Định nghĩa volume để lưu database
 volumes:

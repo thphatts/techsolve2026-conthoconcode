@@ -15,4 +15,6 @@ public class AiReceiptItem {
 
     @JsonProperty("estimated_expiry_days")
     private Integer estimatedExpiryDays;
+
+    private String category;
 }

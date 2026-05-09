@@ -12,6 +12,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 
@@ -19,46 +20,48 @@ import java.math.BigDecimal;
 @RequiredArgsConstructor
 public class AuthService {
 
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
-    private final AuthenticationManager authenticationManager;
+        private final UserRepository userRepository;
+        private final PasswordEncoder passwordEncoder;
+        private final JwtService jwtService;
+        private final AuthenticationManager authenticationManager;
 
-    public AuthResponse signup(SignupRequest request) {
-        // Kiểm tra email trùng lặp
-        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new RuntimeException("Email đã được sử dụng!");
+        @Transactional
+        public AuthResponse signup(SignupRequest request) {
+                // Kiểm tra email trùng lặp
+                if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+                        throw new RuntimeException("Email đã được sử dụng!");
+                }
+
+                // Mã hóa mật khẩu và tạo user
+                User user = User.builder()
+                                .name(request.getName())
+                                .email(request.getEmail())
+                                .passwordHash(passwordEncoder.encode(request.getPassword()))
+                                .totalPoints(0)
+                                .walletBalance(BigDecimal.ZERO)
+                                .build();
+                // Save and flush để đảm bảo lấy được ID ngay lập tức cho Token
+                User savedUser = userRepository.saveAndFlush(user);
+
+                // Cấp JWT
+                CustomUserDetails userDetails = new CustomUserDetails(savedUser);
+                String jwtToken = jwtService.generateToken(userDetails);
+
+                return AuthResponse.builder().token(jwtToken).userId(savedUser.getId())
+                                .name(savedUser.getName()).email(savedUser.getEmail()).build();
         }
 
-        // Mã hóa mật khẩu và tạo user
-        User user = User.builder()
-                .name(request.getName())
-                .email(request.getEmail())
-                .passwordHash(passwordEncoder.encode(request.getPassword()))
-                .totalPoints(0)
-                .walletBalance(BigDecimal.ZERO)
-                .build();
-        userRepository.save(user);
+        public AuthResponse login(LoginRequest request) {
+                // Xác thực username/password
+                authenticationManager.authenticate(
+                                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
-        // Cấp JWT
-        CustomUserDetails userDetails = new CustomUserDetails(user);
-        String jwtToken = jwtService.generateToken(userDetails);
+                User user = userRepository.findByEmail(request.getEmail())
+                                .orElseThrow(() -> new RuntimeException("Không tìm thấy User"));
 
-        return AuthResponse.builder().token(jwtToken).userId(user.getId())
-                .name(user.getName()).email(user.getEmail()).build();
-    }
+                String jwtToken = jwtService.generateToken(new CustomUserDetails(user));
 
-    public AuthResponse login(LoginRequest request) {
-        // Xác thực username/password
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
-
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy User"));
-
-        String jwtToken = jwtService.generateToken(new CustomUserDetails(user));
-
-        return AuthResponse.builder().token(jwtToken).userId(user.getId())
-                .name(user.getName()).email(user.getEmail()).build();
-    }
+                return AuthResponse.builder().token(jwtToken).userId(user.getId())
+                                .name(user.getName()).email(user.getEmail()).build();
+        }
 }

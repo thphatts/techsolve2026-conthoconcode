@@ -2,6 +2,7 @@ package hackathon.fridgeai.entity;
 
 import hackathon.fridgeai.enums.FridgeItemStatus;
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -27,6 +28,7 @@ public class FridgeItem extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "fridge_id", nullable = false)
+    @JsonIgnoreProperties({ "owner", "members", "items" }) // Chặn vòng lặp qua Fridge
     private Fridge fridge;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -35,6 +37,7 @@ public class FridgeItem extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "added_by", nullable = false)
+    @JsonIgnoreProperties({ "fridges", "passwordHash", "authorities" }) // Chặn vòng lặp qua User và ẩn info nhạy cảm
     private User addedBy;
 
     @Column(nullable = false)

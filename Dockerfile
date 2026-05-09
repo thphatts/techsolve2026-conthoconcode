@@ -11,11 +11,15 @@ COPY backend/src ./src
 RUN mvn clean package -DskipTests
 
 # STAGE 2: Chạy ứng dụng với môi trường JRE nhỏ gọn
-FROM eclipse-temurin:17-jre-alpine
+# STAGE 2: Chạy ứng dụng với môi trường JRE nhỏ gọn (Hỗ trợ ARM64 cho Mac M-series)
+FROM eclipse-temurin:17-jre-jammy
 WORKDIR /app
 
 # Copy file JAR từ Stage 1 sang Stage 2
 COPY --from=build /app/target/FridgeAI-0.0.1-SNAPSHOT.jar app.jar
+
+# Tạo thư mục để lưu trữ ảnh hóa đơn bên trong container
+RUN mkdir -p uploads/receipts
 
 # Expose port 8080 và chạy ứng dụng
 EXPOSE 8080
