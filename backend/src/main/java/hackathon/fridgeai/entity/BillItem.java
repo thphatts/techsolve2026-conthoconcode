@@ -37,6 +37,10 @@ public class BillItem extends BaseEntity {
     @Column(name = "raw_name_from_ai", nullable = false, length = 200)
     private String rawNameFromAi;
 
+    // Lưu loại sản phẩm AI phân loại (thịt, rau, sữa...) để hiển thị icon
+    @Column(length = 50)
+    private String category;
+
     @Column(nullable = false)
     @Builder.Default
     private Double quantity = 1.0;

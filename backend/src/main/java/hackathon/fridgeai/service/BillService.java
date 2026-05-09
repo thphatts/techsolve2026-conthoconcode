@@ -49,20 +49,25 @@ public class BillService {
                 // Nếu AI quét ra món mới chưa có trong DB Products, tự động tạo mới
                 Product product = billItem.getProduct();
                 if (product == null) {
-                        product = Product.builder().name(billItem.getRawNameFromAi()).defaultShelfLife(3).build();
+                        product = Product.builder()
+                                        .name(billItem.getRawNameFromAi())
+                                        .category(billItem.getCategory()) // Gán category từ AI vào Product mới
+                                        .defaultShelfLife(shelfLifeSuggestion(billItem.getCategory()))
+                                        .build();
                         product = productRepository.save(product);
                         billItem.setProduct(product);
                 }
 
-                // Chuyển món hàng vào tủ lạnh
+                // Tính toán ngày hết hạn: Ưu tiên AI suggestion > Product default > 3 ngày
+                Integer shelfLife = (product.getDefaultShelfLife() != null) ? product.getDefaultShelfLife() : 3;
+
+                // Nếu lúc confirm người dùng không nhập ngày, ta sẽ tính toán tự động
+                LocalDate calculatedExpiry = (expiresAt != null) ? expiresAt : LocalDate.now().plusDays(shelfLife);
+
                 FridgeItem fridgeItem = FridgeItem.builder().fridge(billItem.getBill().getFridge()).product(product)
                                 .addedBy(billItem.getBill().getUser()).quantity(billItem.getQuantity())
                                 .purchasePrice(billItem.getUnitPrice())
-                                .expiresAt(expiresAt != null ? expiresAt
-                                                : LocalDate.now()
-                                                                .plusDays(product.getDefaultShelfLife() != null
-                                                                                ? product.getDefaultShelfLife()
-                                                                                : 3))
+                                .expiresAt(calculatedExpiry)
                                 .status(FridgeItemStatus.FRESH).build();
 
                 // Đánh dấu đã chốt
@@ -117,6 +122,7 @@ public class BillService {
                         return BillItem.builder()
                                         .bill(bill)
                                         .product(product)
+                                        .category(aiItem.getCategory()) // Lưu thông tin phân loại từ AI
                                         .rawNameFromAi(aiItem.getProductName())
                                         .quantity(aiItem.getQuantity() != null ? aiItem.getQuantity().doubleValue()
                                                         : 1.0)
@@ -132,5 +138,22 @@ public class BillService {
                 bill.setItems(billItems);
                 billRepository.save(bill); // Nhờ cấu hình CascadeType.ALL, lệnh này sẽ tự động lưu cả Bill và các
                                            // BillItem
+        }
+
+        /**
+         * Hàm phụ trợ để gán shelf life mặc định dựa trên category nếu AI không đoán
+         * được
+         */
+        private Integer shelfLifeSuggestion(String category) {
+                if (category == null)
+                        return 3;
+                return switch (category.toLowerCase()) {
+                        case "thịt", "hải sản" -> 3;
+                        case "rau củ", "trái cây" -> 5;
+                        case "sữa", "bơ sữa" -> 7;
+                        case "đồ khô", "gia vị" -> 180;
+                        case "đồ uống" -> 30;
+                        default -> 3;
+                };
         }
 }
