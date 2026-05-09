@@ -156,6 +156,71 @@ phone.addEventListener('touchend', e => {
   }
 }, { passive: true });
 
-btnWallet.addEventListener('click', () => {
-  showToast('👜 Ví: 250,000đ');
-});
+// Hàm lấy thông tin User (Profile, Điểm, Tiền)
+async function fetchUserProfile() {
+    const userId = localStorage.getItem("userId") || 1; // Lấy userId đã lưu lúc đăng nhập
+    const token = localStorage.getItem("jwt_token");
+
+    try {
+        const response = await fetch(`https://ashes-choosing-nursing.ngrok-free.dev/api/v1/users/${userId}`, {
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "ngrok-skip-browser-warning": "69420"
+            }
+        });
+
+        if (response.ok) {
+            const userData = await response.json();
+            // userData sẽ có các trường như totalPoints, coins... (tuỳ thuộc vào Entity User của bạn)
+            
+            // Cập nhật lại sự kiện nút Ví
+            const btnWallet = document.getElementById('btnWallet');
+            if (btnWallet) {
+                // Xoá event cũ đi (nếu cần) và gắn event mới hiển thị số dư thực tế
+                btnWallet.onclick = () => {
+                    const balance = userData.coins || userData.totalPoints || 0;
+                    showToast(`👜 Ví của bạn: ${balance} điểm/đ`);
+                };
+            }
+            
+            // (Tuỳ chọn) Gọi thêm API Gamification Logs để lấy lịch sử
+            // fetchGamificationLogs(userId, token);
+        }
+    } catch (error) {
+        console.error("Lỗi tải thông tin User:", error);
+    }
+}
+
+// Hàm kiểm tra thực phẩm sắp hết hạn
+async function checkUnreadNotifications() {
+    const userId = localStorage.getItem("userId") || 1;
+    const token = localStorage.getItem("jwt_token");
+
+    try {
+        const response = await fetch(`https://ashes-choosing-nursing.ngrok-free.dev/api/v1/notifications/users/${userId}/unread`, {
+            headers: { 
+                "Authorization": `Bearer ${token}`,
+                "ngrok-skip-browser-warning": "69420"
+            }
+        });
+
+        if (response.ok) {
+            const alerts = await response.json();
+            if (alerts && alerts.length > 0) {
+                // Nếu có cảnh báo, đếm số lượng và hiển thị cho người dùng
+                const alertCount = alerts.length;
+                const firstAlertName = alerts[0].itemName || "một số thực phẩm"; // Giả sử entity có itemName
+                
+                showToast(`🔔 Bạn có ${alertCount} cảnh báo! ${firstAlertName} sắp hết hạn.`);
+                
+                // Nếu bạn có nút chuông thông báo (btnEvent), hãy cập nhật icon ở đây
+                const btnEvent = document.getElementById('btnEvent');
+                if (btnEvent) {
+                    btnEvent.innerHTML = `🔔<span style="color:red; font-size:10px;">(${alertCount})</span>`;
+                }
+            }
+        }
+    } catch (error) {
+        console.error("Lỗi lấy thông báo:", error);
+    }
+}

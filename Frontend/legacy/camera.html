@@ -46,21 +46,11 @@
       gap: 5px;
       text-decoration: none;
       z-index: 10;
-      /* The "Home" text is already on the background image, 
-         but we add the arrow and a clickable area */
     }
 
     .home-link img {
       width: 20px;
       image-rendering: pixelated;
-    }
-
-    .home-link span {
-      font-size: 18px;
-      font-weight: 900;
-      color: #000;
-      display: none;
-      /* Text is already in background */
     }
 
     /* ── Camera Preview Frame ── */
@@ -82,8 +72,6 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transform: scaleX(-1);
-      /* Mirror for selfie-like feel */
     }
 
     /* ── Bottom Controls ── */
@@ -119,7 +107,6 @@
     .capture-btn {
       position: absolute;
       left: 50.5%;
-      /* Slight offset to match background circle precisely */
       top: 50%;
       transform: translate(-50%, -50%);
       background: none;
@@ -137,10 +124,26 @@
       width: 80px;
       display: block;
       image-rendering: pixelated;
-      margin-bottom: 120px;
     }
 
-    /* Toast */
+    .gallery-btn {
+      position: absolute;
+      right: 50px;
+      transform: translateY(-50%);
+      width: 45px;
+      height: 40px;
+      background: #fff;
+      border: 2px solid #ed89b5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 24px;
+      font-weight: 900;
+      color: #ed89b5;
+      border-radius: 4px;
+    }
+
     .toast {
       position: absolute;
       bottom: 50px;
@@ -162,29 +165,74 @@
       opacity: 1;
       transform: translateX(-50%) translateY(0);
     }
+
+    .confirm-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 160px;
+      background: rgba(255, 255, 255, 0.9);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      z-index: 30;
+      border-top: 3px solid #ed89b5;
+    }
+
+    .confirm-overlay.active {
+      display: flex;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 15px;
+    }
+
+    .action-btn {
+      padding: 10px 24px;
+      border-radius: 20px;
+      border: none;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .btn-confirm { background: #ed89b5; color: #fff; }
+    .btn-retake { background: #eee; color: #333; }
   </style>
 </head>
 
 <body>
   <div class="phone">
-    <!-- Home Link -->
     <a href="Index.html" class="home-link">
       <img src="../assets/May_anh/Back.png" alt="Back" />
     </a>
 
-    <!-- Camera Preview -->
     <div class="camera-frame">
       <video id="video" autoplay playsinline></video>
     </div>
 
-    <!-- Controls -->
-    <div class="bottom-controls">
+    <div class="bottom-controls" id="bottomControls">
       <div class="thumbnail-container">
         <img id="thumbnail" src="" alt="" style="display: none;" />
       </div>
+      <div class="gallery-btn" id="galleryBtn">+</div>
+      <input type="file" id="fileInput" accept="image/*" style="display: none;">
       <button class="capture-btn" id="captureBtn">
         <img src="../assets/May_anh/Nut_chup.png" alt="Chụp" />
       </button>
+    </div>
+
+    <div class="confirm-overlay" id="confirmOverlay">
+      <p style="font-weight: 900; color: #333; font-size: 14px;">Xác nhận gửi ảnh này?</p>
+      <div class="btn-group">
+        <button class="action-btn btn-retake" id="retakeBtn">Chụp lại</button>
+        <button class="action-btn btn-confirm" id="confirmBtn">Gửi ảnh</button>
+      </div>
     </div>
 
     <canvas id="canvas" style="display: none;"></canvas>
@@ -197,9 +245,27 @@
     const captureBtn = document.getElementById('captureBtn');
     const thumbnail = document.getElementById('thumbnail');
     const toast = document.getElementById('toast');
+    const confirmOverlay = document.getElementById('confirmOverlay');
+    const bottomControls = document.getElementById('bottomControls');
+    const retakeBtn = document.getElementById('retakeBtn');
+    const confirmBtn = document.getElementById('confirmBtn');
+    const galleryBtn = document.getElementById('galleryBtn');
+    const fileInput = document.getElementById('fileInput');
 
-    // Start Camera
+    // API Config
+    const API_CONFIG = {
+      BASE_URL: "https://ashes-choosing-nursing.ngrok-free.dev/api/v1",
+      USER_ID: 1,
+      FRIDGE_ID: 1
+    };
+
     async function initCamera() {
+      if (!window.isSecureContext) {
+        showToast("⚠️ Camera yêu cầu HTTPS hoặc localhost để hoạt động");
+        console.error("Camera cannot be accessed in an insecure context.");
+        return;
+      }
+
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
           video: { facingMode: 'environment' },
@@ -207,48 +273,102 @@
         });
         video.srcObject = stream;
       } catch (err) {
-        console.error("Lỗi truy cập camera: ", err);
         showToast("❌ Không thể truy cập camera");
       }
     }
 
-    // Capture Photo
-    captureBtn.addEventListener('click', () => {
+    captureBtn.onclick = () => {
       const context = canvas.getContext('2d');
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
-
-      // Draw video frame to canvas
-      context.save();
-      context.translate(canvas.width, 0);
-      context.scale(-1, 1); // Flip back for storage if mirrored
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
-      context.restore();
 
-      const dataUrl = canvas.toDataURL('image/png');
-      thumbnail.src = dataUrl;
+      thumbnail.src = canvas.toDataURL('image/png');
       thumbnail.style.display = 'block';
+      video.pause();
+      bottomControls.style.display = 'none';
+      confirmOverlay.classList.add('active');
+    };
 
-      showToast("📸 Đã lưu ảnh! Đang phân tích...");
+    retakeBtn.onclick = () => {
+      video.play();
+      confirmOverlay.classList.remove('active');
+      bottomControls.style.display = 'block';
+      thumbnail.style.display = 'none';
+      fileInput.value = "";
+    };
 
-      // Simple flash effect
-      video.style.opacity = '0.3';
-      setTimeout(() => video.style.opacity = '1', 100);
+    galleryBtn.onclick = () => fileInput.click();
 
-      // Redirect after 1.5s
-      setTimeout(() => {
-        window.location.href = 'food_list.html';
-      }, 1500);
-    });
+    fileInput.onchange = (e) => {
+      if (e.target.files && e.target.files[0]) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          thumbnail.src = event.target.result;
+          thumbnail.style.display = 'block';
+          video.pause();
+          bottomControls.style.display = 'none';
+          confirmOverlay.classList.add('active');
+        };
+        reader.readAsDataURL(e.target.files[0]);
+      }
+    };
+
+    confirmBtn.onclick = () => {
+      if (thumbnail.src.startsWith('data:')) {
+        const blob = dataURLtoBlob(thumbnail.src);
+        processAndUpload(blob);
+      }
+    };
+
+    function dataURLtoBlob(dataurl) {
+      const arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1];
+      const bstr = atob(arr[1]);
+      let n = bstr.length;
+      const u8arr = new Uint8Array(n);
+      while(n--) u8arr[n] = bstr.charCodeAt(n);
+      return new Blob([u8arr], {type:mime});
+    }
+
+    async function processAndUpload(fileBlob) {
+      confirmBtn.disabled = true;
+      confirmBtn.innerText = "Đang quét...";
+      showToast("🚀 AI đang phân tích hóa đơn...");
+      
+      const formData = new FormData();
+      formData.append("file", fileBlob);
+      formData.append("userId", API_CONFIG.USER_ID);
+      formData.append("fridgeId", API_CONFIG.FRIDGE_ID);
+
+      try {
+        const response = await fetch(`${API_CONFIG.BASE_URL}/scan/receipt`, {
+          method: "POST",
+          body: formData,
+          headers: {
+            "ngrok-skip-browser-warning": "69420"
+          }
+        });
+
+        if (!response.ok) throw new Error("Lỗi Backend");
+
+        const data = await response.json();
+        localStorage.setItem('scannedItems', JSON.stringify(data.items || []));
+        showToast("✅ Thành công!");
+        setTimeout(() => window.location.href = 'food_list.html', 800);
+      } catch (err) {
+        showToast("❌ Lỗi xử lý ảnh!");
+        confirmBtn.disabled = false;
+        confirmBtn.innerText = "Gửi lại";
+      }
+    }
 
     function showToast(msg) {
       toast.textContent = msg;
       toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 2000);
+      setTimeout(() => toast.classList.remove('show'), 3000);
     }
 
     initCamera();
   </script>
 </body>
-
 </html>
