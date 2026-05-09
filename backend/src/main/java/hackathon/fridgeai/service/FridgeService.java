@@ -46,6 +46,10 @@ public class FridgeService {
          */
         @Transactional
         public FridgeItem consumeItem(Long itemId, Long userId) {
+                if (itemId == null || userId == null) {
+                        throw new RuntimeException("ID món đồ hoặc ID người dùng không được để trống.");
+                }
+
                 FridgeItem item = fridgeItemRepository.findById(itemId)
                                 .orElseThrow(() -> new RuntimeException("Không tìm thấy món đồ này trong tủ lạnh."));
 
@@ -73,7 +77,9 @@ public class FridgeService {
                                         .pointsDelta(pointsConsumedBonus) // Cộng điểm EXP
                                         .walletDelta(BigDecimal.ZERO) // Ăn đúng hạn thì không bị phạt tiền
                                         .build();
-                        gamificationLogRepository.save(logEntry);
+                        if (logEntry != null) {
+                                gamificationLogRepository.save(logEntry);
+                        }
 
                         // 2. Cập nhật tổng điểm cho User
                         user.setTotalPoints(user.getTotalPoints() + pointsConsumedBonus);
@@ -95,6 +101,10 @@ public class FridgeService {
         @Transactional
         public FridgeItem addItemManually(Long fridgeId, Long userId, Product product, LocalDate expiresAt,
                         Double quantity, BigDecimal price) {
+                if (fridgeId == null || userId == null) {
+                        throw new RuntimeException("ID tủ lạnh hoặc ID người dùng không được để trống.");
+                }
+
                 Fridge fridge = fridgeRepository.findById(fridgeId)
                                 .orElseThrow(() -> new RuntimeException("Không tìm thấy Fridge."));
                 User user = userRepository.findById(userId)
@@ -111,6 +121,9 @@ public class FridgeService {
                                 .build();
 
                 log.info("Thêm món đồ {} vào tủ lạnh {} thành công.", product.getName(), fridgeId);
-                return fridgeItemRepository.save(newItem);
+                if (newItem != null) {
+                        return fridgeItemRepository.save(newItem);
+                }
+                throw new RuntimeException("Không thể tạo món đồ mới.");
         }
 }

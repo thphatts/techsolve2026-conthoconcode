@@ -950,19 +950,87 @@
 
   </div>
   <script>
-    // ── Food data (có số lượng dạng số) ──────────────────
-    const foods = [
-      { icon: '🥚', bg: '#1a2e1a', name: 'Trứng gà', qty: 6, unit: 'quả', exp: '12/05/2026', status: 'ok' },
-      { icon: '🍅', bg: '#2e1a1a', name: 'Cà chua', qty: 4, unit: 'quả', exp: '10/05/2026', status: 'wn' },
-      { icon: '🥛', bg: '#1a1a2e', name: 'Sữa tươi', qty: 1, unit: 'hộp', exp: '09/05/2026', status: 'dn' },
-      { icon: '🥦', bg: '#1e2a1a', name: 'Bông cải', qty: 1, unit: 'cây', exp: '15/05/2026', status: 'ok' },
-    ];
+    const API_BASE_URL = "http://localhost:8080/api/v1";
+    
+    // ── Food data (Sẽ được fetch từ API) ──────────────────
+    let foods = [];
 
     let activeFoodIdx = null;
     let takeQty = 1;
 
+    // Fetch dữ liệu thực tế từ Backend
+    async function fetchFridgeItems() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/fridges/1/items`); // Giả định fridgeId = 1
+        if (!response.ok) throw new Error("Không thể lấy dữ liệu");
+        
+        const data = await response.json();
+        
+        // Map dữ liệu từ Backend sang format Frontend
+        foods = data.map(item => {
+          // Tính toán status dựa trên ngày hết hạn
+          const now = new Date();
+          const expDate = new Date(item.expiresAt);
+          const diffDays = (expDate - now) / (1000 * 60 * 60 * 24);
+          
+          let status = 'ok';
+          if (diffDays < 0) status = 'dn'; // Hết hạn
+          else if (diffDays <= 3) status = 'wn'; // Sắp hết hạn (3 ngày)
+
+          return {
+            id: item.id,
+            icon: '📦', // Có thể cải tiến lấy icon theo category
+            bg: status === 'dn' ? '#2e0d0a' : status === 'wn' ? '#2e2300' : '#1a2e1a',
+            name: item.product.name,
+            qty: item.quantity,
+            unit: item.product.unit || 'cái',
+            exp: expDate.toLocaleDateString('vi-VN'),
+            status: status
+          };
+        });
+
+        updateStats();
+        renderFoods();
+      } catch (err) {
+        console.error("Lỗi fetch:", err);
+        showToast("❌ Lỗi: Không thể kết nối tới máy chủ.");
+        // Mock data nếu lỗi để demo
+        foods = [
+          { icon: '🥚', bg: '#1a2e1a', name: 'Trứng gà (Mock)', qty: 6, unit: 'quả', exp: '12/05/2026', status: 'ok' },
+          { icon: '🍅', bg: '#2e1a1a', name: 'Cà chua (Mock)', qty: 4, unit: 'quả', exp: '10/05/2026', status: 'wn' }
+        ];
+        renderFoods();
+      }
+    }
+
+    function updateStats() {
+      const goodCount = foods.filter(f => f.status === 'ok').length;
+      const warnCount = foods.filter(f => f.status === 'wn').length;
+      const dangerCount = foods.filter(f => f.status === 'dn').length;
+
+      // Cập nhật biểu đồ (giả định)
+      const bars = document.querySelectorAll('.chart-bar');
+      const vals = document.querySelectorAll('.chart-val');
+      
+      if(vals[0]) vals[0].textContent = goodCount;
+      if(vals[1]) vals[1].textContent = warnCount;
+      if(vals[2]) vals[2].textContent = dangerCount;
+
+      // Cập nhật các con số stats
+      const svs = document.querySelectorAll('.sv');
+      if(svs[0]) svs[0].textContent = foods.length;
+      if(svs[1]) svs[1].textContent = warnCount;
+    }
+
     function renderFoods() {
       const list = document.getElementById('foodList');
+      if (!list) return;
+
+      if (foods.length === 0) {
+        list.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--muted); font-size:12px;">📭 Tủ lạnh trống trơn...</div>`;
+        return;
+      }
+
       list.innerHTML = foods.map((f, i) => {
         const isEmpty = f.qty <= 0;
         const badge = isEmpty
@@ -1014,6 +1082,7 @@
       closeTakeModal();
       renderFoods();
       showToast(`✅ Đã lấy ${takeQty} ${f.unit} ${f.name} ra nấu!`);
+      // Ghi chú: Cần gọi API cập nhật số lượng ở đây trong tương lai
     }
 
     function showToast(msg) {
@@ -1039,7 +1108,8 @@
       if (e.target === this) closeTakeModal();
     });
 
-    renderFoods();
+    // Khởi tạo
+    fetchFridgeItems();
   </script>
 </body>
 

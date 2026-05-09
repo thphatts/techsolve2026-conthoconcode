@@ -30,5 +30,5 @@ app:
     # Tạm thời bạn có thể để một chuỗi bất kỳ để app chạy lên,
     # sau này có key thật từ Google AI Studio thì paste vào đây
     api-key: "AIzaSyAHHYVzEoNzCdjxrzdcfwp_3OIjRMB6zjY"
-    model: "gemini-1.5-flash"
+    model: "gemini-pro"
     bill-scan-prompt: "Bạn là một chuyên gia đọc hóa đơn siêu thị. Hãy đọc ảnh hóa đơn này và trả về JSON chứa mảng 'items' gồm các trường: product_name (tên món hàng), quantity (số lượng), price (giá một đơn vị), estimated_expiry_days (số ngày hết hạn ước tính dựa trên loại đồ ăn, ví dụ thịt là 3-5 ngày, rau là 5-7 ngày). Chỉ trả về JSON hợp lệ."

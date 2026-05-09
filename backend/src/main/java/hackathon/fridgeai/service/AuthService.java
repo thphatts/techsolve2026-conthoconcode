@@ -7,7 +7,6 @@ import hackathon.fridgeai.entity.User;
 import hackathon.fridgeai.repository.UserRepository;
 import hackathon.fridgeai.security.CustomUserDetails;
 import hackathon.fridgeai.security.JwtService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 
 @Service
-@RequiredArgsConstructor
 public class AuthService {
 
     private final UserRepository userRepository;
@@ -24,13 +22,21 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
+    public AuthService(UserRepository userRepository, 
+                       PasswordEncoder passwordEncoder, 
+                       JwtService jwtService, 
+                       AuthenticationManager authenticationManager) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
+        this.authenticationManager = authenticationManager;
+    }
+
     public AuthResponse signup(SignupRequest request) {
-        // Kiểm tra email trùng lặp
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new RuntimeException("Email đã được sử dụng!");
         }
 
-        // Mã hóa mật khẩu và tạo user
         User user = User.builder()
                 .name(request.getName())
                 .email(request.getEmail())
@@ -38,18 +44,25 @@ public class AuthService {
                 .totalPoints(0)
                 .walletBalance(BigDecimal.ZERO)
                 .build();
+        
+        if (user == null) {
+            throw new RuntimeException("Lỗi tạo User");
+        }
+
         userRepository.save(user);
 
-        // Cấp JWT
         CustomUserDetails userDetails = new CustomUserDetails(user);
         String jwtToken = jwtService.generateToken(userDetails);
 
-        return AuthResponse.builder().token(jwtToken).userId(user.getId())
-                .name(user.getName()).email(user.getEmail()).build();
+        return AuthResponse.builder()
+                .token(jwtToken)
+                .userId(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .build();
     }
 
     public AuthResponse login(LoginRequest request) {
-        // Xác thực username/password
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
@@ -58,7 +71,11 @@ public class AuthService {
 
         String jwtToken = jwtService.generateToken(new CustomUserDetails(user));
 
-        return AuthResponse.builder().token(jwtToken).userId(user.getId())
-                .name(user.getName()).email(user.getEmail()).build();
+        return AuthResponse.builder()
+                .token(jwtToken)
+                .userId(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .build();
     }
 }

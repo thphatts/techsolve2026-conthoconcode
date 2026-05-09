@@ -162,6 +162,116 @@
       padding: 0 20px;
       opacity: 0.8;
     }
+
+    /* --- ADDED FOR MANUAL ADD FEATURE & ROW EDITING --- */
+    .note-area {
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .note-area:active {
+      opacity: 0.8;
+    }
+
+    .edit-form-container {
+      display: none; /* Hidden by default */
+      background: #fff;
+      border: 2px solid #ed89b5;
+      border-radius: 16px;
+      padding: 12px;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: -5px;
+      margin-bottom: 5px;
+      box-shadow: 0 4px 10px rgba(237, 137, 181, 0.15);
+      animation: slideDown 0.3s ease-out;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .edit-form-container.active {
+      display: flex;
+    }
+
+    .form-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .form-label {
+      font-size: 13px;
+      font-weight: 800;
+      color: #555;
+    }
+
+    /* Quantity Counter */
+    .counter {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #fdf2f7;
+      border-radius: 20px;
+      padding: 2px 6px;
+      border: 1.5px solid #ffdae9;
+    }
+
+    .counter-btn {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: none;
+      background: #ed89b5;
+      color: #fff;
+      font-weight: 900;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+
+    .counter-input {
+      width: 35px;
+      text-align: center;
+      border: none;
+      background: transparent;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 900;
+      font-size: 15px;
+      color: #333;
+      outline: none;
+    }
+
+    /* Expiry Input */
+    .expiry-input, .name-input {
+      width: 130px;
+      padding: 6px 12px;
+      border-radius: 12px;
+      border: 1.5px solid #ffdae9;
+      background: #fdf2f7;
+      font-family: 'Nunito', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      outline: none;
+      text-align: center;
+      color: #333;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .expiry-input:focus, .name-input:focus {
+      border-color: #ed89b5;
+      box-shadow: 0 0 0 3px rgba(237, 137, 181, 0.2);
+    }
+
+    .name-input {
+      width: 100%; /* Name takes full width in its item row */
+      text-align: left;
+    }
+    /* ------------------------------------ */
   </style>
 </head>
 
@@ -180,57 +290,278 @@
     <div class="content">
       <p class="date" id="dateDisplay">Ngày mua: 9/9/2026</p>
 
-      <!-- Note Area -->
-      <div class="note-area">
+      <!-- Manual Add Trigger -->
+      <div class="note-area" id="manualAddTrigger">
         <img src="../assets/Food-list/Food-frame.png" alt="Note Frame" class="note-bg" />
-        <span>Type note:</span>
+        <span>Thêm sản phẩm khác</span>
+      </div>
+
+      <!-- Manual Add Form -->
+      <div class="edit-form-container" id="manualAddForm">
+        <div class="form-item">
+          <span class="form-label">Tên sản phẩm:</span>
+          <input type="text" class="name-input" placeholder="Ví dụ: Táo Mỹ...">
+        </div>
+        <div class="form-item">
+          <span class="form-label">Số lượng:</span>
+          <div class="counter">
+            <button class="counter-btn qty-minus">-</button>
+            <input type="number" class="counter-input qty-input" value="1" min="1" inputmode="numeric">
+            <button class="counter-btn qty-plus">+</button>
+          </div>
+        </div>
+        <div class="form-item">
+          <span class="form-label">Hạn sử dụng:</span>
+          <input type="text" class="expiry-input date-mask" placeholder="dd/mm/yyyy" maxlength="10">
+        </div>
       </div>
 
       <!-- Food List Items -->
-      <div class="food-items">
-        <div class="food-row">
-          <span>Cà chua</span>
-          <img src="../assets/Food-list/Edit.png" alt="Edit" class="edit-icon" />
+      <div class="food-items" id="foodItemsList">
+        <!-- Item 1 -->
+        <div class="food-item-group">
+          <div class="food-row">
+            <span>Cà chua</span>
+            <img src="../assets/Food-list/Edit.png" alt="Edit" class="edit-icon" />
+          </div>
+          <div class="edit-form-container">
+            <div class="form-item">
+              <span class="form-label">Số lượng:</span>
+              <div class="counter">
+                <button class="counter-btn qty-minus">-</button>
+                <input type="number" class="counter-input qty-input" value="2" min="1">
+                <button class="counter-btn qty-plus">+</button>
+              </div>
+            </div>
+            <div class="form-item">
+              <span class="form-label">Hạn sử dụng:</span>
+              <input type="text" class="expiry-input date-mask" value="15/05/2026" maxlength="10">
+            </div>
+          </div>
         </div>
-        <div class="food-row">
-          <span>Thịt bò</span>
-          <img src="../assets/Food-list/Edit.png" alt="Edit" class="edit-icon" />
+
+        <!-- Item 2 -->
+        <div class="food-item-group">
+          <div class="food-row">
+            <span>Thịt bò</span>
+            <img src="../assets/Food-list/Edit.png" alt="Edit" class="edit-icon" />
+          </div>
+          <div class="edit-form-container">
+            <div class="form-item">
+              <span class="form-label">Số lượng:</span>
+              <div class="counter">
+                <button class="counter-btn qty-minus">-</button>
+                <input type="number" class="counter-input qty-input" value="1" min="1">
+                <button class="counter-btn qty-plus">+</button>
+              </div>
+            </div>
+            <div class="form-item">
+              <span class="form-label">Hạn sử dụng:</span>
+              <input type="text" class="expiry-input date-mask" value="20/05/2026" maxlength="10">
+            </div>
+          </div>
         </div>
         
-        <!-- Empty Rows to match design -->
-        <div class="empty-row">
-          <img src="../assets/Food-list/Edit.png" alt="Edit" class="edit-icon" />
-        </div>
-        <div class="empty-row">
-          <img src="../assets/Food-list/Edit.png" alt="Edit" class="edit-icon" />
-        </div>
-        <div class="empty-row">
-          <img src="../assets/Food-list/Edit.png" alt="Edit" class="edit-icon" />
-        </div>
-        <div class="empty-row">
-          <img src="../assets/Food-list/Edit.png" alt="Edit" class="edit-icon" />
-        </div>
+        <!-- Empty Rows -->
+        <div class="empty-row"><img src="../assets/Food-list/Edit.png" alt="Edit" class="edit-icon" /></div>
+        <div class="empty-row"><img src="../assets/Food-list/Edit.png" alt="Edit" class="edit-icon" /></div>
       </div>
     </div>
   </div>
 
   <script>
-    // Add logic if needed, e.g., edit name or add to fridge animation
-    document.querySelector('.add-btn').addEventListener('click', (e) => {
-      e.preventDefault();
-      alert("Đã thêm thực phẩm vào tủ lạnh!");
-      window.location.href = 'Index.html';
+    /* --- 
+       DATA & API LOGIC: HANDLING SCANNED ITEMS
+       This block manages the population of the list from AI results
+       and provides utilities for formatting and editing.
+    --- */
+    
+    const DATE_CONFIG = {
+      LOCALE: 'vi-VN',
+      FORMAT: { day: '2-digit', month: '2-digit', year: 'numeric' }
+    };
+
+    // Initialize Page
+    window.addEventListener('DOMContentLoaded', () => {
+      updateDisplayDate();
+      loadScannedItems();
+      initializeGlobalListeners();
     });
 
-    // Update real-time date
-    function updateDate() {
+    function updateDisplayDate() {
       const now = new Date();
-      const d = String(now.getDate()).padStart(2, '0');
-      const m = String(now.getMonth() + 1).padStart(2, '0');
-      const y = now.getFullYear();
-      document.getElementById('dateDisplay').textContent = `Ngày mua: ${d}/${m}/${y}`;
+      const formattedDate = now.toLocaleDateString(DATE_CONFIG.LOCALE, DATE_CONFIG.FORMAT);
+      document.getElementById('dateDisplay').textContent = `Ngày mua: ${formattedDate}`;
     }
-    updateDate();
+
+    function loadScannedItems() {
+      const scannedData = localStorage.getItem('scannedItems');
+      if (!scannedData) return;
+
+      try {
+        const items = JSON.parse(scannedData);
+        if (items && items.length > 0) {
+          const list = document.getElementById('foodItemsList');
+          
+          // Get all potential slots (mock groups and empty rows)
+          let slots = Array.from(list.querySelectorAll('.food-item-group, .empty-row'));
+          
+          items.forEach((item, index) => {
+            const expiryStr = calculateExpiryDate(item.estimated_expiry_days || 7);
+            
+            if (index < slots.length) {
+              // Re-use existing slot
+              const currentSlot = slots[index];
+              
+              if (currentSlot.classList.contains('empty-row')) {
+                // Convert empty-row to a full food-item-group
+                currentSlot.classList.remove('empty-row');
+                currentSlot.classList.add('food-row');
+                currentSlot.innerHTML = `
+                  <span>${item.product_name}</span>
+                  <img src="../assets/Food-list/Edit.png" alt="Edit" class="edit-icon" />
+                `;
+                
+                // Add the hidden edit form after it
+                const form = createEditForm(item, expiryStr);
+                currentSlot.parentNode.insertBefore(form, currentSlot.nextSibling);
+                
+                // Wrap them in a group for consistency
+                const group = document.createElement('div');
+                group.className = 'food-item-group';
+                currentSlot.parentNode.insertBefore(group, currentSlot);
+                group.appendChild(currentSlot);
+                group.appendChild(form);
+              } else {
+                // Update existing mock group
+                const nameSpan = currentSlot.querySelector('.food-row span');
+                if(nameSpan) nameSpan.textContent = item.product_name;
+                
+                const qtyInput = currentSlot.querySelector('.qty-input');
+                if(qtyInput) qtyInput.value = item.quantity || 1;
+                
+                const expiryInput = currentSlot.querySelector('.date-mask');
+                if(expiryInput) expiryInput.value = expiryStr;
+              }
+            } else {
+              // Create new slot if we ran out
+              list.appendChild(createFoodItemGroup(item));
+            }
+          });
+
+          // Optional: Remove remaining empty rows if you want a tight list
+          // list.querySelectorAll('.empty-row').forEach(r => r.remove());
+        }
+      } catch (e) {
+        console.error("Lỗi đổ dữ liệu AI:", e);
+      }
+    }
+
+    function createEditForm(item, expiryStr) {
+      const div = document.createElement('div');
+      div.className = 'edit-form-container';
+      div.innerHTML = `
+        <div class="form-item">
+          <span class="form-label">Số lượng:</span>
+          <div class="counter">
+            <button class="counter-btn qty-minus">-</button>
+            <input type="number" class="counter-input qty-input" value="${item.quantity || 1}" min="1" inputmode="numeric">
+            <button class="counter-btn qty-plus">+</button>
+          </div>
+        </div>
+        <div class="form-item">
+          <span class="form-label">Hạn sử dụng:</span>
+          <input type="text" class="expiry-input date-mask" value="${expiryStr}" placeholder="dd/mm/yyyy" maxlength="10">
+        </div>
+      `;
+      attachFormListeners(div);
+      return div;
+    }
+
+    function createFoodItemGroup(item) {
+      const expiryStr = calculateExpiryDate(item.estimated_expiry_days || 7);
+      const div = document.createElement('div');
+      div.className = 'food-item-group';
+      div.innerHTML = `
+        <div class="food-row">
+          <span>${item.product_name}</span>
+          <img src="../assets/Food-list/Edit.png" alt="Edit" class="edit-icon" />
+        </div>
+      `;
+      div.appendChild(createEditForm(item, expiryStr));
+      return div;
+    }
+
+    function calculateExpiryDate(days) {
+      const d = new Date();
+      d.setDate(d.getDate() + days);
+      return d.toLocaleDateString(DATE_CONFIG.LOCALE, DATE_CONFIG.FORMAT);
+    }
+
+    /* --- FORM UTILITIES --- */
+    function attachFormListeners(container) {
+      // Counter Logic
+      const input = container.querySelector('.qty-input');
+      const minus = container.querySelector('.qty-minus');
+      const plus = container.querySelector('.qty-plus');
+      
+      if(input) {
+        // Auto-select text on focus for easier mobile input
+        input.onfocus = () => input.select();
+      }
+
+      if(minus) minus.onclick = () => { let v = parseInt(input.value)||1; if(v>1) input.value = v-1; };
+      if(plus) plus.onclick = () => { let v = parseInt(input.value)||0; input.value = v+1; };
+
+      // Date Masking Logic
+      const dateInput = container.querySelector('.date-mask');
+      if(dateInput) {
+        dateInput.oninput = (e) => {
+          let v = e.target.value.replace(/\D/g, '');
+          if (v.length > 8) v = v.slice(0, 8);
+          let out = "";
+          if (v.length > 0) out += v.slice(0, 2);
+          if (v.length > 2) out += "/" + v.slice(2, 4);
+          if (v.length > 4) out += "/" + v.slice(4, 8);
+          e.target.value = out;
+        };
+      }
+    }
+
+    function initializeGlobalListeners() {
+      // Manual Add Toggle
+      const manualTrigger = document.getElementById('manualAddTrigger');
+      const manualForm = document.getElementById('manualAddForm');
+      if(manualTrigger) {
+        manualTrigger.onclick = () => manualForm.classList.toggle('active');
+        attachFormListeners(manualForm);
+      }
+
+      // Row Edit Toggle (Event Delegation)
+      document.getElementById('foodItemsList').onclick = (e) => {
+        if (e.target.classList.contains('edit-icon')) {
+          const group = e.target.closest('.food-item-group');
+          if (group) {
+            const form = group.querySelector('.edit-form-container');
+            if (form) form.classList.toggle('active');
+          } else if (e.target.closest('.empty-row')) {
+            // If clicking empty row, maybe redirect to manual add or alert
+            manualForm.classList.add('active');
+            manualForm.scrollIntoView({ behavior: 'smooth' });
+          }
+        }
+      };
+
+      // Final Submission
+      document.querySelector('.add-btn').onclick = (e) => {
+        e.preventDefault();
+        // Here we would normally collect all data and send to /api/v1/fridges/1/items (Bulk Add)
+        alert("🎉 Đã lưu tất cả thực phẩm vào tủ lạnh!");
+        localStorage.removeItem('scannedItems');
+        window.location.href = 'tu_lanh.html';
+      };
+    }
+    /* --- END DATA LOGIC --- */
   </script>
 </body>
 

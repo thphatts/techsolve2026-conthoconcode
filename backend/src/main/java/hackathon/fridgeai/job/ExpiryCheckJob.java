@@ -71,7 +71,9 @@ public class ExpiryCheckJob {
                     .pointsDelta(-penaltyPoints) // Trừ điểm (Số âm)
                     .walletDelta(penaltyMoney.negate()) // Trừ tiền ảo (Chuyển thành số âm)
                     .build();
-            gamificationLogRepository.save(penaltyLog);
+            if (penaltyLog != null) {
+                gamificationLogRepository.save(penaltyLog);
+            }
 
             // 5. Cập nhật lại Ví Tổng của User
             user.setTotalPoints((user.getTotalPoints() != null ? user.getTotalPoints() : 0) - penaltyPoints);
@@ -88,7 +90,9 @@ public class ExpiryCheckJob {
                     .message("Rất tiếc! Món " + item.getProduct().getName() + " của bạn đã hỏng. Bạn bị trừ "
                             + penaltyPoints + " EXP.")
                     .build();
-            expiryAlertRepository.save(alert);
+            if (alert != null) {
+                expiryAlertRepository.save(alert);
+            }
 
             processedCount++;
         }

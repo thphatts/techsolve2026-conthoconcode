@@ -32,13 +32,33 @@ public class BillService {
         @Transactional
         public Bill processAndSaveAiReceipt(Long userId, Long fridgeId, String imageUrl, AiReceiptResponse aiResponse,
                         Map<String, Object> rawJson) {
+                if (userId == null || fridgeId == null) {
+                        throw new RuntimeException("UserID hoặc FridgeID không được để trống.");
+                }
 
                 // 1. Tìm User và Fridge (Trong thực tế Hackathon, bạn có thể hardcode ID 1L để
                 // test cho nhanh)
+                // 1. Tìm hoặc Tự tạo User (Tối ưu cho Hackathon demo)
                 User user = userRepository.findById(userId)
-                                .orElseThrow(() -> new RuntimeException("Không tìm thấy User"));
+                                .orElseGet(() -> {
+                                        User newUser = User.builder()
+                                                        .name("Demo User")
+                                                        .email("demo" + userId + "@example.com")
+                                                        .passwordHash("password_hash")
+                                                        .totalPoints(0)
+                                                        .build();
+                                        return userRepository.save(newUser);
+                                });
+
+                // Tìm hoặc Tự tạo Fridge
                 Fridge fridge = fridgeRepository.findById(fridgeId)
-                                .orElseThrow(() -> new RuntimeException("Không tìm thấy Fridge"));
+                                .orElseGet(() -> {
+                                        Fridge newFridge = Fridge.builder()
+                                                        .name("Tủ lạnh Demo")
+                                                        .owner(user)
+                                                        .build();
+                                        return fridgeRepository.save(newFridge);
+                                });
 
                 // 2. Tạo hóa đơn mới
                 Bill newBill = Bill.builder()
@@ -81,6 +101,9 @@ public class BillService {
 
                 // 4. Lưu tất cả vào Database (Vì có CascadeType.ALL, lưu Bill sẽ tự động lưu
                 // các BillItem bên trong)
-                return billRepository.save(newBill);
+                if (newBill != null) {
+                        return billRepository.save(newBill);
+                }
+                throw new RuntimeException("Không thể tạo hóa đơn mới.");
         }
 }
