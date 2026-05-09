@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Máy Ảnh – Smart Fridge</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: #b8a050;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    /* ── Phone shell ── */
+    .phone {
+      width: 375px;
+      height: 720px;
+      border: 8px solid #222;
+      border-radius: 40px;
+      overflow: hidden;
+      position: relative;
+      background: #b9f3fb url('../assets/May_anh/Màn hình chụp bill.png') center/cover no-repeat;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Home Button ── */
+    .home-link {
+      position: absolute;
+      top: 30px;
+      left: 20px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      text-decoration: none;
+      z-index: 10;
+      /* The "Home" text is already on the background image, 
+         but we add the arrow and a clickable area */
+    }
+
+    .home-link img {
+      width: 20px;
+      image-rendering: pixelated;
+    }
+
+    .home-link span {
+      font-size: 18px;
+      font-weight: 900;
+      color: #000;
+      display: none;
+      /* Text is already in background */
+    }
+
+    /* ── Camera Preview Frame ── */
+    .camera-frame {
+      position: absolute;
+      top: 60px;
+      left: 45px;
+      width: 270px;
+      height: 400px;
+      border-radius: 20px;
+      overflow: hidden;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scaleX(-1);
+      /* Mirror for selfie-like feel */
+    }
+
+    /* ── Bottom Controls ── */
+    .bottom-controls {
+      position: absolute;
+      bottom: 20px;
+      left: 0;
+      width: 100%;
+      height: 130px;
+      z-index: 20;
+    }
+
+    .thumbnail-container {
+      position: absolute;
+      left: 50px;
+      transform: translateY(-50%);
+      width: 45px;
+      height: 40px;
+      background: #fff;
+      border: 2px solid #ed89b5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    #thumbnail {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .capture-btn {
+      position: absolute;
+      left: 50.5%;
+      /* Slight offset to match background circle precisely */
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      transition: transform 0.1s;
+    }
+
+    .capture-btn:active {
+      transform: translate(-50%, -50%) scale(0.9);
+    }
+
+    .capture-btn img {
+      width: 80px;
+      display: block;
+      image-rendering: pixelated;
+      margin-bottom: 120px;
+    }
+
+    /* Toast */
+    .toast {
+      position: absolute;
+      bottom: 50px;
+      left: 50%;
+      transform: translateX(-50%) translateY(10px);
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      padding: 8px 20px;
+      border-radius: 25px;
+      font-size: 14px;
+      font-weight: 700;
+      opacity: 0;
+      transition: all 0.3s;
+      z-index: 100;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="phone">
+    <!-- Home Link -->
+    <a href="Index.html" class="home-link">
+      <img src="../assets/May_anh/Back.png" alt="Back" />
+    </a>
+
+    <!-- Camera Preview -->
+    <div class="camera-frame">
+      <video id="video" autoplay playsinline></video>
+    </div>
+
+    <!-- Controls -->
+    <div class="bottom-controls">
+      <div class="thumbnail-container">
+        <img id="thumbnail" src="" alt="" style="display: none;" />
+      </div>
+      <button class="capture-btn" id="captureBtn">
+        <img src="../assets/May_anh/Nut_chup.png" alt="Chụp" />
+      </button>
+    </div>
+
+    <canvas id="canvas" style="display: none;"></canvas>
+    <div class="toast" id="toast"></div>
+  </div>
+
+  <script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const captureBtn = document.getElementById('captureBtn');
+    const thumbnail = document.getElementById('thumbnail');
+    const toast = document.getElementById('toast');
+
+    // Start Camera
+    async function initCamera() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'environment' },
+          audio: false
+        });
+        video.srcObject = stream;
+      } catch (err) {
+        console.error("Lỗi truy cập camera: ", err);
+        showToast("❌ Không thể truy cập camera");
+      }
+    }
+
+    // Capture Photo
+    captureBtn.addEventListener('click', () => {
+      const context = canvas.getContext('2d');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+
+      // Draw video frame to canvas
+      context.save();
+      context.translate(canvas.width, 0);
+      context.scale(-1, 1); // Flip back for storage if mirrored
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      context.restore();
+
+      const dataUrl = canvas.toDataURL('image/png');
+      thumbnail.src = dataUrl;
+      thumbnail.style.display = 'block';
+
+      showToast("📸 Đã lưu ảnh! Đang phân tích...");
+
+      // Simple flash effect
+      video.style.opacity = '0.3';
+      setTimeout(() => video.style.opacity = '1', 100);
+
+      // Redirect after 1.5s
+      setTimeout(() => {
+        window.location.href = 'food_list.html';
+      }, 1500);
+    });
+
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+
+    initCamera();
+  </script>
+</body>
+
+</html>
