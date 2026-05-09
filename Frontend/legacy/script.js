@@ -2,32 +2,15 @@
 //  Smart Fridge App – script.js
 // ══════════════════════════════════════
 
-const viewHome   = document.getElementById('view-home');
+const viewHome = document.getElementById('view-home');
 const viewFridge = document.getElementById('view-fridge');
-const fridgeBtn  = document.getElementById('fridgeBtn');
-const backBtn    = document.getElementById('backBtn');
-const btnCamera  = document.getElementById('btnCamera');
-const btnEvent   = document.getElementById('btnEvent');
-const btnWallet  = document.getElementById('btnWallet');
-const emotionFill  = document.getElementById('emotionFill');
+const fridgeBtn = document.getElementById('fridgeBtn');
+const backBtn = document.getElementById('backBtn');
+const btnCamera = document.getElementById('btnCamera');
+const btnEvent = document.getElementById('btnEvent');
+const btnWallet = document.getElementById('btnWallet');
+const emotionFill = document.getElementById('emotionFill');
 const emotionEmoji = document.getElementById('emotionEmoji');
-
-// ── Emotion levels ──────────────────────
-const emotions = [
-  { level: 20,  emoji: '😴', label: 'Buồn ngủ' },
-  { level: 40,  emoji: '😐', label: 'Bình thường' },
-  { level: 65,  emoji: '😊', label: 'Vui' },
-  { level: 85,  emoji: '😄', label: 'Rất vui' },
-  { level: 100, emoji: '🥰', label: 'Hạnh phúc' },
-];
-let currentEmotion = 2; // index 0-4
-
-function updateEmotion() {
-  const e = emotions[currentEmotion];
-  emotionFill.style.width = e.level + '%';
-  emotionEmoji.textContent = e.emoji;
-}
-updateEmotion();
 
 // ── Navigation helpers ─────────────────
 function goToFridge() {
@@ -62,10 +45,6 @@ btnCamera.addEventListener('click', () => {
   setTimeout(goToFridge, 800);
 });
 
-// Nút Sự kiện
-btnEvent.addEventListener('click', () => {
-  showToast('📅 Chưa có sự kiện nào!');
-});
 
 // Nút Ví
 btnWallet.addEventListener('click', () => {
@@ -177,4 +156,6 @@ phone.addEventListener('touchend', e => {
   }
 }, { passive: true });
 
-console.log('🐱 Smart Fridge App loaded!');
+btnWallet.addEventListener('click', () => {
+  showToast('👜 Ví: 250,000đ');
+});
