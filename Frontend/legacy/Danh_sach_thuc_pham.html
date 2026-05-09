@@ -36,17 +36,17 @@
       letter-spacing: 0.5px;
     }
 
-    /* ── Phone shell Pixel ── */
+    /* ── Khung điện thoại (Bo tròn hiện đại) ── */
     .phone {
       width: 375px;
       height: 812px;
       background: var(--surface);
-      border-radius: 0;
-      border: 4px solid var(--border);
+      border-radius: 40px;
+      border: 8px solid #222;
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.2);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
       position: relative;
     }
 
@@ -61,18 +61,20 @@
       color: #333;
       position: relative;
       flex-shrink: 0;
-      background: transparent;
+      z-index: 60;
     }
 
+    /* Tai thỏ bo tròn */
     .notch {
       width: 120px;
       height: 24px;
       background: #111;
-      border-radius: 0;
+      border-radius: 0 0 16px 16px;
       position: absolute;
       top: 0;
       left: 50%;
       transform: translateX(-50%);
+      z-index: 50;
     }
 
     /* Header */
@@ -84,7 +86,6 @@
       flex-shrink: 0;
     }
 
-    /* Nút Back Pixel */
     .back {
       background: #fff;
       border: 3px solid var(--border);
@@ -106,7 +107,7 @@
     }
 
     .hdr h1 {
-      font-size: 24px;
+      font-size: 26px;
       font-weight: 900;
       flex: 1;
       text-align: center;
@@ -140,21 +141,26 @@
       padding: 8px 10px;
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      align-items: flex-start;
+      gap: 4px;
       box-shadow: 4px 4px 0 var(--border);
     }
 
     .sc .si {
       font-size: 20px;
+      display: flex;
+      align-items: center;
+      margin-bottom: 2px;
     }
 
     .sc .sv {
       font-size: 24px;
       font-weight: 900;
+      line-height: 1;
     }
 
     .sc .sl {
-      font-size: 14px;
+      font-size: 13px;
       color: var(--muted);
       font-weight: 700;
       text-transform: uppercase;
@@ -187,6 +193,8 @@
     }
 
     .search span {
+      display: flex;
+      align-items: center;
       font-size: 20px;
     }
 
@@ -211,11 +219,9 @@
       padding: 4px 14px 12px;
       overflow-x: auto;
       flex-shrink: 0;
-      /* Thêm con trỏ chuột hình bàn tay để báo hiệu kéo được */
       cursor: grab;
     }
 
-    /* Đổi hình bàn tay khi đang nhấn giữ */
     .tabs:active {
       cursor: grabbing;
     }
@@ -225,6 +231,9 @@
     }
 
     .tab {
+      display: flex;
+      align-items: center;
+      gap: 6px;
       padding: 6px 14px;
       border-radius: 0;
       font-size: 18px;
@@ -235,7 +244,6 @@
       color: var(--muted);
       box-shadow: 2px 2px 0 var(--border);
       transition: transform .1s, box-shadow .1s;
-      /* Ngăn chặn bôi đen text khi kéo chuột */
       user-select: none;
     }
 
@@ -268,7 +276,7 @@
       background: var(--card);
       border: 3px solid var(--border);
       border-radius: 0;
-      padding: 12px 12px;
+      padding: 12px;
       display: flex;
       align-items: center;
       gap: 12px;
@@ -296,8 +304,8 @@
     }
 
     .ficon {
-      width: 48px;
-      height: 48px;
+      width: 52px;
+      height: 52px;
       border-radius: 0;
       border: 3px solid var(--border);
       display: flex;
@@ -305,7 +313,20 @@
       justify-content: center;
       font-size: 26px;
       flex-shrink: 0;
-      background: #222;
+      background: #fff;
+    }
+
+    /* Tô màu nền ô icon theo tình trạng thực phẩm */
+    .fi.ok-item .ficon {
+      background: #bbf7d0;
+    }
+
+    .fi.warn-item .ficon {
+      background: #fef08a;
+    }
+
+    .fi.danger-item .ficon {
+      background: #fecaca;
     }
 
     .finfo {
@@ -321,11 +342,16 @@
     .fmeta {
       font-size: 16px;
       color: var(--muted);
-      margin-top: 4px;
+      margin-top: 2px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    .fmeta span {
-      margin-right: 8px;
+    .fmeta img {
+      width: 16px;
+      height: 16px;
+      image-rendering: pixelated;
     }
 
     .fbadge {
@@ -352,22 +378,29 @@
       color: #ff6b6b;
     }
 
+    /* Khung màu nền báo thời gian */
     .days {
-      font-size: 15px;
+      display: inline-block;
+      font-size: 14px;
       font-weight: 700;
-      margin-top: 4px;
+      margin-top: 6px;
+      padding: 2px 8px;
+      color: #fff;
     }
 
     .days.ok {
+      background: #0f3f26;
       color: #4ade80;
     }
 
     .days.warn {
-      color: var(--warn);
+      background: #fff0b3;
+      color: #b28900;
     }
 
     .days.danger {
-      color: var(--danger);
+      background: #4a0f0f;
+      color: #ff6b6b;
     }
 
     /* ── Add button Pixel ── */
@@ -387,7 +420,7 @@
       justify-content: center;
       gap: 6px;
       box-shadow: 4px 4px 0 var(--border);
-      transition: transform .1s, box-shadow .1s;
+      transition: transform .1s, box-shadow 0.1s;
       flex-shrink: 0;
     }
 
@@ -431,81 +464,45 @@
       margin-top: -15px;
     }
 
-    /* ── Modal thêm món Pixel ── */
-    .modal-bg {
+    /* ── Modals ── */
+    .modal-wallet-bg {
       display: none;
       position: absolute;
       inset: 0;
       background: rgba(0, 0, 0, 0.8);
-      z-index: 100;
+      z-index: 3000;
       align-items: flex-end;
     }
 
-    .modal-bg.open {
+    .modal-wallet-bg.open {
       display: flex;
     }
 
-    .modal {
+    .modal-wallet-content {
       width: 100%;
-      background: var(--card);
-      border-radius: 0;
-      padding: 24px 18px 40px;
-      border-top: 4px solid var(--border);
-    }
-
-    .modal h3 {
-      font-size: 24px;
-      font-weight: 900;
-      margin-bottom: 14px;
-    }
-
-    .modal input,
-    .modal select {
-      width: 100%;
-      padding: 10px 12px;
-      margin-bottom: 14px;
-      background: var(--surface);
-      border: 3px solid var(--border);
-      border-radius: 0;
-      color: var(--text);
-      font-size: 20px;
-      font-family: 'VT323', monospace;
-      outline: none;
-      box-shadow: inset 2px 2px 0 rgba(0, 0, 0, 0.1);
-    }
-
-    .modal-btns {
-      display: flex;
-      gap: 12px;
-      margin-top: 8px;
-    }
-
-    .modal-btns button {
-      flex: 1;
-      padding: 12px;
-      border-radius: 0;
-      border: 3px solid var(--border);
-      font-size: 20px;
-      font-weight: 800;
-      cursor: pointer;
-      font-family: 'VT323', monospace;
-      box-shadow: 4px 4px 0 var(--border);
-      transition: transform .1s, box-shadow .1s;
-    }
-
-    .modal-btns button:active {
-      transform: translate(4px, 4px);
-      box-shadow: 0 0 0 var(--border);
-    }
-
-    .btn-cancel {
       background: #fff;
-      color: var(--text);
+      border-top: 4px solid #222;
+      padding: 24px 20px 40px;
+      z-index: 3001;
     }
 
-    .btn-save {
-      background: var(--cyan);
-      color: #000;
+    .pixel-box {
+      border-radius: 0 !important;
+      border: 3px solid #222 !important;
+      background: #fff;
+      box-shadow: 4px 4px 0 #222;
+    }
+
+    .pixel-box-sm {
+      border-radius: 0 !important;
+      border: 3px solid #222 !important;
+      box-shadow: 2px 2px 0 #222;
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+
+    .pixel-box-sm:active {
+      transform: translate(2px, 2px) !important;
+      box-shadow: 0 0 0 #222 !important;
     }
   </style>
 </head>
@@ -523,33 +520,55 @@
       <a href="tu_lanh.html" class="back">← Tủ lạnh</a>
       <img src="../assets/tulanh.png" class="fridge-header-img" id="fridgeHeaderImg" alt="Tủ lạnh"
         onclick="location.href='Index.html'" />
-      <h1>Smart<span>Fridge</span></h1>
+      <h1>Danh sách <span>Thực phẩm</span></h1>
     </div>
 
     <div class="stats">
-      <div class="sc g"><span class="si">✅</span><span class="sv" id="s-good">0</span><span class="sl">Còn tốt</span>
+      <div class="sc g">
+        <span class="si"><img src="../assets/check.png" alt="Còn tốt"
+            style="width:24px;height:24px;object-fit:contain;image-rendering:pixelated;" /></span>
+        <span class="sv" id="s-good">0</span>
+        <span class="sl">Còn tốt</span>
       </div>
-      <div class="sc y"><span class="si">⏰</span><span class="sv" id="s-warn">0</span><span class="sl">Sắp hết</span>
+      <div class="sc y">
+        <span class="si"><img src="../assets/clock.png" alt="Sắp hết"
+            style="width:24px;height:24px;object-fit:contain;image-rendering:pixelated;" /></span>
+        <span class="sv" id="s-warn">0</span>
+        <span class="sl">Sắp hết</span>
       </div>
-      <div class="sc r"><span class="si">🚨</span><span class="sv" id="s-danger">0</span><span class="sl">Hết hạn</span>
+      <div class="sc r">
+        <span class="si"><img src="../assets/siren.png" alt="Hết hạn"
+            style="width:24px;height:24px;object-fit:contain;image-rendering:pixelated;" /></span>
+        <span class="sv" id="s-danger">0</span>
+        <span class="sl">Hết hạn</span>
       </div>
     </div>
 
     <div class="search">
-      <span>🔍</span>
+      <span><img src="../assets/icon_search_pixel.png" alt="🔍" style="width:24px;image-rendering:pixelated;"
+          onerror="this.outerHTML='🔍'" /></span>
       <input type="text" id="searchInput" placeholder="Tìm thực phẩm..." oninput="filterFood()" />
     </div>
 
     <div class="tabs" id="tabsContainer">
       <div class="tab active" onclick="setTab(this,'all')">Tất cả</div>
-      <div class="tab" onclick="setTab(this,'ok')">✅ Còn tốt</div>
-      <div class="tab" onclick="setTab(this,'warn')">⚠️ Sắp hết</div>
-      <div class="tab" onclick="setTab(this,'danger')">🚨 Hết hạn</div>
+      <div class="tab" onclick="setTab(this,'ok')">
+        <img src="../assets/check.png" alt="Còn tốt"
+          style="width:18px;height:18px;object-fit:contain;image-rendering:pixelated;" /> Còn tốt
+      </div>
+      <div class="tab" onclick="setTab(this,'warn')">
+        <img src="../assets/clock.png" alt="Sắp hết"
+          style="width:18px;height:18px;object-fit:contain;image-rendering:pixelated;" /> Sắp hết
+      </div>
+      <div class="tab" onclick="setTab(this,'danger')">
+        <img src="../assets/siren.png" alt="Hết hạn"
+          style="width:18px;height:18px;object-fit:contain;image-rendering:pixelated;" /> Hết hạn
+      </div>
     </div>
 
     <div class="food-list" id="foodList"></div>
 
-    <button class="add-btn" onclick="openModal()">
+    <button class="add-btn" onclick="location.href='tu_lanh.html'">
       ＋ Thêm thực phẩm mới
     </button>
 
@@ -558,39 +577,53 @@
         <img src="../assets/nuttrangchu.png" alt="Trang chủ" onclick="location.href='Index.html'" />
         <img src="../assets/nutthucpham.png" alt="Thực phẩm" onclick="location.href='Danh_sach_thuc_pham.html'" />
         <img src="../assets/nutchup.png" alt="Chụp ảnh" class="center-btn" onclick="location.href='tu_lanh.html'" />
-        <img src="../assets/nutvi.png" alt="Ví" />
+        <img src="../assets/nutvi.png" alt="Ví" onclick="openWalletModal()" />
         <img src="../assets/nutcaidat.png" alt="Cài đặt" />
       </div>
     </div>
 
-    <div class="modal-bg" id="modalBg">
-      <div class="modal">
-        <h3>➕ Thêm thực phẩm</h3>
-        <input type="text" id="mName" placeholder="Tên thực phẩm (vd: Cà rốt 🥕)" />
-        <input type="text" id="mQty" placeholder="Số lượng (vd: 3 củ)" />
-        <input type="date" id="mExp" />
-        <div class="modal-btns">
-          <button class="btn-cancel" onclick="closeModal()">Huỷ</button>
-          <button class="btn-save" onclick="addFood()">Lưu</button>
+    <div class="modal-wallet-bg" id="walletModalBg">
+      <div class="modal-wallet-content">
+        <h3 style="font-size:30px; margin-bottom: 5px;">Chi tiêu tháng 5...</h3>
+        <p style="margin-bottom:20px; font-size:18px; color:#777;">Quản lý thực phẩm</p>
+        <div class="pixel-box" style="padding:15px; margin-bottom:20px;">
+          <h4
+            style="font-size:24px; color:#ff85a2; border-bottom:2px dashed #222; padding-bottom:5px; margin-bottom:10px;">
+            Theo tuần</h4>
+          <div style="display:flex; justify-content:space-between; font-size:22px;"><span>Đã ăn:</span><span
+              style="color:#0f3f26; font-weight:bold;">350.000đ</span></div>
+          <div style="display:flex; justify-content:space-between; font-size:22px; margin-top:5px;"><span>Lãng
+              phí:</span><span style="color:#ff6b6b; font-weight:bold;">45.000đ</span></div>
         </div>
+        <div class="pixel-box" style="padding:15px; margin-bottom:25px;">
+          <h4
+            style="font-size:24px; color:#ff85a2; border-bottom:2px dashed #222; padding-bottom:5px; margin-bottom:10px;">
+            Theo tháng</h4>
+          <div style="display:flex; justify-content:space-between; font-size:22px;"><span>Đã ăn:</span><span
+              style="color:#0f3f26; font-weight:bold;">1.250.000đ</span></div>
+          <div style="display:flex; justify-content:space-between; font-size:22px; margin-top:5px;"><span>Lãng
+              phí:</span><span style="color:#ff6b6b; font-weight:bold;">120.000đ</span></div>
+        </div>
+        <button class="pixel-box-sm"
+          style="width:100%; padding:12px; font-family:'VT323'; font-size:22px; cursor:pointer; background:#fff;"
+          onclick="closeWalletModal()">Đóng</button>
       </div>
     </div>
 
   </div>
 
   <script>
-    // ── Data ──────────────────────────────
     const foods = [
-      { icon: '🥚', bg: '#1a2e1a', name: 'Trứng gà', qty: '6 quả', exp: '2026-05-12', status: 'ok' },
-      { icon: '🍅', bg: '#2e1a1a', name: 'Cà chua', qty: '4 quả', exp: '2026-05-10', status: 'warn' },
-      { icon: '🥛', bg: '#1a1a2e', name: 'Sữa tươi', qty: '1 hộp', exp: '2026-05-09', status: 'danger' },
-      { icon: '🥦', bg: '#1e2a1a', name: 'Bông cải xanh', qty: '1 cây', exp: '2026-05-15', status: 'ok' },
-      { icon: '🧀', bg: '#2a2210', name: 'Phô mai', qty: '200g', exp: '2026-05-11', status: 'warn' },
-      { icon: '🍗', bg: '#2e1e0a', name: 'Thịt gà', qty: '500g', exp: '2026-05-13', status: 'ok' },
-      { icon: '🐟', bg: '#0a1e2e', name: 'Cá hồi', qty: '300g', exp: '2026-05-10', status: 'warn' },
-      { icon: '🥕', bg: '#2e1a0a', name: 'Cà rốt', qty: '5 củ', exp: '2026-05-18', status: 'ok' },
-      { icon: '🍋', bg: '#2a2a0a', name: 'Chanh', qty: '4 quả', exp: '2026-05-20', status: 'ok' },
-      { icon: '🧅', bg: '#2a1e0a', name: 'Hành tây', qty: '2 củ', exp: '2026-05-25', status: 'ok' },
+      { img: 'trung_pixel.png', icon: '🥚', name: 'Trứng gà', qty: '6 quả', exp: '2026-05-12', status: 'ok' },
+      { img: 'cachua_pixel.png', icon: '🍅', name: 'Cà chua', qty: '4 quả', exp: '2026-05-10', status: 'warn' },
+      { img: 'sua_pixel.png', icon: '🥛', name: 'Sữa tươi', qty: '1 hộp', exp: '2026-05-09', status: 'danger' },
+      { img: 'bongcai_pixel.png', icon: '🥦', name: 'Bông cải xanh', qty: '1 cây', exp: '2026-05-15', status: 'ok' },
+      { img: 'phomai_pixel.png', icon: '🧀', name: 'Phô mai', qty: '200g', exp: '2026-05-11', status: 'warn' },
+      { img: 'ga_pixel.png', icon: '🍗', name: 'Thịt gà', qty: '500g', exp: '2026-05-13', status: 'ok' },
+      { img: 'cahoi_pixel.png', icon: '🐟', name: 'Cá hồi', qty: '300g', exp: '2026-05-10', status: 'warn' },
+      { img: 'carot_pixel.png', icon: '🥕', name: 'Cà rốt', qty: '5 củ', exp: '2026-05-18', status: 'ok' },
+      { img: 'chanh_pixel.png', icon: '🍋', name: 'Chanh', qty: '4 quả', exp: '2026-05-20', status: 'ok' },
+      { img: 'hanhtay_pixel.png', icon: '🧅', name: 'Hành tây', qty: '2 củ', exp: '2026-05-25', status: 'ok' },
     ];
 
     let currentTab = 'all';
@@ -600,6 +633,7 @@
       const d = Math.round((new Date(exp) - new Date()) / (1000 * 60 * 60 * 24));
       return d;
     }
+
     function statusLabel(s) {
       if (s === 'ok') return 'Còn tốt';
       if (s === 'warn') return 'Sắp hết hạn';
@@ -640,13 +674,19 @@
         const borderClass = f.status === 'ok' ? 'ok-item' : (f.status === 'warn' ? 'warn-item' : 'danger-item');
         const badgeClass = f.status === 'ok' ? 'ok' : (f.status === 'warn' ? 'wn' : 'dn');
 
+        // Đối với ảnh đồ ăn mình vẫn để chế độ chống lỗi để bạn dễ nhìn
+        const imgTag = `<img src="../assets/${f.img}" alt="${f.icon}" style="width:40px;height:40px;object-fit:contain;image-rendering:pixelated;" onerror="this.outerHTML='${f.icon}'" />`;
+
+        const boxIcon = `<img src="../assets/icon_box_pixel.png" alt="📦" onerror="this.outerHTML='📦'" />`;
+        const calendarIcon = `<img src="../assets/icon_calendar_pixel.png" alt="📅" onerror="this.outerHTML='📅'" />`;
+
         return `<div class="fi ${borderClass}">
-      <div class="ficon">${f.icon}</div>
+      <div class="ficon">${imgTag}</div>
       <div class="finfo">
         <div class="fname">${f.name}</div>
         <div class="fmeta">
-          <span>📦 ${f.qty}</span>
-          <span>📅 HH: ${expFmt}</span>
+          <span>${boxIcon} ${f.qty}</span>
+          <span>${calendarIcon} HH: ${expFmt}</span>
         </div>
         <div class="days ${dcls}">${dText}</div>
       </div>
@@ -667,34 +707,13 @@
       renderList();
     }
 
-    function openModal() {
-      document.getElementById('modalBg').classList.add('open');
-      const d = new Date(); d.setDate(d.getDate() + 7);
-      document.getElementById('mExp').value = d.toISOString().split('T')[0];
+    function openWalletModal() {
+      document.getElementById('walletModalBg').classList.add('open');
+    }
+    function closeWalletModal() {
+      document.getElementById('walletModalBg').classList.remove('open');
     }
 
-    function closeModal() {
-      document.getElementById('modalBg').classList.remove('open');
-    }
-
-    function addFood() {
-      const name = document.getElementById('mName').value.trim();
-      const qty = document.getElementById('mQty').value.trim();
-      const exp = document.getElementById('mExp').value;
-      if (!name || !qty || !exp) { alert('Vui lòng điền đầy đủ thông tin!'); return; }
-      const d = daysLeft(exp);
-      const status = d < 0 ? 'danger' : d <= 3 ? 'warn' : 'ok';
-
-      foods.unshift({ icon: '🍱', bg: '#1a1a2a', name, qty, exp, status });
-      closeModal();
-      renderList();
-      updateStats();
-
-      document.getElementById('mName').value = '';
-      document.getElementById('mQty').value = '';
-    }
-
-    // Hover tủ lạnh ở Header
     const fridgeHeader = document.getElementById('fridgeHeaderImg');
     if (fridgeHeader) {
       fridgeHeader.addEventListener('mouseenter', () => {
@@ -705,12 +724,10 @@
       });
     }
 
-    // Lắng nghe click ra ngoài modal để đóng
-    document.getElementById('modalBg').addEventListener('click', function (e) {
-      if (e.target === this) closeModal();
+    document.getElementById('walletModalBg').addEventListener('click', function (e) {
+      if (e.target === this) closeWalletModal();
     });
 
-    // ── XỬ LÝ KÉO TRƯỢT CHUỘT CHO TABS ──
     const tabsContainer = document.getElementById('tabsContainer');
     let isDown = false;
     let startX;
@@ -731,11 +748,10 @@
       if (!isDown) return;
       e.preventDefault();
       const x = e.pageX - tabsContainer.offsetLeft;
-      const walk = (x - startX) * 2; // Tốc độ trượt (nhân 2 để lướt nhanh hơn)
+      const walk = (x - startX) * 2;
       tabsContainer.scrollLeft = scrollLeft - walk;
     });
 
-    // Initial render
     updateStats();
     renderList();
   </script>
