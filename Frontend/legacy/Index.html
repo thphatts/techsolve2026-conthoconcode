@@ -25,7 +25,7 @@
     /* ── Phone shell ── */
     .phone {
       width: 375px;
-      height: 720px;
+      height: 812px;
       border: 8px solid #222;
       border-radius: 40px;
       overflow: hidden;
@@ -162,34 +162,45 @@
       position: relative;
       overflow: hidden;
       border-top: 3px solid #333;
-      background: url('../assets/background.png') center bottom/cover no-repeat;
+      background: url('../assets/background.png') center 8% / cover no-repeat;
     }
+
+    .fridge-link,
+    .cat-area {
+      position: absolute;
+      z-index: 1;
+    }
+
+
 
     /* Tủ lạnh */
     .fridge-link {
       position: absolute;
       left: 10px;
-      bottom: 60px;
-      width: 180px;
-      z-index: 5;
+      bottom: 0;
+      top: 45px;
+      width: 90%;
+      z-index: 10;
       text-decoration: none;
       transition: transform 0.2s;
     }
 
     .fridge-link:hover {
-      transform: scale(1.05);
+      transform: scale(1.02);
     }
 
     .fridge-link img {
       width: 100%;
+      height: auto;
       image-rendering: pixelated;
+      display: block;
     }
 
     /* Mèo area */
     .cat-area {
       position: absolute;
-      right: 30px;
-      bottom: 50px;
+      left: 60px;
+      bottom: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -205,10 +216,18 @@
       }
 
       50% {
-        transform: translateY(-10px);
+        transform: translateY(-8px);
       }
     }
 
+    .cat-img {
+      width: 230px;
+      image-rendering: pixelated;
+      display: block;
+      flex-shrink: 0;
+    }
+
+    /* Bong bóng thoại – nằm trên đầu mèo */
     .bubble {
       background: #fff;
       border: 3px solid #222;
@@ -223,8 +242,11 @@
       margin-bottom: 15px;
       box-shadow: 4px 4px 0 #222;
       white-space: nowrap;
+      right: -50px;
+      top: 10px;
     }
 
+    /* Đuôi bong bóng trỏ xuống dưới */
     .bubble::after {
       content: '';
       position: absolute;
@@ -250,20 +272,40 @@
       z-index: 1;
     }
 
-    .cat-img {
-      width: 140px;
-      image-rendering: pixelated;
-    }
-
     /* ── BOTTOM NAV ── */
     .bottom-nav {
       display: flex;
-      justify-content: space-around;
-      align-items: center;
-      padding: 10px 10px 25px;
+      flex-direction: column;
       background: #fff;
       border-top: 3px solid #222;
       flex-shrink: 0;
+    }
+
+    .nav-top-row {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 8px 10px 4px;
+    }
+
+    .nav-img-row {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 4px 10px 14px;
+    }
+
+    .nav-img-row img {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+      image-rendering: pixelated;
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+
+    .nav-img-row img:hover {
+      transform: scale(1.15);
     }
 
     .nav-item {
@@ -284,7 +326,10 @@
     }
 
     .nav-icon {
-      font-size: 24px;
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+      image-rendering: pixelated;
     }
 
     .nav-fab-container {
@@ -313,6 +358,87 @@
 
     .nav-fab:hover {
       transform: scale(1.1);
+    }
+
+    /* ── Camera Modal ── */
+    .cam-modal {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      z-index: 1000;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .cam-modal.show {
+      display: flex;
+    }
+
+    .cam-full-img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      image-rendering: pixelated;
+      z-index: 1002;
+      pointer-events: none;
+    }
+
+    #camStream {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 1001;
+    }
+
+    .cam-flash {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #fff;
+      z-index: 2000;
+      display: none;
+    }
+
+    .cam-overlay-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.5);
+      color: #fff;
+      border: 2px solid #fff;
+      padding: 5px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700;
+      z-index: 1001;
+    }
+
+    .cam-capture-btn {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 80px;
+      image-rendering: pixelated;
+      cursor: pointer;
+      z-index: 1005;
+      transition: transform 0.1s;
+    }
+
+    .cam-capture-btn:active {
+      transform: translateX(-50%) scale(0.9);
     }
 
     /* Toast */
@@ -372,13 +498,13 @@
     <div class="room">
       <!-- Tủ lạnh -->
       <a href="tu_lanh.html" class="fridge-link">
-        <img src="../assets/tulanh.png" alt="Tủ lạnh" />
+        <img src="../assets/tulanh.png" alt="Tủ lạnh" id="fridgeImg" />
       </a>
 
       <!-- Mèo -->
       <div class="cat-area">
         <div class="bubble">
-          mio,<br />nhau đã.
+          Hôm nay ăn gì nè?
         </div>
         <img src="../assets/meodung.gif" alt="Mèo" class="cat-img" />
       </div>
@@ -386,27 +512,24 @@
 
     <!-- Bottom Nav -->
     <div class="bottom-nav">
-      <a href="Index.html" class="nav-item active">
-        <span class="nav-icon">🏠</span>
-        <span>Trang chủ</span>
-      </a>
-      <a href="Danh_sach_thuc_pham.html" class="nav-item">
-        <span class="nav-icon">📋</span>
-        <span>Thực phẩm</span>
-      </a>
-
-      <div class="nav-fab-container">
-        <div class="nav-fab" id="camBtn">📷</div>
+      <!-- Tầng dưới: bảng nút pixel art -->
+      <div class="nav-img-row">
+        <img src="../assets/nuttrangchu.png" alt="Trang chủ" onclick="location.href='Index.html'" />
+        <img src="../assets/nutthucpham.png" alt="Thực phẩm" onclick="location.href='Danh_sach_thuc_pham.html'" />
+        <img src="../assets/nutchup.png" alt="Chụp ảnh" id="camBtnImg" />
+        <img src="../assets/nutvi.png" alt="Ví" />
+        <img src="../assets/nutcaidat.png" alt="Cài đặt" />
       </div>
+    </div>
 
-      <a href="#" class="nav-item">
-        <span class="nav-icon">🍳</span>
-        <span>Công thức</span>
-      </a>
-      <a href="#" class="nav-item">
-        <span class="nav-icon">⚙️</span>
-        <span>Cài đặt</span>
-      </a>
+    <!-- Camera Modal -->
+    <div class="cam-modal" id="camModal">
+      <video id="camStream" autoplay playsinline></video>
+      <img src="../assets/manhinhchupbill.png" class="cam-full-img" alt="Giao diện chụp hóa đơn" />
+      <div class="cam-flash" id="camFlash"></div>
+
+      <button class="cam-overlay-close" id="closeCamBtn">Đóng</button>
+      <img src="../assets/camera.png" class="cam-capture-btn" id="captureBtn" alt="Chụp ảnh">
     </div>
 
     <div class="toast" id="toast"></div>
@@ -428,10 +551,60 @@
     updateEmo();
     setInterval(() => { ei = (ei + 1) % emotions.length; updateEmo(); }, 5000);
 
-    // Camera button → navigate
-    document.getElementById('camBtn').addEventListener('click', () => {
-      showToast('📷 Khởi động camera...');
-      setTimeout(() => { window.location.href = 'camera.html'; }, 700);
+    // Fridge hover effect
+    const fridgeImg = document.getElementById('fridgeImg');
+    fridgeImg.addEventListener('mouseenter', () => {
+      fridgeImg.src = '../assets/tulanhmo.gif';
+    });
+    fridgeImg.addEventListener('mouseleave', () => {
+      fridgeImg.src = '../assets/tulanh.png';
+    });
+
+    // Camera button → Open Modal & Start Stream
+    const camModal = document.getElementById('camModal');
+    const video = document.getElementById('camStream');
+    const flash = document.getElementById('camFlash');
+    let stream = null;
+
+    async function startCamera() {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+        video.srcObject = stream;
+      } catch (err) {
+        console.error("Lỗi truy cập camera: ", err);
+        showToast('❌ Không thể truy cập camera');
+      }
+    }
+
+    function stopCamera() {
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+        stream = null;
+      }
+    }
+
+    document.getElementById('camBtnImg').addEventListener('click', () => {
+      camModal.classList.add('show');
+      startCamera();
+    });
+
+    document.getElementById('closeCamBtn').addEventListener('click', () => {
+      camModal.classList.remove('show');
+      stopCamera();
+    });
+
+    document.getElementById('captureBtn').addEventListener('click', () => {
+      // Flash effect
+      flash.style.display = 'block';
+      setTimeout(() => { flash.style.display = 'none'; }, 100);
+
+      showToast('📸 Đang chụp hóa đơn...');
+
+      setTimeout(() => {
+        camModal.classList.remove('show');
+        stopCamera();
+        showToast('✅ Đã lưu hóa đơn!');
+      }, 1200);
     });
 
     // Toast
