@@ -627,10 +627,19 @@
       return d.toLocaleDateString('vi-VN', { day:'2-digit', month:'2-digit', year:'numeric' });
     }
 
-    // ─── Fridge hover ───
+    // ── KỊCH BẢN CLICK MỞ TỦ LẠNH (TRANG CHỦ) ──
+    const fridgeLink = document.querySelector('.fridge-link');
     const fridgeImg = document.getElementById('fridgeImg');
-    fridgeImg.addEventListener('mouseenter', () => fridgeImg.src = '../assets/tulanhmo.gif');
-    fridgeImg.addEventListener('mouseleave', () => fridgeImg.src = '../assets/tulanh.png');
+
+    fridgeLink.addEventListener('click', function (e) {
+      e.preventDefault(); // Ngăn trình duyệt chuyển trang ngay lập tức
+      fridgeImg.src = '../assets/tulanhmo.gif'; // Chạy hiệu ứng GIF mở tủ
+
+      // Đợi 800 mili-giây (cho GIF chạy) rồi mới chuyển sang trang Tủ Lạnh
+      setTimeout(() => {
+        window.location.href = 'tu_lanh.html';
+      }, 800);
+    });
 
     // ─── Camera refs ───
     const camModal     = document.getElementById('camModal');
