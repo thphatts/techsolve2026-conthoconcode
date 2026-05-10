@@ -38,7 +38,7 @@ cameraInput.addEventListener('change', async (event) => {
   const file = event.target.files[0];
   if (!file) return;
 
-  showToast('⏳ Đang phân tích ảnh qua AI...');
+  showToast('Đang phân tích ảnh qua AI...');
   goToFridge();
   startScanAnimation();
 
@@ -60,17 +60,17 @@ cameraInput.addEventListener('change', async (event) => {
 
     if (response.ok) {
         const data = await response.json();
-        showToast('✅ Quét hoàn tất! Đã lưu thông tin từ hóa đơn.');
+        showToast(' Quét hoàn tất! Đã lưu thông tin từ hóa đơn.');
         // Kiểm tra xem hàm có tồn tại không trước khi gọi
         if (typeof fetchFridgeItems === 'function') {
              fetchFridgeItems();
         }
     } else {
-        showToast('❌ Xử lý ảnh thất bại!');
+        showToast('Xử lý ảnh thất bại!');
     }
   } catch (error) {
       console.error("Lỗi gọi API Scan:", error);
-      showToast('❌ Lỗi kết nối đến máy chủ!');
+      showToast(' Lỗi kết nối đến máy chủ!');
   } finally {
       cameraInput.value = ''; // Reset input để có thể chụp tiếp
   }
@@ -90,21 +90,21 @@ backBtn.addEventListener('click', goToHome);
 
 // Nút Camera quét ở bottom nav home
 btnCamera.addEventListener('click', () => {
-  showToast('📷 Đang khởi động camera...');
+  showToast('Đang khởi động camera...');
   cameraInput.click();
 });
 
 
 // Nút Ví
 btnWallet.addEventListener('click', () => {
-  showToast('👜 Ví: 250,000đ');
+  showToast('Ví: 250,000đ');
 });
 
 // FAB trong fridge view
 const fab = document.querySelector('#view-fridge .fab');
 if (fab) {
   fab.addEventListener('click', () => {
-    showToast('📷 Đang khởi động camera...');
+    showToast('Đang khởi động camera...');
     cameraInput.click();
   });
 }
@@ -113,7 +113,7 @@ if (fab) {
 const sBtn = document.querySelector('.s-btn');
 if (sBtn) {
   sBtn.addEventListener('click', () => {
-    showToast('🍳 Công thức: Trứng chiên cà chua!');
+    showToast('Công thức: Trứng chiên cà chua!');
   });
 }
 
@@ -185,7 +185,7 @@ function startScanAnimation() {
   setTimeout(() => {
     scanLine.style.animationDuration = '2s';
     scanLine.style.boxShadow = '0 0 8px #00e5a0';
-    showToast('✅ Quét xong! Tìm thấy 12 món.');
+    showToast('Quét xong! Tìm thấy 12 món.');
   }, 1200);
 }
 
@@ -228,7 +228,7 @@ async function fetchUserProfile() {
                 // Xoá event cũ đi (nếu cần) và gắn event mới hiển thị số dư thực tế
                 btnWallet.onclick = () => {
                     const balance = userData.coins || userData.totalPoints || 0;
-                    showToast(`👜 Ví của bạn: ${balance} điểm/đ`);
+                    showToast(` Ví của bạn: ${balance} điểm/đ`);
                 };
             }
             
@@ -260,12 +260,12 @@ async function checkUnreadNotifications() {
                 const alertCount = alerts.length;
                 const firstAlertName = alerts[0].itemName || "một số thực phẩm"; // Giả sử entity có itemName
                 
-                showToast(`🔔 Bạn có ${alertCount} cảnh báo! ${firstAlertName} sắp hết hạn.`);
+                showToast(` Bạn có ${alertCount} cảnh báo! ${firstAlertName} sắp hết hạn.`);
                 
                 // Nếu bạn có nút chuông thông báo (btnEvent), hãy cập nhật icon ở đây
                 const btnEvent = document.getElementById('btnEvent');
                 if (btnEvent) {
-                    btnEvent.innerHTML = `🔔<span style="color:red; font-size:10px;">(${alertCount})</span>`;
+                    btnEvent.innerHTML = `<span style="color:red; font-size:10px;">(${alertCount})</span>`;
                 }
             }
         }
