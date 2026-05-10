@@ -5,13 +5,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>Máy Ảnh – Smart Fridge</title>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=VT323&family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet" />
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: 'Nunito', sans-serif;
@@ -31,148 +27,89 @@
       overflow: hidden;
       position: relative;
       background: #b9f3fb url('../assets/May_anh/man_hinh_chup_bill.png') center/cover no-repeat;
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
-      display: flex;
-      flex-direction: column;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.5);
     }
 
-    /* ── Home Button ── */
+    /* ── Home link ── */
     .home-link {
       position: absolute;
-      top: 30px;
-      left: 20px;
+      top: 28px; left: 20px;
       display: flex;
       align-items: center;
       gap: 5px;
       text-decoration: none;
       z-index: 10;
     }
+    .home-link img { width: 20px; image-rendering: pixelated; }
 
-    .home-link img {
-      width: 20px;
-      image-rendering: pixelated;
-    }
-
-    /* ── Camera Preview Frame ── */
+    /* ── Camera Preview ── */
     .camera-frame {
       position: absolute;
-      top: 60px;
-      left: 45px;
-      width: 270px;
-      height: 400px;
+      top: 60px; left: 45px;
+      width: 270px; height: 400px;
       border-radius: 20px;
       overflow: hidden;
       background: #000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
-
     #video {
-      width: 100%;
-      height: 100%;
+      width: 100%; height: 100%;
       object-fit: cover;
+      display: block;
+    }
+    #previewImg {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: none;
     }
 
     /* ── Bottom Controls ── */
     .bottom-controls {
       position: absolute;
-      bottom: 20px;
-      left: 0;
-      width: 100%;
-      height: 130px;
+      bottom: 20px; left: 0;
+      width: 100%; height: 130px;
       z-index: 20;
     }
-
     .thumbnail-container {
       position: absolute;
-      left: 50px;
+      left: 50px; top: 50%;
       transform: translateY(-50%);
-      width: 45px;
-      height: 40px;
+      width: 45px; height: 40px;
       background: #fff;
       border: 2px solid #ed89b5;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       overflow: hidden;
     }
-
-    #thumbnail {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+    #thumbnail { width: 100%; height: 100%; object-fit: cover; display: none; }
 
     .capture-btn {
       position: absolute;
-      left: 50.5%;
-      top: 50%;
+      left: 50.5%; top: 50%;
       transform: translate(-50%, -50%);
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 0;
+      background: none; border: none;
+      cursor: pointer; padding: 0;
       transition: transform 0.1s;
     }
-
-    .capture-btn:active {
-      transform: translate(-50%, -50%) scale(0.9);
-    }
-
-    .capture-btn img {
-      width: 80px;
-      display: block;
-      image-rendering: pixelated;
-    }
+    .capture-btn:active { transform: translate(-50%, -50%) scale(0.9); }
+    .capture-btn img { width: 80px; display: block; image-rendering: pixelated; }
 
     .gallery-btn {
       position: absolute;
-      right: 50px;
+      right: 50px; top: 50%;
       transform: translateY(-50%);
-      width: 45px;
-      height: 40px;
-      background: #fff;
-      border: 2px solid #ed89b5;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 24px;
-      font-weight: 900;
-      color: #ed89b5;
-      border-radius: 4px;
+      width: 45px; height: 40px;
+      background: #fff; border: 2px solid #ed89b5;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 24px; font-weight: 900;
+      color: #ed89b5; border-radius: 4px;
     }
 
-    .toast {
-      position: absolute;
-      bottom: 50px;
-      left: 50%;
-      transform: translateX(-50%) translateY(10px);
-      background: rgba(0, 0, 0, 0.8);
-      color: #fff;
-      padding: 8px 20px;
-      border-radius: 25px;
-      font-size: 14px;
-      font-weight: 700;
-      opacity: 0;
-      transition: all 0.3s;
-      z-index: 100;
-      pointer-events: none;
-    }
-
-    .toast.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-
+    /* ── Confirm Overlay ── */
     .confirm-overlay {
       position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 160px;
-      background: rgba(255, 255, 255, 0.9);
+      bottom: 0; left: 0;
+      width: 100%; height: 160px;
+      background: rgba(255,255,255,0.95);
       display: none;
       flex-direction: column;
       align-items: center;
@@ -181,28 +118,187 @@
       z-index: 30;
       border-top: 3px solid #ed89b5;
     }
-
-    .confirm-overlay.active {
-      display: flex;
-    }
-
-    .btn-group {
-      display: flex;
-      gap: 15px;
-    }
-
+    .confirm-overlay.active { display: flex; }
+    .confirm-text { font-weight: 900; color: #333; font-size: 14px; }
+    .btn-group { display: flex; gap: 14px; }
     .action-btn {
-      padding: 10px 24px;
-      border-radius: 20px;
-      border: none;
+      padding: 10px 22px;
+      border-radius: 20px; border: none;
       font-family: 'Nunito', sans-serif;
-      font-weight: 800;
-      font-size: 14px;
-      cursor: pointer;
+      font-weight: 800; font-size: 14px;
+      cursor: pointer; transition: opacity 0.2s;
+    }
+    .action-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn-confirm { background: #ed89b5; color: #fff; }
+    .btn-retake  { background: #eee; color: #444; }
+
+    /* ── Loading Overlay ── */
+    .loading-overlay {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.68);
+      display: none;
+      flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 16px; z-index: 50;
+    }
+    .loading-overlay.active { display: flex; }
+    .spinner {
+      width: 50px; height: 50px;
+      border: 5px solid rgba(255,255,255,0.25);
+      border-top-color: #ed89b5;
+      border-radius: 50%;
+      animation: spin 0.75s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text {
+      color: #fff; font-weight: 800; font-size: 15px;
+      text-align: center; line-height: 1.5; padding: 0 24px;
     }
 
-    .btn-confirm { background: #ed89b5; color: #fff; }
-    .btn-retake { background: #eee; color: #333; }
+    /* ══════════════════════════════════════════
+       RESULT PANEL – slide up từ dưới lên
+    ══════════════════════════════════════════ */
+    .result-panel {
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 100%;
+      /* khi ẩn trượt xuống dưới đáy */
+      transform: translateY(100%);
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      background: #fff;
+      border-radius: 24px 24px 0 0;
+      box-shadow: 0 -8px 32px rgba(0,0,0,0.25);
+      z-index: 40;
+      display: flex;
+      flex-direction: column;
+      max-height: 78%;
+    }
+    .result-panel.open {
+      transform: translateY(0);
+    }
+
+    /* Drag handle */
+    .panel-handle {
+      width: 40px; height: 4px;
+      background: #ddd;
+      border-radius: 4px;
+      margin: 12px auto 0;
+      flex-shrink: 0;
+    }
+
+    /* Panel header */
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 20px 6px;
+      flex-shrink: 0;
+    }
+    .panel-title {
+      font-family: 'VT323', monospace;
+      font-size: 28px; color: #222;
+    }
+    .panel-count {
+      font-family: 'Nunito', sans-serif;
+      font-size: 12px; font-weight: 800;
+      color: #ed89b5;
+      background: #fdf2f7;
+      padding: 3px 10px; border-radius: 20px;
+    }
+
+    /* Scrollable list */
+    .panel-list {
+      overflow-y: auto;
+      padding: 6px 16px 0;
+      flex: 1;
+    }
+    .panel-list::-webkit-scrollbar { display: none; }
+
+    /* Each item row */
+    .item-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid #f0f0f0;
+      animation: slideIn 0.3s ease both;
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-12px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    .item-row:last-child { border-bottom: none; }
+
+    .item-emoji { font-size: 28px; flex-shrink: 0; }
+
+    .item-info { flex: 1; min-width: 0; }
+    .item-name {
+      font-family: 'VT323', monospace;
+      font-size: 24px; color: #111;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .item-meta {
+      font-family: 'Nunito', sans-serif;
+      font-size: 11px; font-weight: 700;
+      color: #999; margin-top: 1px;
+    }
+
+    .item-badge {
+      font-family: 'Nunito', sans-serif;
+      font-size: 11px; font-weight: 800;
+      background: #f0f8ff; color: #5aaadd;
+      padding: 3px 8px; border-radius: 10px;
+      flex-shrink: 0;
+    }
+
+    /* Panel footer */
+    .panel-footer {
+      padding: 12px 16px 18px;
+      display: flex; gap: 10px;
+      flex-shrink: 0;
+      border-top: 1px solid #f0f0f0;
+    }
+    .btn-rescan {
+      flex: 1; padding: 12px;
+      border-radius: 14px; border: 2px solid #ed89b5;
+      background: #fff; color: #ed89b5;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800; font-size: 14px;
+      cursor: pointer; transition: background 0.2s;
+    }
+    .btn-rescan:hover { background: #fdf2f7; }
+    .btn-save {
+      flex: 2; padding: 12px;
+      border-radius: 14px; border: none;
+      background: #ed89b5; color: #fff;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800; font-size: 14px;
+      cursor: pointer; transition: opacity 0.2s;
+    }
+    .btn-save:hover { opacity: 0.88; }
+
+    /* Empty state trong panel */
+    .panel-empty {
+      text-align: center;
+      padding: 30px 20px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 13px; color: #aaa; font-weight: 700;
+    }
+    .panel-empty-icon { font-size: 40px; display: block; margin-bottom: 8px; }
+
+    /* ── Toast ── */
+    .toast {
+      position: absolute;
+      bottom: 170px; left: 50%;
+      transform: translateX(-50%) translateY(10px);
+      background: rgba(0,0,0,0.82);
+      color: #fff; padding: 8px 20px;
+      border-radius: 25px; font-size: 13px; font-weight: 700;
+      opacity: 0; transition: all 0.3s;
+      z-index: 100; pointer-events: none;
+      white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   </style>
 </head>
 
@@ -212,163 +308,338 @@
       <img src="../assets/May_anh/back.png" alt="Back" />
     </a>
 
+    <!-- Camera preview -->
     <div class="camera-frame">
       <video id="video" autoplay playsinline></video>
+      <img id="previewImg" alt="preview" />
     </div>
 
+    <!-- Bottom Controls -->
     <div class="bottom-controls" id="bottomControls">
       <div class="thumbnail-container">
-        <img id="thumbnail" src="" alt="" style="display: none;" />
+        <img id="thumbnail" src="" alt="" />
       </div>
       <div class="gallery-btn" id="galleryBtn">+</div>
-      <input type="file" id="fileInput" accept="image/*" style="display: none;">
+      <input type="file" id="fileInput" accept="image/*" style="display:none;" />
       <button class="capture-btn" id="captureBtn">
         <img src="../assets/May_anh/nut_chup.png" alt="Chụp" />
       </button>
     </div>
 
+    <!-- Confirm Overlay -->
     <div class="confirm-overlay" id="confirmOverlay">
-      <p style="font-weight: 900; color: #333; font-size: 14px;">Xác nhận gửi ảnh này?</p>
+      <p class="confirm-text">Xác nhận gửi ảnh cho AI phân tích?</p>
       <div class="btn-group">
         <button class="action-btn btn-retake" id="retakeBtn">Chụp lại</button>
-        <button class="action-btn btn-confirm" id="confirmBtn">Gửi ảnh</button>
+        <button class="action-btn btn-confirm" id="confirmBtn">Gửi ảnh ✨</button>
       </div>
     </div>
 
-    <canvas id="canvas" style="display: none;"></canvas>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+      <div class="spinner"></div>
+      <div class="loading-text">🤖 AI đang phân tích hóa đơn...<br/>Vui lòng chờ</div>
+    </div>
+
+    <!-- ══ RESULT PANEL (slide up) ══ -->
+    <div class="result-panel" id="resultPanel">
+      <div class="panel-handle"></div>
+      <div class="panel-header">
+        <span class="panel-title">Foods List</span>
+        <span class="panel-count" id="itemCount">0 sản phẩm</span>
+      </div>
+      <div class="panel-list" id="itemList">
+        <!-- render bởi JS -->
+      </div>
+      <div class="panel-footer">
+        <button class="btn-rescan" id="rescanBtn">📷 Chụp lại</button>
+        <button class="btn-save"   id="saveFridgeBtn">🧊 Thêm vào tủ lạnh</button>
+      </div>
+    </div>
+
+    <canvas id="canvas" style="display:none;"></canvas>
     <div class="toast" id="toast"></div>
   </div>
 
   <script>
-    const video = document.getElementById('video');
-    const canvas = document.getElementById('canvas');
-    const captureBtn = document.getElementById('captureBtn');
-    const thumbnail = document.getElementById('thumbnail');
-    const toast = document.getElementById('toast');
+    // ─────────────────────────────────────────────
+    //  CONFIG
+    // ─────────────────────────────────────────────
+    // Khi test trên điện thoại qua ngrok, đổi BASE_URL:
+    // const BASE_URL = "https://xxxx.ngrok-free.app";
+    const BASE_URL    = "";
+    const API_RECEIPT = `${BASE_URL}/api/v1/scan/receipt`;
+
+    // ─────────────────────────────────────────────
+    //  DOM refs
+    // ─────────────────────────────────────────────
+    const video          = document.getElementById('video');
+    const canvas         = document.getElementById('canvas');
+    const previewImg     = document.getElementById('previewImg');
+    const captureBtn     = document.getElementById('captureBtn');
+    const thumbnail      = document.getElementById('thumbnail');
+    const toast          = document.getElementById('toast');
     const confirmOverlay = document.getElementById('confirmOverlay');
     const bottomControls = document.getElementById('bottomControls');
-    const retakeBtn = document.getElementById('retakeBtn');
-    const confirmBtn = document.getElementById('confirmBtn');
-    const galleryBtn = document.getElementById('galleryBtn');
-    const fileInput = document.getElementById('fileInput');
+    const retakeBtn      = document.getElementById('retakeBtn');
+    const confirmBtn     = document.getElementById('confirmBtn');
+    const galleryBtn     = document.getElementById('galleryBtn');
+    const fileInput      = document.getElementById('fileInput');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const resultPanel    = document.getElementById('resultPanel');
+    const itemList       = document.getElementById('itemList');
+    const itemCount      = document.getElementById('itemCount');
+    const rescanBtn      = document.getElementById('rescanBtn');
+    const saveFridgeBtn  = document.getElementById('saveFridgeBtn');
 
-    // API Config
-    const API_CONFIG = {
-      BASE_URL: "/api/v1",
-      USER_ID: 1,
-      FRIDGE_ID: 1
-    };
+    let pendingBlob   = null;
+    let detectedItems = [];
 
+    // ─────────────────────────────────────────────
+    //  Emoji mapping
+    // ─────────────────────────────────────────────
+    const EMOJI_MAP = [
+      { keys: ['cà chua','tomato'],               emoji: '🍅' },
+      { keys: ['thịt bò','bò','beef'],            emoji: '🥩' },
+      { keys: ['thịt gà','gà','chicken'],         emoji: '🍗' },
+      { keys: ['thịt heo','heo','pork'],          emoji: '🥓' },
+      { keys: ['cá','fish'],                       emoji: '🐟' },
+      { keys: ['sữa','milk'],                      emoji: '🥛' },
+      { keys: ['trứng','egg'],                     emoji: '🥚' },
+      { keys: ['rau','cải','salad','lettuce'],     emoji: '🥬' },
+      { keys: ['táo','apple'],                     emoji: '🍎' },
+      { keys: ['chuối','banana'],                  emoji: '🍌' },
+      { keys: ['cam','orange'],                    emoji: '🍊' },
+      { keys: ['xoài','mango'],                    emoji: '🥭' },
+      { keys: ['nước','water','drink'],            emoji: '🥤' },
+      { keys: ['phô mai','cheese'],               emoji: '🧀' },
+      { keys: ['bơ','butter'],                     emoji: '🧈' },
+      { keys: ['bánh','bread'],                    emoji: '🍞' },
+      { keys: ['mì','noodle','pasta'],             emoji: '🍜' },
+      { keys: ['tỏi','garlic'],                    emoji: '🧄' },
+      { keys: ['hành','onion'],                    emoji: '🧅' },
+      { keys: ['cà rốt','carrot'],                emoji: '🥕' },
+      { keys: ['ớt','pepper'],                     emoji: '🌶️' },
+      { keys: ['dưa','cucumber','melon'],          emoji: '🍉' },
+    ];
+
+    function getEmoji(name) {
+      const n = (name || '').toLowerCase();
+      for (const { keys, emoji } of EMOJI_MAP) {
+        if (keys.some(k => n.includes(k))) return emoji;
+      }
+      return '🍱';
+    }
+
+    function calcExpiry(days) {
+      if (!days) return null;
+      const d = new Date();
+      d.setDate(d.getDate() + days);
+      return d.toLocaleDateString('vi-VN', { day:'2-digit', month:'2-digit', year:'numeric' });
+    }
+
+    // ─────────────────────────────────────────────
+    //  Camera init
+    // ─────────────────────────────────────────────
     async function initCamera() {
       if (!window.isSecureContext) {
-        showToast("⚠️ Camera yêu cầu HTTPS hoặc localhost để hoạt động");
-        console.error("Camera cannot be accessed in an insecure context.");
+        showToast('⚠️ Cần HTTPS hoặc ngrok để dùng Camera');
         return;
       }
-
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: 'environment' },
+          video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } },
           audio: false
         });
         video.srcObject = stream;
       } catch (err) {
-        showToast("❌ Không thể truy cập camera");
+        showToast('❌ Không mở được camera: ' + err.message);
       }
     }
 
-    captureBtn.onclick = () => {
-      const context = canvas.getContext('2d');
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    // ─────────────────────────────────────────────
+    //  Chụp ảnh
+    // ─────────────────────────────────────────────
+    captureBtn.addEventListener('click', () => {
+      if (!video.videoWidth) { showToast('⚠️ Camera chưa sẵn sàng!'); return; }
 
-      thumbnail.src = canvas.toDataURL('image/png');
+      canvas.width  = video.videoWidth;
+      canvas.height = video.videoHeight;
+      canvas.getContext('2d').drawImage(video, 0, 0);
+
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+      previewImg.src = dataUrl;
+      previewImg.style.display = 'block';
+      video.style.display = 'none';
+
+      thumbnail.src = dataUrl;
       thumbnail.style.display = 'block';
-      video.pause();
+
+      canvas.toBlob(blob => { pendingBlob = blob; }, 'image/jpeg', 0.85);
+
       bottomControls.style.display = 'none';
       confirmOverlay.classList.add('active');
-    };
+    });
 
-    retakeBtn.onclick = () => {
-      video.play();
+    // ─────────────────────────────────────────────
+    //  Chụp lại
+    // ─────────────────────────────────────────────
+    function resetToCamera() {
+      pendingBlob = null;
+      detectedItems = [];
+      previewImg.style.display = 'none';
+      previewImg.src = '';
+      video.style.display = 'block';
+      thumbnail.style.display = 'none';
+      thumbnail.src = '';
+      fileInput.value = '';
       confirmOverlay.classList.remove('active');
       bottomControls.style.display = 'block';
-      thumbnail.style.display = 'none';
-      fileInput.value = "";
-    };
-
-    galleryBtn.onclick = () => fileInput.click();
-
-    fileInput.onchange = (e) => {
-      if (e.target.files && e.target.files[0]) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          thumbnail.src = event.target.result;
-          thumbnail.style.display = 'block';
-          video.pause();
-          bottomControls.style.display = 'none';
-          confirmOverlay.classList.add('active');
-        };
-        reader.readAsDataURL(e.target.files[0]);
-      }
-    };
-
-    confirmBtn.onclick = () => {
-      if (thumbnail.src.startsWith('data:')) {
-        const blob = dataURLtoBlob(thumbnail.src);
-        processAndUpload(blob);
-      }
-    };
-
-    function dataURLtoBlob(dataurl) {
-      const arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1];
-      const bstr = atob(arr[1]);
-      let n = bstr.length;
-      const u8arr = new Uint8Array(n);
-      while(n--) u8arr[n] = bstr.charCodeAt(n);
-      return new Blob([u8arr], {type:mime});
+      resultPanel.classList.remove('open');
+      itemList.innerHTML = '';
     }
 
-    async function processAndUpload(fileBlob) {
+    retakeBtn.addEventListener('click', resetToCamera);
+    rescanBtn.addEventListener('click', resetToCamera);
+
+    // ─────────────────────────────────────────────
+    //  Chọn từ thư viện
+    // ─────────────────────────────────────────────
+    galleryBtn.addEventListener('click', () => fileInput.click());
+
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      pendingBlob = file;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        previewImg.src = ev.target.result;
+        previewImg.style.display = 'block';
+        video.style.display = 'none';
+        thumbnail.src = ev.target.result;
+        thumbnail.style.display = 'block';
+        bottomControls.style.display = 'none';
+        confirmOverlay.classList.add('active');
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // ─────────────────────────────────────────────
+    //  Gửi ảnh → gọi API → render result panel
+    // ─────────────────────────────────────────────
+    confirmBtn.addEventListener('click', async () => {
+      if (!pendingBlob) { showToast('❌ Không có ảnh để gửi!'); return; }
+
+      confirmOverlay.classList.remove('active');
+      loadingOverlay.classList.add('active');
       confirmBtn.disabled = true;
-      confirmBtn.innerText = "Đang quét...";
-      showToast("🚀 AI đang phân tích hóa đơn...");
-      
+      retakeBtn.disabled  = true;
+
+      const userId   = localStorage.getItem('userId')   || 1;
+      const fridgeId = localStorage.getItem('fridgeId') || 1;
+      const token    = localStorage.getItem('jwt_token');
+
       const formData = new FormData();
-      formData.append("file", fileBlob);
-      formData.append("userId", API_CONFIG.USER_ID);
-      formData.append("fridgeId", API_CONFIG.FRIDGE_ID);
+      formData.append('file',     pendingBlob, 'receipt.jpg');
+      formData.append('userId',   userId);
+      formData.append('fridgeId', fridgeId);
+
+      const headers = { 'ngrok-skip-browser-warning': 'true' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
 
       try {
-        const response = await fetch(`${API_CONFIG.BASE_URL}/scan/receipt`, {
-          method: "POST",
-          body: formData,
-          headers: {
-            "ngrok-skip-browser-warning": "69420"
-          }
-        });
+        const res = await fetch(API_RECEIPT, { method: 'POST', headers, body: formData });
 
-        if (!response.ok) throw new Error("Lỗi Backend");
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-        const data = await response.json();
-        localStorage.setItem('scannedItems', JSON.stringify(data.items || []));
-        showToast("✅ Thành công!");
-        setTimeout(() => window.location.href = 'food_list.html', 800);
-      } catch (err) {
-        showToast("❌ Lỗi xử lý ảnh!");
+        // ─── Đây là AiReceiptResponse { items: [...] } ───
+        const aiResult = await res.json();
+        console.log('AI Response:', aiResult);
+
+        detectedItems = aiResult.items || [];
+
+        loadingOverlay.classList.remove('active');
         confirmBtn.disabled = false;
-        confirmBtn.innerText = "Gửi lại";
+        retakeBtn.disabled  = false;
+
+        // Render kết quả và mở panel
+        renderResultPanel(detectedItems);
+        resultPanel.classList.add('open');
+
+      } catch (err) {
+        console.error('API Error:', err);
+        loadingOverlay.classList.remove('active');
+        confirmOverlay.classList.add('active');
+        confirmBtn.disabled = false;
+        retakeBtn.disabled  = false;
+        showToast('❌ Lỗi: ' + err.message);
       }
+    });
+
+    // ─────────────────────────────────────────────
+    //  Render result panel
+    // ─────────────────────────────────────────────
+    function renderResultPanel(items) {
+      itemList.innerHTML = '';
+
+      if (!items || items.length === 0) {
+        itemCount.textContent = '0 sản phẩm';
+        itemList.innerHTML = `
+          <div class="panel-empty">
+            <span class="panel-empty-icon">🔍</span>
+            AI không nhận diện được sản phẩm nào.<br/>Hãy chụp lại với ánh sáng tốt hơn.
+          </div>`;
+        return;
+      }
+
+      itemCount.textContent = `${items.length} sản phẩm`;
+
+      items.forEach((item, i) => {
+        const expiry = calcExpiry(item.estimated_expiry_days);
+        const metaParts = [];
+        if (item.quantity)           metaParts.push(`x${item.quantity}`);
+        if (expiry)                  metaParts.push(`HSD: ${expiry}`);
+        if (item.category)           metaParts.push(item.category);
+
+        const row = document.createElement('div');
+        row.className = 'item-row';
+        row.style.animationDelay = `${i * 55}ms`;
+        row.innerHTML = `
+          <div class="item-emoji">${getEmoji(item.product_name)}</div>
+          <div class="item-info">
+            <div class="item-name">${item.product_name || '(Không tên)'}</div>
+            ${metaParts.length ? `<div class="item-meta">${metaParts.join(' · ')}</div>` : ''}
+          </div>
+          ${item.price ? `<div class="item-badge">${Number(item.price).toLocaleString('vi-VN')}đ</div>` : ''}
+        `;
+        itemList.appendChild(row);
+      });
     }
 
-    function showToast(msg) {
+    // ─────────────────────────────────────────────
+    //  Lưu vào tủ lạnh
+    // ─────────────────────────────────────────────
+    saveFridgeBtn.addEventListener('click', () => {
+      if (detectedItems.length === 0) {
+        showToast('Không có sản phẩm để lưu!');
+        return;
+      }
+      // Lưu vào sessionStorage để food_list.html dùng nếu cần
+      sessionStorage.setItem('scannedItems', JSON.stringify(detectedItems));
+      showToast('✅ Đã lưu vào tủ lạnh!');
+      setTimeout(() => { window.location.href = 'food_list.html'; }, 900);
+    });
+
+    // ─────────────────────────────────────────────
+    //  Toast
+    // ─────────────────────────────────────────────
+    function showToast(msg, duration = 3000) {
       toast.textContent = msg;
       toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 3000);
+      setTimeout(() => toast.classList.remove('show'), duration);
     }
 
-    initCamera();
+    window.addEventListener('DOMContentLoaded', initCamera);
   </script>
 </body>
 </html>

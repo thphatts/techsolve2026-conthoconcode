@@ -4,6 +4,8 @@ import hackathon.fridgeai.dto.AuthDto.AuthResponse;
 import hackathon.fridgeai.dto.AuthDto.LoginRequest;
 import hackathon.fridgeai.dto.AuthDto.SignupRequest;
 import hackathon.fridgeai.entity.User;
+import hackathon.fridgeai.entity.Fridge;
+import hackathon.fridgeai.service.FridgeService;
 import hackathon.fridgeai.repository.UserRepository;
 import hackathon.fridgeai.security.CustomUserDetails;
 import hackathon.fridgeai.security.JwtService;
@@ -24,6 +26,7 @@ public class AuthService {
         private final PasswordEncoder passwordEncoder;
         private final JwtService jwtService;
         private final AuthenticationManager authenticationManager;
+        private final FridgeService fridgeService;
 
         @Transactional
         public AuthResponse signup(SignupRequest request) {
@@ -43,12 +46,20 @@ public class AuthService {
                 // Save and flush để đảm bảo lấy được ID ngay lập tức cho Token
                 User savedUser = userRepository.saveAndFlush(user);
 
+                // Tự động tạo một tủ lạnh mặc định cho người dùng mới
+                Fridge defaultFridge = fridgeService.createFridge(savedUser.getId());
+
                 // Cấp JWT
                 CustomUserDetails userDetails = new CustomUserDetails(savedUser);
                 String jwtToken = jwtService.generateToken(userDetails);
 
-                return AuthResponse.builder().token(jwtToken).userId(savedUser.getId())
-                                .name(savedUser.getName()).email(savedUser.getEmail()).build();
+                return AuthResponse.builder()
+                                .token(jwtToken)
+                                .userId(savedUser.getId())
+                                .name(savedUser.getName())
+                                .email(savedUser.getEmail())
+                                .fridgeId(defaultFridge.getId())
+                                .build();
         }
 
         public AuthResponse login(LoginRequest request) {
@@ -61,7 +72,14 @@ public class AuthService {
 
                 String jwtToken = jwtService.generateToken(new CustomUserDetails(user));
 
-                return AuthResponse.builder().token(jwtToken).userId(user.getId())
-                                .name(user.getName()).email(user.getEmail()).build();
+                Long userFridgeId = user.getFridges().isEmpty() ? null : user.getFridges().get(0).getId();
+
+                return AuthResponse.builder()
+                                .token(jwtToken)
+                                .userId(user.getId())
+                                .name(user.getName())
+                                .email(user.getEmail())
+                                .fridgeId(userFridgeId)
+                                .build();
         }
 }

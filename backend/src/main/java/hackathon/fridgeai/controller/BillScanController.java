@@ -28,6 +28,8 @@ public class BillScanController {
     @Value("${app.upload-dir}")
     private String uploadDir;
 
+    // Constructor được Lombok @RequiredArgsConstructor tự generate từ các final fields bên trên.
+
     @PostMapping("/receipt")
     public ResponseEntity<AiReceiptResponse> uploadReceipt(
             @RequestParam("file") MultipartFile file,

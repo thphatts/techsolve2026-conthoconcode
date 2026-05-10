@@ -4,17 +4,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>Danh Sách Thực Phẩm – Smart Fridge</title>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet" />
+  <title>Foods List – Smart Fridge</title>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet" />
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: 'Nunito', sans-serif;
+      font-family: 'VT323', monospace;
       background: #b8a050;
       display: flex;
       align-items: center;
@@ -31,98 +27,83 @@
       overflow: hidden;
       position: relative;
       background: #fff;
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.5);
       display: flex;
       flex-direction: column;
     }
 
     /* ── Header ── */
     .header {
-      position: relative;
       width: 100%;
       height: 110px;
+      background: #F8F9CA;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      border-bottom: 2px solid #DDE0A0;
       flex-shrink: 0;
     }
 
-    .header-bg {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      image-rendering: pixelated;
+    .title-badge {
+      background: #E4E7A8;
+      padding: 6px 28px;
+      border-radius: 10px;
+      font-size: 34px;
+      color: #111;
+      letter-spacing: 1px;
     }
 
     .add-btn {
       position: absolute;
-      top: 15px;
       right: 15px;
-      width: 60px;
-      height: 75px;
+      top: 50%;
+      transform: translateY(-50%);
       display: flex;
       flex-direction: column;
       align-items: center;
-      text-decoration: none;
-      color: #000;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      gap: 3px;
     }
-
     .add-btn img {
-      width: 45px;
-      height: auto;
+      width: 40px; height: 40px;
       image-rendering: pixelated;
+      background: #EAEBBE;
+      border-radius: 8px;
+      padding: 5px;
     }
-
-    .add-btn span {
-      font-size: 9px;
-      font-weight: 800;
-      margin-top: 2px;
-      text-align: center;
-      line-height: 1;
-    }
+    .add-btn span { font-size: 13px; color: #333; }
 
     /* ── Content ── */
     .content {
       flex: 1;
-      padding: 20px;
+      padding: 14px 18px;
       display: flex;
       flex-direction: column;
-      gap: 15px;
-      background: #f0faff; /* Light blueish tint */
+      gap: 10px;
+      overflow-y: auto;
+      background: #f5fbff;
     }
+    .content::-webkit-scrollbar { display: none; }
 
-    .date {
-      font-size: 18px;
-      font-weight: 900;
-      color: #333;
-    }
+    .date { font-size: 22px; color: #222; }
 
     .note-area {
-      position: relative;
       width: 100%;
-      height: 45px;
+      height: 44px;
+      background: #B2D3C2;
+      border-radius: 8px;
       display: flex;
       align-items: center;
-      padding: 0 15px;
-    }
-
-    .note-bg {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: fill;
-      image-rendering: pixelated;
-      z-index: 0;
-    }
-
-    .note-area span {
-      position: relative;
-      z-index: 1;
-      font-size: 16px;
-      font-weight: 800;
+      padding: 0 14px;
+      font-size: 22px;
       color: #333;
+      flex-shrink: 0;
     }
 
-    /* ── Food Items ── */
+    /* ── Food list ── */
     .food-items {
       display: flex;
       flex-direction: column;
@@ -130,439 +111,249 @@
     }
 
     .food-row {
-      background: #e6edf0;
-      border-radius: 12px;
-      height: 55px;
+      background: #E6ECEF;
+      border-radius: 10px;
+      height: 56px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      padding: 0 20px;
-      box-shadow: 0 2px 0 rgba(0,0,0,0.05);
+      padding: 0 14px;
+      gap: 12px;
+      animation: fadeSlideIn 0.3s ease both;
     }
 
-    .food-row span {
-      font-size: 20px;
-      font-weight: 900;
-      color: #000;
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .food-icon { font-size: 26px; line-height: 1; }
+
+    .food-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .food-name {
+      font-size: 24px;
+      color: #111;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .food-meta {
+      font-family: 'Nunito', sans-serif;
+      font-size: 10px;
+      color: #888;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .edit-icon {
-      width: 24px;
+      width: 22px; height: 22px;
       image-rendering: pixelated;
+      opacity: 0.55;
       cursor: pointer;
+      flex-shrink: 0;
     }
+    .edit-icon:hover { opacity: 0.9; }
 
     .empty-row {
-      background: #e6edf0;
-      border-radius: 12px;
-      height: 55px;
+      background: #E6ECEF;
+      border-radius: 10px;
+      height: 56px;
       display: flex;
       align-items: center;
       justify-content: flex-end;
-      padding: 0 20px;
-      opacity: 0.8;
+      padding: 0 14px;
+      opacity: 0.75;
     }
 
-    /* --- ADDED FOR MANUAL ADD FEATURE & ROW EDITING --- */
-    .note-area {
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .note-area:active {
-      opacity: 0.8;
-    }
-
-    .edit-form-container {
-      display: none; /* Hidden by default */
-      background: #fff;
-      border: 2px solid #ed89b5;
-      border-radius: 16px;
-      padding: 12px;
+    /* ── Empty state (khi AI không tìm thấy gì) ── */
+    .empty-state {
+      display: flex;
       flex-direction: column;
-      gap: 10px;
-      margin-top: -5px;
-      margin-bottom: 5px;
-      box-shadow: 0 4px 10px rgba(237, 137, 181, 0.15);
-      animation: slideDown 0.3s ease-out;
-    }
-
-    @keyframes slideDown {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .edit-form-container.active {
-      display: flex;
-    }
-
-    .form-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .form-label {
-      font-size: 13px;
-      font-weight: 800;
-      color: #555;
-    }
-
-    /* Quantity Counter */
-    .counter {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: #fdf2f7;
-      border-radius: 20px;
-      padding: 2px 6px;
-      border: 1.5px solid #ffdae9;
-    }
-
-    .counter-btn {
-      width: 26px;
-      height: 26px;
-      border-radius: 50%;
-      border: none;
-      background: #ed89b5;
-      color: #fff;
-      font-weight: 900;
-      font-size: 16px;
-      cursor: pointer;
-      display: flex;
       align-items: center;
       justify-content: center;
-      line-height: 1;
+      gap: 10px;
+      padding: 30px 0;
+      color: #aaa;
     }
+    .empty-state-icon { font-size: 48px; }
+    .empty-state-text { font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 700; text-align: center; }
 
-    .counter-input {
-      width: 35px;
-      text-align: center;
-      border: none;
-      background: transparent;
+    /* ── Toast ── */
+    .toast {
+      position: absolute;
+      bottom: 30px; left: 50%;
+      transform: translateX(-50%) translateY(10px);
+      background: rgba(0,0,0,0.8);
+      color: #fff; padding: 10px 22px;
+      border-radius: 25px; font-size: 14px; font-weight: 700;
       font-family: 'Nunito', sans-serif;
-      font-weight: 900;
-      font-size: 15px;
-      color: #333;
-      outline: none;
+      opacity: 0; transition: all 0.3s;
+      z-index: 100; pointer-events: none;
+      white-space: nowrap;
     }
-
-    /* Expiry Input */
-    .expiry-input, .name-input {
-      width: 130px;
-      padding: 6px 12px;
-      border-radius: 12px;
-      border: 1.5px solid #ffdae9;
-      background: #fdf2f7;
-      font-family: 'Nunito', sans-serif;
-      font-size: 13px;
-      font-weight: 700;
-      outline: none;
-      text-align: center;
-      color: #333;
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-
-    .expiry-input:focus, .name-input:focus {
-      border-color: #ed89b5;
-      box-shadow: 0 0 0 3px rgba(237, 137, 181, 0.2);
-    }
-
-    .name-input {
-      width: 100%; /* Name takes full width in its item row */
-      text-align: left;
-    }
-    /* ------------------------------------ */
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   </style>
 </head>
 
 <body>
   <div class="phone">
-    <!-- Header -->
     <header class="header">
-      <img src="../assets/Food-list/iPhone13&14-4(1).png" alt="Header" class="header-bg" />
-      <a href="Index.html" class="add-btn">
+      <div class="title-badge">Foods List</div>
+      <button class="add-btn" id="saveToFridgeBtn">
         <img src="../assets/Food-list/exits.png" alt="Add to Fridge" />
         <span>Add to Fridge</span>
-      </a>
+      </button>
     </header>
 
-    <!-- Main Content -->
     <div class="content">
-      <p class="date" id="dateDisplay">Ngày mua: 9/9/2026</p>
+      <div class="date" id="dateDisplay">Day: --/--/----</div>
 
-      <!-- Manual Add Trigger -->
-      <div class="note-area" id="manualAddTrigger">
-        <img src="../assets/Food-list/food-frame.png" alt="Note Frame" class="note-bg" />
-        <span>Thêm sản phẩm khác</span>
-      </div>
+      <div class="note-area">Type note:</div>
 
-      <!-- Manual Add Form -->
-      <div class="edit-form-container" id="manualAddForm">
-        <div class="form-item">
-          <span class="form-label">Tên sản phẩm:</span>
-          <input type="text" class="name-input" placeholder="Ví dụ: Táo Mỹ...">
-        </div>
-        <div class="form-item">
-          <span class="form-label">Số lượng:</span>
-          <div class="counter">
-            <button class="counter-btn qty-minus">-</button>
-            <input type="number" class="counter-input qty-input" value="1" min="1" inputmode="numeric">
-            <button class="counter-btn qty-plus">+</button>
-          </div>
-        </div>
-        <div class="form-item">
-          <span class="form-label">Hạn sử dụng:</span>
-          <input type="text" class="expiry-input date-mask" placeholder="dd/mm/yyyy" maxlength="10">
-        </div>
-      </div>
-
-      <!-- Food List Items -->
       <div class="food-items" id="foodItemsList">
-        <!-- Item 1 -->
-        <div class="food-item-group">
-          <div class="food-row">
-            <span>Cà chua</span>
-            <img src="../assets/Food-list/edit.png" alt="Edit" class="edit-icon" />
-          </div>
-          <div class="edit-form-container">
-            <div class="form-item">
-              <span class="form-label">Số lượng:</span>
-              <div class="counter">
-                <button class="counter-btn qty-minus">-</button>
-                <input type="number" class="counter-input qty-input" value="2" min="1">
-                <button class="counter-btn qty-plus">+</button>
-              </div>
-            </div>
-            <div class="form-item">
-              <span class="form-label">Hạn sử dụng:</span>
-              <input type="text" class="expiry-input date-mask" value="15/05/2026" maxlength="10">
-            </div>
-          </div>
-        </div>
-
-        <!-- Item 2 -->
-        <div class="food-item-group">
-          <div class="food-row">
-            <span>Thịt bò</span>
-            <img src="../assets/Food-list/edit.png" alt="Edit" class="edit-icon" />
-          </div>
-          <div class="edit-form-container">
-            <div class="form-item">
-              <span class="form-label">Số lượng:</span>
-              <div class="counter">
-                <button class="counter-btn qty-minus">-</button>
-                <input type="number" class="counter-input qty-input" value="1" min="1">
-                <button class="counter-btn qty-plus">+</button>
-              </div>
-            </div>
-            <div class="form-item">
-              <span class="form-label">Hạn sử dụng:</span>
-              <input type="text" class="expiry-input date-mask" value="20/05/2026" maxlength="10">
-            </div>
-          </div>
-        </div>
-        
-        <!-- Empty Rows -->
-        <div class="empty-row"><img src="../assets/Food-list/edit.png" alt="Edit" class="edit-icon" /></div>
-        <div class="empty-row"><img src="../assets/Food-list/edit.png" alt="Edit" class="edit-icon" /></div>
+        <!-- Render bởi JS -->
       </div>
     </div>
   </div>
+  <div class="toast" id="toast"></div>
 
   <script>
-    /* --- 
-       DATA & API LOGIC: HANDLING SCANNED ITEMS
-       This block manages the population of the list from AI results
-       and provides utilities for formatting and editing.
-    --- */
-    
-    const DATE_CONFIG = {
-      LOCALE: 'vi-VN',
-      FORMAT: { day: '2-digit', month: '2-digit', year: 'numeric' }
-    };
+    // ============================================================
+    //  Map tên sản phẩm → Emoji icon
+    // ============================================================
+    const EMOJI_MAP = [
+      { keys: ['cà chua', 'tomato'],              emoji: '🍅' },
+      { keys: ['thịt bò', 'bò', 'beef'],          emoji: '🥩' },
+      { keys: ['thịt gà', 'gà', 'chicken'],       emoji: '🍗' },
+      { keys: ['thịt heo', 'heo', 'pork'],        emoji: '🥓' },
+      { keys: ['cá', 'fish'],                      emoji: '🐟' },
+      { keys: ['sữa', 'milk'],                     emoji: '🥛' },
+      { keys: ['trứng', 'egg'],                    emoji: '🥚' },
+      { keys: ['rau', 'cải', 'salad', 'lettuce'], emoji: '🥬' },
+      { keys: ['táo', 'apple'],                    emoji: '🍎' },
+      { keys: ['chuối', 'banana'],                 emoji: '🍌' },
+      { keys: ['cam', 'orange'],                   emoji: '🍊' },
+      { keys: ['xoài', 'mango'],                   emoji: '🥭' },
+      { keys: ['nước', 'water', 'drink'],          emoji: '🥤' },
+      { keys: ['phô mai', 'cheese'],               emoji: '🧀' },
+      { keys: ['bơ', 'butter'],                    emoji: '🧈' },
+      { keys: ['bánh', 'bread'],                   emoji: '🍞' },
+      { keys: ['mì', 'noodle', 'pasta'],           emoji: '🍜' },
+      { keys: ['tỏi', 'garlic'],                   emoji: '🧄' },
+      { keys: ['hành', 'onion'],                   emoji: '🧅' },
+      { keys: ['cà rốt', 'carrot'],                emoji: '🥕' },
+      { keys: ['ớt', 'pepper'],                    emoji: '🌶️' },
+      { keys: ['dưa', 'cucumber', 'melon'],        emoji: '🍉' },
+    ];
 
-    // Initialize Page
-    window.addEventListener('DOMContentLoaded', () => {
-      updateDisplayDate();
-      loadScannedItems();
-      initializeGlobalListeners();
-    });
-
-    function updateDisplayDate() {
-      const now = new Date();
-      const formattedDate = now.toLocaleDateString(DATE_CONFIG.LOCALE, DATE_CONFIG.FORMAT);
-      document.getElementById('dateDisplay').textContent = `Ngày mua: ${formattedDate}`;
-    }
-
-    function loadScannedItems() {
-      const scannedData = localStorage.getItem('scannedItems');
-      if (!scannedData) return;
-
-      try {
-        const items = JSON.parse(scannedData);
-        if (items && items.length > 0) {
-          const list = document.getElementById('foodItemsList');
-          
-          // Get all potential slots (mock groups and empty rows)
-          let slots = Array.from(list.querySelectorAll('.food-item-group, .empty-row'));
-          
-          items.forEach((item, index) => {
-            const expiryStr = calculateExpiryDate(item.estimated_expiry_days || 7);
-            
-            if (index < slots.length) {
-              // Re-use existing slot
-              const currentSlot = slots[index];
-              
-              if (currentSlot.classList.contains('empty-row')) {
-                // Convert empty-row to a full food-item-group
-                currentSlot.classList.remove('empty-row');
-                currentSlot.classList.add('food-row');
-                currentSlot.innerHTML = `
-                  <span>${item.product_name}</span>
-                  <img src="../assets/Food-list/Edit.png" alt="Edit" class="edit-icon" />
-                `;
-                
-                // Add the hidden edit form after it
-                const form = createEditForm(item, expiryStr);
-                currentSlot.parentNode.insertBefore(form, currentSlot.nextSibling);
-                
-                // Wrap them in a group for consistency
-                const group = document.createElement('div');
-                group.className = 'food-item-group';
-                currentSlot.parentNode.insertBefore(group, currentSlot);
-                group.appendChild(currentSlot);
-                group.appendChild(form);
-              } else {
-                // Update existing mock group
-                const nameSpan = currentSlot.querySelector('.food-row span');
-                if(nameSpan) nameSpan.textContent = item.product_name;
-                
-                const qtyInput = currentSlot.querySelector('.qty-input');
-                if(qtyInput) qtyInput.value = item.quantity || 1;
-                
-                const expiryInput = currentSlot.querySelector('.date-mask');
-                if(expiryInput) expiryInput.value = expiryStr;
-              }
-            } else {
-              // Create new slot if we ran out
-              list.appendChild(createFoodItemGroup(item));
-            }
-          });
-
-          // Optional: Remove remaining empty rows if you want a tight list
-          // list.querySelectorAll('.empty-row').forEach(r => r.remove());
-        }
-      } catch (e) {
-        console.error("Lỗi đổ dữ liệu AI:", e);
+    function getEmoji(name) {
+      const n = (name || '').toLowerCase();
+      for (const { keys, emoji } of EMOJI_MAP) {
+        if (keys.some(k => n.includes(k))) return emoji;
       }
+      return '🍱';
     }
 
-    function createEditForm(item, expiryStr) {
-      const div = document.createElement('div');
-      div.className = 'edit-form-container';
-      div.innerHTML = `
-        <div class="form-item">
-          <span class="form-label">Số lượng:</span>
-          <div class="counter">
-            <button class="counter-btn qty-minus">-</button>
-            <input type="number" class="counter-input qty-input" value="${item.quantity || 1}" min="1" inputmode="numeric">
-            <button class="counter-btn qty-plus">+</button>
-          </div>
-        </div>
-        <div class="form-item">
-          <span class="form-label">Hạn sử dụng:</span>
-          <input type="text" class="expiry-input date-mask" value="${expiryStr}" placeholder="dd/mm/yyyy" maxlength="10">
-        </div>
-      `;
-      attachFormListeners(div);
-      return div;
-    }
-
-    function createFoodItemGroup(item) {
-      const expiryStr = calculateExpiryDate(item.estimated_expiry_days || 7);
-      const div = document.createElement('div');
-      div.className = 'food-item-group';
-      div.innerHTML = `
-        <div class="food-row">
-          <span>${item.product_name}</span>
-          <img src="../assets/Food-list/Edit.png" alt="Edit" class="edit-icon" />
-        </div>
-      `;
-      div.appendChild(createEditForm(item, expiryStr));
-      return div;
-    }
-
-    function calculateExpiryDate(days) {
+    // ============================================================
+    //  Format ngày hết hạn từ số ngày
+    // ============================================================
+    function calcExpiry(days) {
+      if (!days) return null;
       const d = new Date();
       d.setDate(d.getDate() + days);
-      return d.toLocaleDateString(DATE_CONFIG.LOCALE, DATE_CONFIG.FORMAT);
+      return d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
     }
 
-    /* --- FORM UTILITIES --- */
-    function attachFormListeners(container) {
-      // Counter Logic
-      const input = container.querySelector('.qty-input');
-      const minus = container.querySelector('.qty-minus');
-      const plus = container.querySelector('.qty-plus');
-      
-      if(input) {
-        // Auto-select text on focus for easier mobile input
-        input.onfocus = () => input.select();
+    // ============================================================
+    //  Render danh sách
+    // ============================================================
+    function renderItems(items) {
+      const list = document.getElementById('foodItemsList');
+      list.innerHTML = '';
+
+      if (!items || items.length === 0) {
+        list.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">🔍</div>
+            <div class="empty-state-text">AI không nhận diện được sản phẩm nào.<br/>Hãy thử chụp lại với ánh sáng tốt hơn.</div>
+          </div>`;
+        return;
       }
 
-      if(minus) minus.onclick = () => { let v = parseInt(input.value)||1; if(v>1) input.value = v-1; };
-      if(plus) plus.onclick = () => { let v = parseInt(input.value)||0; input.value = v+1; };
+      // Render các item thật từ AI
+      items.forEach((item, i) => {
+        const expiry   = calcExpiry(item.estimated_expiry_days);
+        const qty      = item.quantity    ? `x${item.quantity}` : '';
+        const cat      = item.category    ? `[${item.category}]` : '';
+        const meta     = [qty, expiry ? `HSD: ${expiry}` : '', cat].filter(Boolean).join(' · ');
 
-      // Date Masking Logic
-      const dateInput = container.querySelector('.date-mask');
-      if(dateInput) {
-        dateInput.oninput = (e) => {
-          let v = e.target.value.replace(/\D/g, '');
-          if (v.length > 8) v = v.slice(0, 8);
-          let out = "";
-          if (v.length > 0) out += v.slice(0, 2);
-          if (v.length > 2) out += "/" + v.slice(2, 4);
-          if (v.length > 4) out += "/" + v.slice(4, 8);
-          e.target.value = out;
-        };
+        const row = document.createElement('div');
+        row.className = 'food-row';
+        row.style.animationDelay = `${i * 60}ms`;
+        row.innerHTML = `
+          <div class="food-icon">${getEmoji(item.product_name)}</div>
+          <div class="food-info">
+            <div class="food-name">${item.product_name || '(Không tên)'}</div>
+            ${meta ? `<div class="food-meta">${meta}</div>` : ''}
+          </div>
+          <img src="../assets/Food-list/edit.png" alt="Edit" class="edit-icon" />
+        `;
+        list.appendChild(row);
+      });
+
+      // Điền thêm ô trống cho đẹp (tối đa 7 slots)
+      const TOTAL_SLOTS = 7;
+      const emptyCount = Math.max(0, TOTAL_SLOTS - items.length);
+      for (let i = 0; i < emptyCount; i++) {
+        const empty = document.createElement('div');
+        empty.className = 'empty-row';
+        empty.innerHTML = `<img src="../assets/Food-list/edit.png" alt="" class="edit-icon" />`;
+        list.appendChild(empty);
       }
     }
 
-    function initializeGlobalListeners() {
-      // Manual Add Toggle
-      const manualTrigger = document.getElementById('manualAddTrigger');
-      const manualForm = document.getElementById('manualAddForm');
-      if(manualTrigger) {
-        manualTrigger.onclick = () => manualForm.classList.toggle('active');
-        attachFormListeners(manualForm);
+    // ============================================================
+    //  Init
+    // ============================================================
+    window.addEventListener('DOMContentLoaded', () => {
+      // Ngày hôm nay
+      const now = new Date();
+      document.getElementById('dateDisplay').textContent =
+        `Day: ${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()}`;
+
+      // Đọc dữ liệu AI từ sessionStorage (được lưu bởi camera.html)
+      let items = [];
+      try {
+        const raw = sessionStorage.getItem('scannedItems');
+        if (raw) items = JSON.parse(raw);
+      } catch (e) {
+        console.error('Parse scannedItems error:', e);
       }
 
-      // Row Edit Toggle (Event Delegation)
-      document.getElementById('foodItemsList').onclick = (e) => {
-        if (e.target.classList.contains('edit-icon')) {
-          const group = e.target.closest('.food-item-group');
-          if (group) {
-            const form = group.querySelector('.edit-form-container');
-            if (form) form.classList.toggle('active');
-          } else if (e.target.closest('.empty-row')) {
-            // If clicking empty row, maybe redirect to manual add or alert
-            manualForm.classList.add('active');
-            manualForm.scrollIntoView({ behavior: 'smooth' });
-          }
-        }
-      };
+      renderItems(items);
 
-      // Final Submission
-      document.querySelector('.add-btn').onclick = (e) => {
-        e.preventDefault();
-        // Here we would normally collect all data and send to /api/v1/fridges/1/items (Bulk Add)
-        alert("🎉 Đã lưu tất cả thực phẩm vào tủ lạnh!");
-        localStorage.removeItem('scannedItems');
-        window.location.href = 'tu_lanh.html';
-      };
+      // BUG-8 fix: Nút "Add to Fridge" → toast + navigate thật sự
+      document.getElementById('saveToFridgeBtn').addEventListener('click', () => {
+        sessionStorage.removeItem('scannedItems');
+        showToast('🎉 Đã thêm vào tủ lạnh!');
+        setTimeout(() => { window.location.href = 'tu_lanh.html'; }, 900);
+      });
+    });
+
+    function showToast(msg, duration = 2500) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), duration);
     }
-    /* --- END DATA LOGIC --- */
   </script>
 </body>
-
 </html>

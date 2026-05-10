@@ -254,26 +254,19 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      overflow: hidden;
+      overflow: hidden; /* giữ hidden để bo góc điện thoại hoạt động đúng */
     }
 
     .cam-modal.show {
       display: flex;
     }
 
-    .cam-full-img {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      image-rendering: pixelated;
-      z-index: 1002;
-      pointer-events: none;
-    }
+    /* .cam-full-img removed – unused class (BUG-10) */
 
     #camStream {
+      position: absolute; /* Add this */
+      top: 0;             /* Add this */
+      left: 0;            /* Add this */
       width: 100%;
       height: 100%;
       object-fit: cover;
@@ -349,6 +342,167 @@
       opacity: 1;
       transform: translateX(-50%) translateY(0);
     }
+
+    /* ── Upload btn (trong cam modal) ── */
+    .cam-upload-area {
+      position: absolute;
+      bottom: 130px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      z-index: 1005;
+    }
+
+    .cam-upload-btn {
+      background: rgba(0,0,0,0.55);
+      border: 3px solid #fff;
+      color: #fff;
+      font-family: 'VT323', monospace;
+      font-size: 22px;
+      padding: 8px 22px;
+      cursor: pointer;
+      letter-spacing: 1px;
+      transition: background 0.2s;
+    }
+    .cam-upload-btn:hover { background: rgba(255,255,255,0.15); }
+
+    .cam-loading {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.72);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      z-index: 2001;
+    }
+    .cam-loading.show { display: flex; }
+    .cam-spinner {
+      width: 48px; height: 48px;
+      border: 5px solid rgba(255,255,255,0.2);
+      border-top-color: #00e5a0;
+      border-radius: 50%;
+      animation: spin 0.75s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .cam-loading-text {
+      font-size: 20px; color: #00e5a0;
+      font-family: 'VT323', monospace;
+      letter-spacing: 1px;
+      text-align: center;
+    }
+
+    /* ── Result panel (slide up từ dưới) ── */
+    .result-panel {
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 100%;
+      transform: translateY(100%);
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      background: #fff;
+      border-radius: 20px 20px 0 0;
+      box-shadow: 0 -8px 32px rgba(0,0,0,0.3);
+      /* Nằm ngoài cam-modal nên chỉ cần cao hơn cam-modal z-index:1000 */
+      z-index: 1200;
+      display: flex;
+      flex-direction: column;
+      max-height: 72%;
+    }
+    .result-panel.open { transform: translateY(0); }
+
+    .panel-handle {
+      width: 40px; height: 4px;
+      background: #ccc; border-radius: 4px;
+      margin: 12px auto 0;
+      flex-shrink: 0;
+    }
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 18px 6px;
+      flex-shrink: 0;
+    }
+    .panel-title {
+      font-size: 28px; color: #111;
+    }
+    .panel-count {
+      font-family: 'Nunito', sans-serif;
+      font-size: 12px; font-weight: 800;
+      color: #00aa77;
+      background: #e6fff5;
+      padding: 3px 10px; border-radius: 20px;
+    }
+
+    .panel-list {
+      overflow-y: auto;
+      padding: 4px 16px 0;
+      flex: 1;
+    }
+    .panel-list::-webkit-scrollbar { display: none; }
+
+    .item-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid #f0f0f0;
+      animation: fadeIn 0.3s ease both;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateX(-10px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    .item-row:last-child { border-bottom: none; }
+    .item-emoji { font-size: 28px; flex-shrink: 0; }
+    .item-info { flex: 1; min-width: 0; }
+    .item-name {
+      font-size: 24px; color: #111;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .item-meta {
+      font-family: 'Nunito', sans-serif;
+      font-size: 10px; font-weight: 700; color: #999; margin-top: 1px;
+    }
+    .item-price {
+      font-family: 'Nunito', sans-serif;
+      font-size: 11px; font-weight: 800;
+      background: #f0f8ff; color: #5aaadd;
+      padding: 3px 8px; border-radius: 10px;
+      flex-shrink: 0;
+    }
+
+    .panel-empty {
+      text-align: center; padding: 28px 20px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 13px; color: #aaa; font-weight: 700;
+    }
+    .panel-empty-icon { font-size: 40px; display: block; margin-bottom: 8px; }
+
+    .panel-footer {
+      padding: 12px 16px 20px;
+      display: flex; gap: 10px;
+      flex-shrink: 0;
+      border-top: 1px solid #eee;
+    }
+    .btn-rescan {
+      flex: 1; padding: 12px;
+      border: 2px solid #00aa77; border-radius: 12px;
+      background: #fff; color: #00aa77;
+      font-family: 'VT323', monospace; font-size: 20px;
+      cursor: pointer;
+    }
+    .btn-save {
+      flex: 2; padding: 12px;
+      border: none; border-radius: 12px;
+      background: #00aa77; color: #fff;
+      font-family: 'VT323', monospace; font-size: 20px;
+      cursor: pointer;
+    }
   </style>
 </head>
 
@@ -389,79 +543,255 @@
 
     <div class="cam-modal" id="camModal">
       <video id="camStream" autoplay playsinline></video>
-      <img src="../assets/manhinhchupbill.png" class="cam-full-img" alt="Giao diện chụp hóa đơn" />
       <div class="cam-flash" id="camFlash"></div>
 
       <button class="cam-overlay-close" id="closeCamBtn">Đóng</button>
+
+      <!-- Nút chụp ảnh -->
       <img src="../assets/camera.png" class="cam-capture-btn" id="captureBtn" alt="Chụp ảnh">
+
+      <!-- Nút upload ảnh -->
+      <div class="cam-upload-area">
+        <input type="file" id="uploadFileInput" accept="image/*" style="display:none;" />
+        <button class="cam-upload-btn" id="uploadBtn">📁 Upload ảnh từ máy</button>
+      </div>
+
+      <!-- Loading overlay (bên trong modal) -->
+      <div class="cam-loading" id="camLoading">
+        <div class="cam-spinner"></div>
+        <div class="cam-loading-text">🤖 AI đang phân tích...<br/>Vui lòng chờ</div>
+      </div>
+    </div>
+
+    <!-- Result Panel ─ Đặt ĐÂY, trong .phone nhưng NGOÀI cam-modal
+         → sử dụng position:fixed so với .phone để slide lên trên camera -->
+    <div class="result-panel" id="resultPanel">
+      <div class="panel-handle"></div>
+      <div class="panel-header">
+        <span class="panel-title">Foods List</span>
+        <span class="panel-count" id="itemCount">0 sản phẩm</span>
+      </div>
+      <div class="panel-list" id="itemList"></div>
+      <div class="panel-footer">
+        <button class="btn-rescan" id="rescanBtn">📷 Chụp lại</button>
+        <button class="btn-save"   id="saveFridgeBtn">🧊 Lưu vào tủ</button>
+      </div>
     </div>
 
     <div class="toast" id="toast"></div>
   </div>
 
   <script>
-    // Fridge hover effect
+    // ─── Config ───
+    const BASE_URL    = ""; // thay bằng ngrok URL khi test điện thoại
+    const API_RECEIPT = `${BASE_URL}/api/v1/scan/receipt`;
+
+    const EMOJI_MAP = [
+      { keys: ['cà chua','tomato'],              emoji: '🍅' },
+      { keys: ['thịt bò','bò','beef'],           emoji: '🥩' },
+      { keys: ['thịt gà','gà','chicken'],        emoji: '🍗' },
+      { keys: ['thịt heo','heo','pork'],          emoji: '🥓' },
+      { keys: ['cá','fish'],                       emoji: '🐟' },
+      { keys: ['sữa','milk'],                      emoji: '🥛' },
+      { keys: ['trứng','egg'],                     emoji: '🥚' },
+      { keys: ['rau','cải','salad'],               emoji: '🥬' },
+      { keys: ['táo','apple'],                     emoji: '🍎' },
+      { keys: ['chuối','banana'],                  emoji: '🍌' },
+      { keys: ['cam','orange'],                    emoji: '🍊' },
+      { keys: ['xoài','mango'],                    emoji: '🥭' },
+      { keys: ['nước','water'],                   emoji: '🥤' },
+      { keys: ['phô mai','cheese'],               emoji: '🧀' },
+      { keys: ['bơ','butter'],                     emoji: '🧈' }, // BUG-12 fix: 🧨→🧈
+      { keys: ['bánh','bread'],                    emoji: '🍞' },
+      { keys: ['mì','noodle'],                     emoji: '🍜' },
+    ];
+
+    function getEmoji(name) {
+      const n = (name || '').toLowerCase();
+      for (const { keys, emoji } of EMOJI_MAP) {
+        if (keys.some(k => n.includes(k))) return emoji;
+      }
+      return '🍱';
+    }
+
+    function calcExpiry(days) {
+      if (!days) return null;
+      const d = new Date();
+      d.setDate(d.getDate() + days);
+      return d.toLocaleDateString('vi-VN', { day:'2-digit', month:'2-digit', year:'numeric' });
+    }
+
+    // ─── Fridge hover ───
     const fridgeImg = document.getElementById('fridgeImg');
-    fridgeImg.addEventListener('mouseenter', () => {
-      fridgeImg.src = '../assets/tulanhmo.gif';
-    });
-    fridgeImg.addEventListener('mouseleave', () => {
-      fridgeImg.src = '../assets/tulanh.png';
-    });
+    fridgeImg.addEventListener('mouseenter', () => fridgeImg.src = '../assets/tulanhmo.gif');
+    fridgeImg.addEventListener('mouseleave', () => fridgeImg.src = '../assets/tulanh.png');
 
-    // Camera button → Open Modal & Start Stream
-    const camModal = document.getElementById('camModal');
-    const video = document.getElementById('camStream');
-    const flash = document.getElementById('camFlash');
+    // ─── Camera refs ───
+    const camModal     = document.getElementById('camModal');
+    const camStream    = document.getElementById('camStream');
+    const flash        = document.getElementById('camFlash');
+    const camLoading   = document.getElementById('camLoading');
+    const resultPanel  = document.getElementById('resultPanel');
+    const itemList     = document.getElementById('itemList');
+    const itemCount    = document.getElementById('itemCount');
+    const uploadInput  = document.getElementById('uploadFileInput');
     let stream = null;
+    let detectedItems = [];
 
+    // ─── Start / Stop camera ───
     async function startCamera() {
       try {
         stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-        video.srcObject = stream;
+        camStream.srcObject = stream;
+        await camStream.play();
       } catch (err) {
-        console.error("Lỗi truy cập camera: ", err);
         showToast('❌ Không thể truy cập camera');
       }
     }
-
     function stopCamera() {
-      if (stream) {
-        stream.getTracks().forEach(track => track.stop());
-        stream = null;
+      stream?.getTracks().forEach(t => t.stop());
+      stream = null;
+    }
+
+    // ─── Open / Close modal ───
+    document.getElementById('camBtnImg').addEventListener('click', () => {
+      stopCamera(); // BUG-6 fix: dừng stream cũ trước khi mở mới
+      camModal.classList.add('show');
+      resultPanel.classList.remove('open');
+      itemList.innerHTML = '';
+      startCamera();
+    });
+    document.getElementById('closeCamBtn').addEventListener('click', () => {
+      camModal.classList.remove('show');
+      resultPanel.classList.remove('open');
+      stopCamera();
+    });
+
+    // ─── Gọi API scan ───
+    async function callScanAPI(blob, filename) {
+      camLoading.classList.add('show');
+
+      const userId   = localStorage.getItem('userId')   || 1;
+      const fridgeId = localStorage.getItem('fridgeId') || 1;
+      const token    = localStorage.getItem('jwt_token');
+
+      const formData = new FormData();
+      formData.append('file',     blob, filename);
+      formData.append('userId',   userId);
+      formData.append('fridgeId', fridgeId);
+
+      const headers = { 'ngrok-skip-browser-warning': 'true' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+
+      try {
+        const res = await fetch(API_RECEIPT, { method: 'POST', headers, body: formData });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+        const aiResult = await res.json();
+        console.log('AI result:', aiResult);
+        detectedItems = aiResult.items || [];
+
+        camLoading.classList.remove('show');
+
+        // ✅ Thoát khỏi màn hình camera, rồi show preview kết quả
+        stopCamera();
+        camModal.classList.remove('show');
+
+        renderResultPanel(detectedItems);
+        // Dùng setTimeout nhỏ để transition slide-up mượt hơn
+        setTimeout(() => resultPanel.classList.add('open'), 50);
+      } catch (err) {
+        camLoading.classList.remove('show');
+        showToast('❌ Lỗi AI: ' + err.message);
       }
     }
 
-    document.getElementById('camBtnImg').addEventListener('click', () => {
+    // ─── Render result panel ───
+    function renderResultPanel(items) {
+      itemList.innerHTML = '';
+      if (!items || items.length === 0) {
+        itemCount.textContent = '0 sản phẩm';
+        itemList.innerHTML = `
+          <div class="panel-empty">
+            <span class="panel-empty-icon">🔍</span>
+            AI không nhận ra sản phẩm nào.<br/>Hãy chụp lại rõ hơn!
+          </div>`;
+        return;
+      }
+      itemCount.textContent = `${items.length} sản phẩm`;
+      items.forEach((item, i) => {
+        const expiry = calcExpiry(item.estimated_expiry_days);
+        const meta = [
+          item.quantity ? `x${item.quantity}` : '',
+          expiry        ? `HSD: ${expiry}`    : '',
+          item.category || ''
+        ].filter(Boolean).join(' · ');
+
+        const row = document.createElement('div');
+        row.className = 'item-row';
+        row.style.animationDelay = `${i * 55}ms`;
+        row.innerHTML = `
+          <div class="item-emoji">${getEmoji(item.product_name)}</div>
+          <div class="item-info">
+            <div class="item-name">${item.product_name || '(Không tên)'}</div>
+            ${meta ? `<div class="item-meta">${meta}</div>` : ''}
+          </div>
+          ${item.price ? `<div class="item-price">${Number(item.price).toLocaleString('vi-VN')}đ</div>` : ''}
+        `;
+        itemList.appendChild(row);
+      });
+    }
+
+    // ─── Nút chụp ảnh (camera) ───
+    document.getElementById('captureBtn').addEventListener('click', () => {
+      if (!stream) { showToast('⚠️ Camera chưa bật!'); return; }
+      // Flash
+      flash.style.display = 'block';
+      setTimeout(() => flash.style.display = 'none', 120);
+
+      const canvas = document.createElement('canvas');
+      canvas.width  = camStream.videoWidth  || 1280;
+      canvas.height = camStream.videoHeight || 720;
+      canvas.getContext('2d').drawImage(camStream, 0, 0);
+
+      canvas.toBlob(blob => callScanAPI(blob, 'capture.jpg'), 'image/jpeg', 0.85);
+    });
+
+    // ─── Nút Upload ảnh ───
+    document.getElementById('uploadBtn').addEventListener('click', () => uploadInput.click());
+
+    uploadInput.addEventListener('change', (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      e.target.value = '';
+      callScanAPI(file, file.name);
+    });
+
+    // ─── Chụp lại ───
+    document.getElementById('rescanBtn').addEventListener('click', () => {
+      resultPanel.classList.remove('open');
+      detectedItems = [];
+      itemList.innerHTML = '';
+      // BUG-5 fix: dừng stream cũ trước khi start lại tránh leak
+      stopCamera();
       camModal.classList.add('show');
       startCamera();
     });
 
-    document.getElementById('closeCamBtn').addEventListener('click', () => {
-      camModal.classList.remove('show');
-      stopCamera();
+    // ─── Lưu vào tủ lạnh ───
+    document.getElementById('saveFridgeBtn').addEventListener('click', () => {
+      if (detectedItems.length === 0) { showToast('Không có sản phẩm!'); return; }
+      sessionStorage.setItem('scannedItems', JSON.stringify(detectedItems));
+      showToast('✅ Đã lưu! Đang chuyển trang...');
+      setTimeout(() => window.location.href = 'food_list.html', 800);
     });
 
-    document.getElementById('captureBtn').addEventListener('click', () => {
-      // Flash effect
-      flash.style.display = 'block';
-      setTimeout(() => { flash.style.display = 'none'; }, 100);
-
-      showToast('📸 Đang chụp hóa đơn...');
-
-      setTimeout(() => {
-        camModal.classList.remove('show');
-        stopCamera();
-        showToast('✅ Đã lưu hóa đơn!');
-      }, 1200);
-    });
-
-    // Toast
+    // ─── Toast ───
     function showToast(msg) {
       const t = document.getElementById('toast');
       t.textContent = msg;
       t.classList.add('show');
-      setTimeout(() => t.classList.remove('show'), 2200);
+      setTimeout(() => t.classList.remove('show'), 2500);
     }
   </script>
 </body>

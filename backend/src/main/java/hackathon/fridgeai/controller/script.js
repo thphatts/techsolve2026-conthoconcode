@@ -44,12 +44,14 @@ cameraInput.addEventListener('change', async (event) => {
 
   const formData = new FormData();
   formData.append("file", file); // Tên tham số tương ứng trên Spring Boot (@RequestParam("file"))
+  formData.append("userId", localStorage.getItem("userId") || 1);
+  formData.append("fridgeId", localStorage.getItem("fridgeId") || 1);
 
   const token = localStorage.getItem("jwt_token");
   
   try {
     // Gọi API Scan bên backend. Đảm bảo thay đổi URL đúng với API Controller của bạn
-    const response = await fetch(`/api/v1/bills/scan`, {
+    const response = await fetch(`/api/v1/scan/receipt`, {
         method: 'POST',
         headers: {
             "Authorization": `Bearer ${token}`,
@@ -61,10 +63,7 @@ cameraInput.addEventListener('change', async (event) => {
     if (response.ok) {
         const data = await response.json();
         showToast('✅ Quét hoàn tất! Đã lưu thông tin từ hóa đơn.');
-        // Kiểm tra xem hàm có tồn tại không trước khi gọi
-        if (typeof fetchFridgeItems === 'function') {
-             fetchFridgeItems();
-        }
+        fetchFridgeItems(); // Reload danh sách tủ lạnh
     } else {
         showToast('❌ Xử lý ảnh thất bại!');
     }
@@ -82,6 +81,7 @@ fridgeBtn.addEventListener('click', () => {
   setTimeout(() => {
     fridgeBtn.style.transform = '';
     goToFridge();
+    fetchFridgeItems(); // Gọi API lấy số lượng đồ thật trong tủ lạnh
   }, 180);
 });
 
@@ -95,9 +95,29 @@ btnCamera.addEventListener('click', () => {
 });
 
 
-// Nút Ví
-btnWallet.addEventListener('click', () => {
-  showToast('👜 Ví: 250,000đ');
+// Nút Ví - Tích hợp API Lấy User Profile thay vì Hardcode
+btnWallet.addEventListener('click', async () => {
+  showToast('⏳ Đang tải thông tin ví...');
+  const userId = localStorage.getItem("userId") || 1; 
+  const token = localStorage.getItem("jwt_token");
+
+  try {
+      const response = await fetch(`/api/v1/users/${userId}`, {
+          headers: {
+              "Authorization": `Bearer ${token}`,
+              "ngrok-skip-browser-warning": "69420"
+          }
+      });
+      if (response.ok) {
+          const userData = await response.json();
+          const balance = userData.walletBalance || userData.totalPoints || 0;
+          showToast(`👜 Ví của bạn: ${balance} đ/điểm`);
+      } else {
+          showToast('❌ Lỗi tải thông tin ví!');
+      }
+  } catch (error) {
+      showToast('❌ Lỗi kết nối API!');
+  }
 });
 
 // FAB trong fridge view
@@ -109,11 +129,33 @@ if (fab) {
   });
 }
 
-// Xem công thức
+// Xem công thức - Tích hợp API Lấy ngẫu nhiên công thức
 const sBtn = document.querySelector('.s-btn');
 if (sBtn) {
-  sBtn.addEventListener('click', () => {
-    showToast('🍳 Công thức: Trứng chiên cà chua!');
+  sBtn.addEventListener('click', async () => {
+    showToast('⏳ Đang tìm gợi ý công thức...');
+    const token = localStorage.getItem("jwt_token");
+    try {
+        const response = await fetch(`/api/v1/recipes`, {
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "ngrok-skip-browser-warning": "69420"
+            }
+        });
+        if (response.ok) {
+            const recipes = await response.json();
+            if (recipes && recipes.length > 0) {
+                // Random 1 món trong list
+                const randomRecipe = recipes[Math.floor(Math.random() * recipes.length)];
+                showToast(`🍳 Gợi ý món: ${randomRecipe.name}!`);
+            } else {
+                showToast('🍳 Hệ thống chưa có công thức nào.');
+            }
+        }
+    } catch (error) {
+        console.error("Lỗi lấy công thức", error);
+        showToast('❌ Không tải được công thức!');
+    }
   });
 }
 
@@ -205,13 +247,13 @@ phone.addEventListener('touchend', e => {
   }
 }, { passive: true });
 
-// Hàm lấy thông tin User (Profile, Điểm, Tiền)
-async function fetchUserProfile() {
-    const userId = localStorage.getItem("userId") || 1; // Lấy userId đã lưu lúc đăng nhập
+// Hàm lấy danh sách món đồ trong Tủ Lạnh
+async function fetchFridgeItems() {
+    const fridgeId = localStorage.getItem("fridgeId") || 1; // Tạm dùng id = 1 hoặc lấy từ local
     const token = localStorage.getItem("jwt_token");
 
     try {
-        const response = await fetch(`/api/v1/users/${userId}`, {
+        const response = await fetch(`/api/v1/fridges/${fridgeId}/items`, {
             headers: {
                 "Authorization": `Bearer ${token}`,
                 "ngrok-skip-browser-warning": "69420"
@@ -219,24 +261,13 @@ async function fetchUserProfile() {
         });
 
         if (response.ok) {
-            const userData = await response.json();
-            // userData sẽ có các trường như totalPoints, coins... (tuỳ thuộc vào Entity User của bạn)
-            
-            // Cập nhật lại sự kiện nút Ví
-            const btnWallet = document.getElementById('btnWallet');
-            if (btnWallet) {
-                // Xoá event cũ đi (nếu cần) và gắn event mới hiển thị số dư thực tế
-                btnWallet.onclick = () => {
-                    const balance = userData.coins || userData.totalPoints || 0;
-                    showToast(`👜 Ví của bạn: ${balance} điểm/đ`);
-                };
-            }
-            
-            // (Tuỳ chọn) Gọi thêm API Gamification Logs để lấy lịch sử
-            // fetchGamificationLogs(userId, token);
+            const items = await response.json();
+            // Tạm thời chỉ hiển thị Toast thông báo số lượng thực tế
+            // TODO: Bạn có thể code thêm logic parse `items` thành HTML (thẻ div .food-item) và render vào DOM
+            showToast(`❄️ Tủ lạnh đang có ${items.length} món đồ.`);
         }
     } catch (error) {
-        console.error("Lỗi tải thông tin User:", error);
+        console.error("Lỗi tải danh sách tủ lạnh:", error);
     }
 }
 
