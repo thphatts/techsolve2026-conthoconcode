@@ -526,16 +526,18 @@
 
     <div class="modal-bg" id="walletModalBg">
       <div class="modal-content">
-        <h3 style="font-size:30px; margin-bottom: 5px;">Chi tiêu tháng 5...</h3>
-        <p style="margin-bottom:20px; font-size:18px; color:#777;">Quản lý thực phẩm</p>
+        <h3 style="font-size:30px; margin-bottom: 5px;">Thống kê ví thực phẩm</h3>
+        <p style="margin-bottom:20px; font-size:18px; color:#777;">Quản lý dòng tiền</p>
         <div class="pixel-box" style="padding:15px; margin-bottom:20px;">
-          <h4
-            style="font-size:24px; color:#ff85a2; border-bottom:2px dashed #222; padding-bottom:5px; margin-bottom:10px;">
-            Theo tuần</h4>
-          <div style="display:flex; justify-content:space-between; font-size:22px;"><span>Đã ăn:</span><span
-              style="color:#0f3f26; font-weight:bold;">350.000đ</span></div>
-          <div style="display:flex; justify-content:space-between; font-size:22px; margin-top:5px;"><span>Lãng
-              phí:</span><span style="color:var(--danger); font-weight:bold;">45.000đ</span></div>
+          <div style="display:flex; justify-content:space-between; font-size:22px; margin-bottom:8px;">
+            <span>Đang có (Còn hạn):</span><span id="wallet-current" style="color:#2b7fb9; font-weight:bold;">0đ</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:22px; margin-bottom:8px;">
+            <span>Đã ăn (Hợp lý):</span><span id="wallet-spent-well" style="color:#0f3f26; font-weight:bold;">0đ</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:22px; border-top:2px dashed #222; padding-top:8px;">
+            <span>Phung phí (Hết hạn):</span><span id="wallet-wasted" style="color:var(--danger); font-weight:bold;">0đ</span>
+          </div>
         </div>
         <button class="pixel-box-sm"
           style="width:100%; padding:12px; font-family:'VT323'; font-size:22px; cursor:pointer; background:#fff;"
@@ -573,10 +575,10 @@
 
   <script>
     const defaultFoods = [
-      { icon: '🥚', name: 'Trứng gà', qty: 7, unit: 'quả', exp: '2026-05-12' },
-      { icon: '🍅', name: 'Cà chua', qty: 3, unit: 'quả', exp: '2026-05-10' },
-      { icon: '🥛', name: 'Sữa tươi', qty: 1, unit: 'hộp', exp: '2026-05-09' },
-      { icon: '🥦', name: 'Bông cải', qty: 1, unit: 'cây', exp: '2026-05-15' }
+      { icon: '🥚', name: 'Trứng gà', qty: 7, unit: 'quả', exp: '2026-05-12', price: 3500 },
+      { icon: '🍅', name: 'Cà chua', qty: 3, unit: 'quả', exp: '2026-05-10', price: 4000 },
+      { icon: '🥛', name: 'Sữa tươi', qty: 1, unit: 'hộp', exp: '2026-05-09', price: 35000 },
+      { icon: '🥦', name: 'Bông cải', qty: 1, unit: 'cây', exp: '2026-05-15', price: 15000 }
     ];
 
     let foods = [];
@@ -654,7 +656,29 @@
       `}).join('');
     }
 
-    function openWalletModal() { document.getElementById('walletModalBg').classList.add('open'); }
+    function openWalletModal() {
+      let wallet = JSON.parse(localStorage.getItem('fridgeWallet') || '{"spentWell":0, "wasted":0}');
+      let currentWasted = 0;
+      let currentGood = 0;
+      foods.forEach(f => {
+         const p = f.price || 0;
+         const st = getStatus(f.exp);
+         if (st === 'dn') {
+             currentWasted += p * f.qty;
+         } else {
+             currentGood += p * f.qty;
+         }
+      });
+      
+      const totalWasted = wallet.wasted + currentWasted;
+      const totalSpentWell = wallet.spentWell;
+      
+      document.getElementById('wallet-spent-well').textContent = totalSpentWell.toLocaleString('vi-VN') + 'đ';
+      document.getElementById('wallet-wasted').textContent = totalWasted.toLocaleString('vi-VN') + 'đ';
+      document.getElementById('wallet-current').textContent = currentGood.toLocaleString('vi-VN') + 'đ';
+
+      document.getElementById('walletModalBg').classList.add('open'); 
+    }
     function closeWalletModal() { document.getElementById('walletModalBg').classList.remove('open'); }
 
     function openTakeModal(idx) {
@@ -685,6 +709,16 @@
     function confirmTake() {
       if (activeIdx === null || takeQty === 0) { closeTakeModal(); return; }
       const f = foods[activeIdx];
+      
+      // Tính tiền cho ví
+      const price = f.price || 0;
+      const value = price * takeQty;
+      const isExpired = getStatus(f.exp) === 'dn';
+      let wallet = JSON.parse(localStorage.getItem('fridgeWallet') || '{"spentWell":0, "wasted":0}');
+      if (isExpired) wallet.wasted += value;
+      else wallet.spentWell += value;
+      localStorage.setItem('fridgeWallet', JSON.stringify(wallet));
+
       f.qty -= takeQty;
       if (f.qty <= 0) foods.splice(activeIdx, 1);
       saveFoods(); // Cập nhật localStorage

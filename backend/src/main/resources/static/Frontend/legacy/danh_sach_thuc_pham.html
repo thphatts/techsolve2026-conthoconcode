@@ -558,7 +558,7 @@
         <img src="../assets/nuttrangchu.png" alt="Trang chủ" onclick="location.href='Index.html'" />
         <img src="../assets/nutthucpham.png" alt="Thực phẩm" onclick="location.href='Danh_sach_thuc_pham.html'" />
         <img src="../assets/nutchup.png" alt="Chụp ảnh" class="center-btn" onclick="location.href='tu_lanh.html'" />
-        <img src="../assets/nutvi.png" alt="Ví" />
+        <img src="../assets/nutvi.png" alt="Ví" onclick="location.href='vi.html'" />
         <img src="../assets/nutcaidat.png" alt="Cài đặt" />
       </div>
     </div>
@@ -581,16 +581,16 @@
   <script>
     // ── Data ──────────────────────────────
     const defaultFoods = [
-      { icon: '🥚', name: 'Trứng gà', qty: 6, unit: 'quả', exp: '2026-05-12' },
-      { icon: '🍅', name: 'Cà chua', qty: 4, unit: 'quả', exp: '2026-05-10' },
-      { icon: '🥛', name: 'Sữa tươi', qty: 1, unit: 'hộp', exp: '2026-05-09' },
-      { icon: '🥦', name: 'Bông cải xanh', qty: 1, unit: 'cây', exp: '2026-05-15' },
-      { icon: '🧀', name: 'Phô mai', qty: 200, unit: 'g', exp: '2026-05-11' },
-      { icon: '🍗', name: 'Thịt gà', qty: 500, unit: 'g', exp: '2026-05-13' },
-      { icon: '🐟', name: 'Cá hồi', qty: 300, unit: 'g', exp: '2026-05-10' },
-      { icon: '🥕', name: 'Cà rốt', qty: 5, unit: 'củ', exp: '2026-05-18' },
-      { icon: '🍋', name: 'Chanh', qty: 4, unit: 'quả', exp: '2026-05-20' },
-      { icon: '🧅', name: 'Hành tây', qty: 2, unit: 'củ', exp: '2026-05-25' },
+      { icon: '🥚', name: 'Trứng gà', qty: 6, unit: 'quả', exp: '2026-05-12', price: 3500 },
+      { icon: '🍅', name: 'Cà chua', qty: 4, unit: 'quả', exp: '2026-05-10', price: 4000 },
+      { icon: '🥛', name: 'Sữa tươi', qty: 1, unit: 'hộp', exp: '2026-05-09', price: 35000 },
+      { icon: '🥦', name: 'Bông cải xanh', qty: 1, unit: 'cây', exp: '2026-05-15', price: 15000 },
+      { icon: '🧀', name: 'Phô mai', qty: 200, unit: 'g', exp: '2026-05-11', price: 200 },
+      { icon: '🍗', name: 'Thịt gà', qty: 500, unit: 'g', exp: '2026-05-13', price: 100 },
+      { icon: '🐟', name: 'Cá hồi', qty: 300, unit: 'g', exp: '2026-05-10', price: 300 },
+      { icon: '🥕', name: 'Cà rốt', qty: 5, unit: 'củ', exp: '2026-05-18', price: 5000 },
+      { icon: '🍋', name: 'Chanh', qty: 4, unit: 'quả', exp: '2026-05-20', price: 2000 },
+      { icon: '🧅', name: 'Hành tây', qty: 2, unit: 'củ', exp: '2026-05-25', price: 3000 },
     ];
 
     let foods = [];
@@ -701,8 +701,9 @@
       
       const qty = parseInt(qtyInput) || 1;
       const unit = qtyInput.replace(/[0-9]/g, '').trim() || 'món';
+      const price = 0; // Thực phẩm thêm tay mặc định giá 0đ
 
-      foods.unshift({ icon: '🍱', name, qty, unit, exp });
+      foods.unshift({ icon: '🍱', name, qty, unit, exp, price });
       saveFoods(); // Cập nhật localStorage
       closeModal();
       renderList();

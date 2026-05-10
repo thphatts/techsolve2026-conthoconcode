@@ -364,6 +364,7 @@
               name: item.product_name || '(Không tên)',
               qty: item.quantity || 1,
               unit: 'món',
+              price: item.price ? Math.round(item.price / (item.quantity || 1)) : 0,
               exp: expDate.toISOString().split('T')[0] // YYYY-MM-DD
             };
           });
