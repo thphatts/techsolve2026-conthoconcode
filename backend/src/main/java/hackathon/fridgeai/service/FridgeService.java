@@ -6,9 +6,11 @@ import hackathon.fridgeai.enums.FridgeItemStatus;
 import hackathon.fridgeai.repository.FridgeItemRepository;
 import hackathon.fridgeai.repository.FridgeRepository;
 import hackathon.fridgeai.repository.FridgeMemberRepository;
+import hackathon.fridgeai.repository.ProductRepository;
 import hackathon.fridgeai.enums.FridgeMemberRole;
 import hackathon.fridgeai.repository.GamificationLogRepository;
 import hackathon.fridgeai.repository.UserRepository;
+import hackathon.fridgeai.dto.BulkItemRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -29,6 +32,7 @@ public class FridgeService {
         private final UserRepository userRepository;
         private final GamificationLogRepository gamificationLogRepository;
         private final FridgeMemberRepository fridgeMemberRepository;
+        private final ProductRepository productRepository;
 
         // Lấy các chỉ số Gamification từ file application.yml
         @Value("${app.gamification.points-consumed-before-expiry:10}")
@@ -116,6 +120,41 @@ public class FridgeService {
 
                 log.info("Thêm món đồ {} vào tủ lạnh {} thành công.", product.getName(), fridgeId);
                 return fridgeItemRepository.save(newItem);
+        }
+
+        /**
+         * Lưu hàng loạt món đồ (AI quét được) vào tủ lạnh
+         */
+        @Transactional
+        public List<FridgeItem> addBulkItems(Long fridgeId, Long userId, List<BulkItemRequest> items) {
+                Fridge fridge = fridgeRepository.findById(fridgeId)
+                                .orElseThrow(() -> new RuntimeException("Không tìm thấy Fridge."));
+                User user = userRepository.findById(userId)
+                                .orElseThrow(() -> new RuntimeException("Không tìm thấy User."));
+
+                List<FridgeItem> savedItems = new ArrayList<>();
+
+                for (BulkItemRequest request : items) {
+                        // Tìm Product có sẵn hoặc tạo mới để tránh lỗi Null
+                        Product product = productRepository.findAll().stream()
+                                        .filter(p -> p.getName().equalsIgnoreCase(request.getProductName()))
+                                        .findFirst()
+                                        .orElseGet(() -> productRepository.save(
+                                                        Product.builder().name(request.getProductName()).build()));
+
+                        FridgeItem newItem = FridgeItem.builder()
+                                        .fridge(fridge)
+                                        .product(product)
+                                        .addedBy(user)
+                                        .expiresAt(request.getExpiresAt())
+                                        .quantity(request.getQuantity() != null ? request.getQuantity() : 1.0)
+                                        .purchasePrice(BigDecimal.ZERO)
+                                        .status(FridgeItemStatus.FRESH)
+                                        .build();
+                        savedItems.add(fridgeItemRepository.save(newItem));
+                }
+                log.info("Đã lưu hàng loạt {} món đồ vào tủ lạnh {}", savedItems.size(), fridgeId);
+                return savedItems;
         }
 
         /**

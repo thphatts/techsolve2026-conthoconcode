@@ -162,7 +162,7 @@ async function fetchUserProfile() {
     const token = localStorage.getItem("jwt_token");
 
     try {
-        const response = await fetch(`https://ashes-choosing-nursing.ngrok-free.dev/api/v1/users/${userId}`, {
+        const response = await fetch(`/api/v1/users/${userId}`, {
             headers: {
                 "Authorization": `Bearer ${token}`,
                 "ngrok-skip-browser-warning": "69420"
@@ -197,7 +197,7 @@ async function checkUnreadNotifications() {
     const token = localStorage.getItem("jwt_token");
 
     try {
-        const response = await fetch(`https://ashes-choosing-nursing.ngrok-free.dev/api/v1/notifications/users/${userId}/unread`, {
+        const response = await fetch(`/api/v1/notifications/users/${userId}/unread`, {
             headers: { 
                 "Authorization": `Bearer ${token}`,
                 "ngrok-skip-browser-warning": "69420"

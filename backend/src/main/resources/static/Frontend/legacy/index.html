@@ -160,48 +160,47 @@
       flex-shrink: 0;
     }
 
-    /* ── BONG BÓNG THOẠI PIXEL 100% ── */
+    /* Bong bóng thoại Pixel – vuông vức, bóng đổ cứng */
     .bubble {
       background: #fff;
       border: 4px solid #222;
       border-radius: 0;
-      padding: 10px 16px;
+      /* Bỏ bo góc */
+      padding: 8px 16px;
       font-family: 'VT323', monospace;
       font-size: 26px;
+      /* Chữ to chuẩn pixel */
+      font-weight: normal;
       color: #111;
+      line-height: 1.2;
       text-align: center;
       position: relative;
       margin-bottom: 25px;
       box-shadow: 6px 6px 0 #222;
+      /* Bóng đổ nét cứng */
       white-space: nowrap;
-      right: -20px;
+      right: -40px;
       top: 10px;
       letter-spacing: 1px;
+    }
+
+    /* Đuôi bong bóng dạng góc vuông cứng (Pixel style) */
+    .bubble::after {
+      content: '';
+      position: absolute;
+      bottom: -16px;
+      left: 20px;
+      border-top: 16px solid #222;
+      border-right: 16px solid transparent;
     }
 
     .bubble::before {
       content: '';
       position: absolute;
-      bottom: -4px;
+      bottom: -8px;
       left: 24px;
-      width: 16px;
-      height: 4px;
-      background: #fff;
-      z-index: 2;
-    }
-
-    .bubble::after {
-      content: '';
-      position: absolute;
-      bottom: -16px;
-      left: 24px;
-      width: 16px;
-      height: 16px;
-      background: #fff;
-      border-left: 4px solid #222;
-      border-right: 4px solid #222;
-      border-bottom: 4px solid #222;
-      box-shadow: 6px 6px 0 #222;
+      border-top: 10px solid #fff;
+      border-right: 10px solid transparent;
       z-index: 1;
     }
 
@@ -325,48 +324,6 @@
       transform: translateX(-50%) scale(0.9);
     }
 
-    /* ── PIXEL STYLES CHO MODAL VÍ ── */
-    .modal-bg {
-      display: none;
-      position: absolute;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.8);
-      z-index: 3000;
-      /* Nổi lên trên cùng */
-      align-items: flex-end;
-    }
-
-    .modal-bg.open {
-      display: flex;
-    }
-
-    .modal-content {
-      width: 100%;
-      background: #fff;
-      border-top: 4px solid #222;
-      padding: 24px 20px 40px;
-      z-index: 3001;
-    }
-
-    .pixel-box-sm {
-      border-radius: 0 !important;
-      border: 3px solid #222 !important;
-      box-shadow: 2px 2px 0 #222;
-      transition: transform 0.1s, box-shadow 0.1s;
-    }
-
-    .pixel-box-sm:active {
-      transform: translate(2px, 2px) !important;
-      box-shadow: 0 0 0 #222 !important;
-    }
-
-    .pixel-box {
-      border-radius: 0 !important;
-      border: 3px solid #222 !important;
-      background: #fff;
-      box-shadow: 4px 4px 0 #222;
-    }
-
     /* Toast */
     .toast {
       position: absolute;
@@ -382,7 +339,7 @@
       font-family: 'VT323', monospace;
       opacity: 0;
       transition: all 0.3s;
-      z-index: 4000;
+      z-index: 100;
       pointer-events: none;
       white-space: nowrap;
       box-shadow: 6px 6px 0 rgba(0, 229, 160, 0.3);
@@ -423,11 +380,9 @@
     <div class="bottom-nav">
       <div class="nav-img-row">
         <img src="../assets/nuttrangchu.png" alt="Trang chủ" onclick="location.href='Index.html'" />
-        <img src="../assets/nutthucpham.png" alt="Thực phẩm" onclick="location.href='Danh_sach_thuc_pham.html'" />
+        <img src="../assets/nutthucpham.png" alt="Thực phẩm" onclick="location.href='danh_sach_thuc_pham.html'" />
         <img src="../assets/nutchup.png" alt="Chụp ảnh" id="camBtnImg" class="center-btn" />
-
-        <img src="../assets/nutvi.png" alt="Ví" onclick="openWalletModal()" />
-
+        <img src="../assets/nutvi.png" alt="Ví" onclick="location.href='vi.html'" />
         <img src="../assets/nutcaidat.png" alt="Cài đặt" />
       </div>
     </div>
@@ -439,37 +394,6 @@
 
       <button class="cam-overlay-close" id="closeCamBtn">Đóng</button>
       <img src="../assets/camera.png" class="cam-capture-btn" id="captureBtn" alt="Chụp ảnh">
-    </div>
-
-    <div class="modal-bg" id="walletModalBg">
-      <div class="modal-content">
-        <h3 style="font-size:30px; margin-bottom: 5px;">Chi tiêu tháng 5...</h3>
-        <p style="margin-bottom:20px; font-size:18px; color:#777;">Quản lý thực phẩm</p>
-
-        <div class="pixel-box" style="padding:15px; margin-bottom:20px;">
-          <h4
-            style="font-size:24px; color:#ff85a2; border-bottom:2px dashed #222; padding-bottom:5px; margin-bottom:10px;">
-            Theo tuần</h4>
-          <div style="display:flex; justify-content:space-between; font-size:22px;"><span>Đã ăn:</span><span
-              style="color:#0f3f26; font-weight:bold;">350.000đ</span></div>
-          <div style="display:flex; justify-content:space-between; font-size:22px; margin-top:5px;"><span>Lãng
-              phí:</span><span style="color:#ff6b6b; font-weight:bold;">45.000đ</span></div>
-        </div>
-
-        <div class="pixel-box" style="padding:15px; margin-bottom:25px;">
-          <h4
-            style="font-size:24px; color:#ff85a2; border-bottom:2px dashed #222; padding-bottom:5px; margin-bottom:10px;">
-            Theo tháng</h4>
-          <div style="display:flex; justify-content:space-between; font-size:22px;"><span>Đã ăn:</span><span
-              style="color:#0f3f26; font-weight:bold;">1.250.000đ</span></div>
-          <div style="display:flex; justify-content:space-between; font-size:22px; margin-top:5px;"><span>Lãng
-              phí:</span><span style="color:#ff6b6b; font-weight:bold;">120.000đ</span></div>
-        </div>
-
-        <button class="pixel-box-sm"
-          style="width:100%; padding:12px; font-family:'VT323'; font-size:22px; cursor:pointer; background:#fff;"
-          onclick="closeWalletModal()">Đóng</button>
-      </div>
     </div>
 
     <div class="toast" id="toast"></div>
@@ -531,21 +455,6 @@
         showToast('✅ Đã lưu hóa đơn!');
       }, 1200);
     });
-
-    // --- LOGIC BẢNG VÍ ---
-    function openWalletModal() {
-      document.getElementById('walletModalBg').classList.add('open');
-    }
-    function closeWalletModal() {
-      document.getElementById('walletModalBg').classList.remove('open');
-    }
-
-    // Đóng các modal (như ví) khi bấm ra nền đen mờ
-    window.onclick = function (e) {
-      if (e.target.classList.contains('modal-bg')) {
-        e.target.classList.remove('open');
-      }
-    }
 
     // Toast
     function showToast(msg) {

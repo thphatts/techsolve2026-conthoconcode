@@ -1,55 +1,42 @@
 package hackathon.fridgeai.controller;
 
-import hackathon.fridgeai.dto.FridgeResponse;
-import hackathon.fridgeai.entity.Fridge;
-import hackathon.fridgeai.entity.FridgeItem;
-import hackathon.fridgeai.entity.User;
-import hackathon.fridgeai.repository.FridgeItemRepository;
-import hackathon.fridgeai.repository.UserRepository;
+import hackathon.fridgeai.dto.BulkItemRequest;
 import hackathon.fridgeai.service.FridgeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/fridges")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*") // Tạm mở CORS cho quá trình thi Hackathon
+@CrossOrigin(origins = "*")
 public class FridgeController {
 
-    private final FridgeItemRepository fridgeItemRepository;
     private final FridgeService fridgeService;
-    private final UserRepository userRepository;
 
-    // API để tạo tủ lạnh mới (Sử dụng Principal để lấy user từ Token)
-    @PostMapping
-    public ResponseEntity<?> createFridge(Principal principal) {
-        try {
-            User user = userRepository.findByEmail(principal.getName())
-                    .orElseThrow(() -> new RuntimeException("User not found"));
+    @PostMapping("/{fridgeId}/items/bulk")
+    public ResponseEntity<?> bulkAddItems(
+            @PathVariable Long fridgeId,
+            @RequestParam Long userId,
+            @RequestBody List<BulkItemRequest> requests) {
 
-            Fridge savedFridge = fridgeService.createFridge(user.getId());
-
-            // Chuyển đổi Entity sang DTO để tránh vòng lặp JSON
-            return ResponseEntity.ok(FridgeResponse.builder()
-                    .id(savedFridge.getId())
-                    .name(savedFridge.getName())
-                    .ownerId(user.getId())
-                    .ownerName(user.getName())
-                    .build());
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        fridgeService.addBulkItems(fridgeId, userId, requests);
+        return ResponseEntity.ok().body("{\"message\": \"Lưu thành công!\"}");
     }
 
-    // API lấy danh sách thực phẩm trong một tủ lạnh cụ thể
+    // --- API: Lấy danh sách sản phẩm trong tủ lạnh ---
     @GetMapping("/{fridgeId}/items")
-    public ResponseEntity<List<FridgeItem>> getItemsInFridge(@PathVariable Long fridgeId) {
-        List<FridgeItem> items = fridgeItemRepository.findByFridgeId(fridgeId);
-        return ResponseEntity.ok(items);
+    public ResponseEntity<?> getFridgeItems(@PathVariable Long fridgeId) {
+        return ResponseEntity.ok(fridgeService.getItemsInFridge(fridgeId));
     }
 
+    // --- API: Đánh dấu đã sử dụng sản phẩm (Ăn/Nấu) ---
+    @PostMapping("/items/{itemId}/consume")
+    public ResponseEntity<?> consumeItem(
+            @PathVariable Long itemId,
+            @RequestParam Long userId) {
+        return ResponseEntity.ok(fridgeService.consumeItem(itemId, userId));
+    }
 }

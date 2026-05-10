@@ -29,5 +29,6 @@ public class AuthDto {
         private Long userId;
         private String name;
         private String email;
+        private Integer fridgeId;
     }
 }

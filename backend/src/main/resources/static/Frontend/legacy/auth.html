@@ -96,7 +96,7 @@
 
   <script>
     let mode = 'login';
-    const API_BASE = "https://ashes-choosing-nursing.ngrok-free.dev/api/v1/auth"; // Khớp với AuthController backend
+    const API_BASE = "/api/v1/auth"; // Khớp với AuthController backend
 
     function switchTab(newMode) {
       mode = newMode;
@@ -134,11 +134,11 @@
           
           // Lưu JWT Token và thông tin cần thiết vào localStorage
           localStorage.setItem('jwt_token', data.token);
-          // localStorage.setItem('userId', data.userId); // Nếu API có trả về
+          localStorage.setItem('userId', data.userId); // Nếu API có trả về
           
           // Nhảy sang trang chính của dự án sau 1 giây
           setTimeout(() => {
-            window.location.href = 'Index.html'; 
+            window.location.href = 'index.html'; 
           }, 1000);
         } else {
           showToast("❌ " + (data.message || "Có lỗi xảy ra"));

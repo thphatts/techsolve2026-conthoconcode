@@ -28,7 +28,7 @@ public class FridgeItem extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "fridge_id", nullable = false)
-    @JsonIgnoreProperties({ "owner", "members", "items" }) // Chặn vòng lặp qua Fridge
+    @JsonIgnoreProperties({ "owner", "members", "items", }) // Chặn vòng lặp qua Fridge
     private Fridge fridge;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

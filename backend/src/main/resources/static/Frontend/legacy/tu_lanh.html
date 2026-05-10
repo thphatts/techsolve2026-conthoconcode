@@ -37,17 +37,17 @@
       letter-spacing: 0.5px;
     }
 
-    /* ── Khung điện thoại (Bo tròn hiện đại) ── */
+    /* Phone shell */
     .phone {
       width: 375px;
       height: 812px;
       background: #e0f2fe;
-      border-radius: 40px;
-      border: 8px solid #222;
+      border-radius: 0;
+      border: 4px solid var(--border);
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+      box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.2);
       position: relative;
     }
 
@@ -61,20 +61,17 @@
       color: var(--text);
       position: relative;
       flex-shrink: 0;
-      z-index: 60;
     }
 
-    /* Tai thỏ bo tròn */
     .notch {
       width: 120px;
       height: 24px;
-      background: #111;
-      border-radius: 0 0 16px 16px;
+      background: var(--border);
+      border-radius: 0;
       position: absolute;
       top: 0;
       left: 50%;
       transform: translateX(-50%);
-      z-index: 50;
     }
 
     /* Header */
@@ -89,12 +86,11 @@
     .logo {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
     }
 
     .logo h1 {
-      font-size: 26px;
-      font-weight: 900;
+      font-size: 22px;
     }
 
     .logo h1 span {
@@ -148,20 +144,22 @@
       color: #fff;
     }
 
-    /* ── CHART BOX ── */
+
+    /* 2. Chart box (Đã Fix khoảng cách số) */
     .chart-box {
-      margin: 15px 14px 12px;
-      padding: 12px 14px 10px;
+      margin: 10px 14px;
+      padding: 15px 14px 5px;
+      /* Tăng padding trên */
       flex-shrink: 0;
+      background: rgba(255, 255, 255, 0.4);
     }
 
     .chart-title {
-      display: block;
       font-size: 18px;
       color: var(--muted);
-      margin-bottom: 35px;
+      margin-bottom: 25px;
+      /* Đẩy tiêu đề lên cao, tạo khoảng trống cho số 8, 3, 1 */
       text-transform: uppercase;
-      font-weight: bold;
     }
 
     .chart-cols {
@@ -218,7 +216,7 @@
       color: var(--muted);
     }
 
-    /* Stats container */
+    /* 3. Stats container */
     .stats {
       display: flex;
       gap: 10px;
@@ -246,11 +244,9 @@
       margin-top: 4px;
     }
 
-    /* ── SUGGESTION BOX (Đã bọc ô vuông) ── */
+    /* Suggestion Box */
     .sug {
       margin: 8px 14px 10px;
-      padding: 12px 14px;
-      /* Thêm padding để nội dung không sát viền */
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -259,12 +255,12 @@
     .sug h3 {
       font-size: 20px;
       color: var(--accent);
-      margin-bottom: 4px;
     }
 
     .sug p {
-      font-size: 16px;
+      font-size: 15px;
       color: var(--muted);
+      margin-top: 4px;
       line-height: 1.2;
     }
 
@@ -321,14 +317,13 @@
     .ficon {
       width: 48px;
       height: 48px;
-      background: #fff;
-      /* Nền trắng như yêu cầu trang danh sách */
-      border: 3px solid var(--border);
+      background: var(--border);
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 26px;
       flex-shrink: 0;
+      color: #fff;
     }
 
     .finfo {
@@ -390,15 +385,6 @@
       display: flex;
       justify-content: space-around;
       position: relative;
-    }
-
-    .nav-img-row {
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      width: 100%;
-      position: relative;
-      z-index: 2;
     }
 
     .nav-img-row img {
@@ -472,13 +458,14 @@
       <div class="logo">
         <img src="../assets/tulanh.png" class="fridge-header-img" id="fridgeHeaderImg" alt="Tủ lạnh"
           onclick="location.href='Index.html'" />
-        <h1>Tủ <span>lạnh</span></h1>
+        <h1>Smart<span>Fridge</span></h1>
       </div>
       <div class="avatar pixel-box-sm">👤</div>
     </header>
 
+
     <div class="chart-box pixel-box">
-      <div class="chart-title">📊 Tình trạng thực phẩm</div>
+      <span class="chart-title">📊 Tình trạng thực phẩm</span>
       <div class="chart-cols">
         <div class="chart-col">
           <span class="chart-val" id="val-good" style="color:#4ade80">0</span>
@@ -513,12 +500,12 @@
       </div>
     </div>
 
-    <div class="sug pixel-box">
+    <div class="sug">
       <div>
         <h3>Gợi ý hôm nay</h3>
         <p>Cà chua & trứng sắp hết hạn!<br />Làm trứng chiên cà chua đi nào~</p>
       </div>
-      <button class="sug-btn pixel-box-sm">Xem công thức</button>
+      <button class="sug-btn pixel-box">Xem công thức</button>
     </div>
 
     <div class="sec-hdr">
@@ -541,8 +528,7 @@
       <div class="modal-content">
         <h3 style="font-size:30px; margin-bottom: 5px;">Chi tiêu tháng 5...</h3>
         <p style="margin-bottom:20px; font-size:18px; color:#777;">Quản lý thực phẩm</p>
-        <div
-          style="background:#fff; border:3px solid #222; padding:15px; box-shadow:4px 4px 0 #222; margin-bottom:20px;">
+        <div class="pixel-box" style="padding:15px; margin-bottom:20px;">
           <h4
             style="font-size:24px; color:#ff85a2; border-bottom:2px dashed #222; padding-bottom:5px; margin-bottom:10px;">
             Theo tuần</h4>
@@ -550,16 +536,6 @@
               style="color:#0f3f26; font-weight:bold;">350.000đ</span></div>
           <div style="display:flex; justify-content:space-between; font-size:22px; margin-top:5px;"><span>Lãng
               phí:</span><span style="color:var(--danger); font-weight:bold;">45.000đ</span></div>
-        </div>
-        <div
-          style="background:#fff; border:3px solid #222; padding:15px; box-shadow:4px 4px 0 #222; margin-bottom:25px;">
-          <h4
-            style="font-size:24px; color:#ff85a2; border-bottom:2px dashed #222; padding-bottom:5px; margin-bottom:10px;">
-            Theo tháng</h4>
-          <div style="display:flex; justify-content:space-between; font-size:22px;"><span>Đã ăn:</span><span
-              style="color:#0f3f26; font-weight:bold;">1.250.000đ</span></div>
-          <div style="display:flex; justify-content:space-between; font-size:22px; margin-top:5px;"><span>Lãng
-              phí:</span><span style="color:var(--danger); font-weight:bold;">120.000đ</span></div>
         </div>
         <button class="pixel-box-sm"
           style="width:100%; padding:12px; font-family:'VT323'; font-size:22px; cursor:pointer; background:#fff;"
@@ -606,11 +582,13 @@
     let activeIdx = null;
     let takeQty = 1;
 
-    // Hiệu ứng rê chuột tủ lạnh ở Header
+    // --- HIỆU ỨNG HOVER TỦ LẠNH Header ---
     const fridgeHeader = document.getElementById('fridgeHeaderImg');
     if (fridgeHeader) {
+      // Tải trước Gif
       const preloadGif = new Image();
       preloadGif.src = '../assets/tulanhmo.gif';
+
       fridgeHeader.addEventListener('mouseenter', () => {
         fridgeHeader.src = '../assets/tulanhmo.gif';
       });
@@ -639,21 +617,17 @@
 
     function renderFoods() {
       const list = document.getElementById('foodList');
-      list.innerHTML = foods.map((f, i) => {
-        const badgeClass = f.status === 'ok' ? 'ok' : (f.status === 'wn' ? 'wn' : 'dn');
-        const badgeText = f.status === 'ok' ? 'Tốt' : (f.status === 'wn' ? 'Sắp hết' : 'Hết hạn!');
-        return `
-          <div class="fi pixel-box">
-            <div class="ficon">${f.icon}</div>
-            <div class="finfo">
-              <div class="fname">${f.name}</div>
-              <div class="fmeta">${f.qty} ${f.unit} · HH: ${f.exp}</div>
-            </div>
-            <span class="fbadge ${badgeClass}">${badgeText}</span>
-            <button class="take-btn pixel-box-sm pixel-hover" onclick="openTakeModal(${i})">🔍 Lấy ra</button>
+      list.innerHTML = foods.map((f, i) => `
+        <div class="fi pixel-box">
+          <div class="ficon">${f.icon}</div>
+          <div class="finfo">
+            <div class="fname">${f.name}</div>
+            <div class="fmeta">${f.qty} ${f.unit} · HH: ${f.exp}</div>
           </div>
-        `;
-      }).join('');
+          <span class="fbadge ${f.status}">${f.status === 'ok' ? 'Tốt' : (f.status === 'wn' ? 'Sắp hết' : 'Hết hạn!')}</span>
+          <button class="take-btn pixel-box-sm pixel-hover" onclick="openTakeModal(${i})">🔍 Lấy ra</button>
+        </div>
+      `).join('');
     }
 
     function openWalletModal() { document.getElementById('walletModalBg').classList.add('open'); }
@@ -672,22 +646,14 @@
     function changeQty(d) {
       if (activeIdx === null) return;
       const f = foods[activeIdx];
-
-      if (d === 1) { // Bấm nút CỘNG
+      if (d === 1) {
         if (takeQty < f.qty) {
           takeQty++;
-          if (takeQty === f.qty) {
-            showToast('⚠️ Tủ lạnh cần thêm thực phẩm');
-          }
-        } else {
-          showToast('⚠️ Tủ lạnh cần thêm thực phẩm');
-        }
-      } else if (d === -1) { // Bấm nút TRỪ
-        if (takeQty > 0) {
-          takeQty--;
-        } else {
-          showToast('⚠️ Tủ lạnh cần thêm thực phẩm');
-        }
+          if (takeQty === f.qty) showToast('⚠️ Tủ lạnh cần thêm thực phẩm');
+        } else showToast('⚠️ Tủ lạnh cần thêm thực phẩm');
+      } else if (d === -1) {
+        if (takeQty > 0) takeQty--;
+        else showToast('⚠️ Tủ lạnh cần thêm thực phẩm');
       }
       document.getElementById('tmQty').textContent = takeQty;
     }
@@ -704,14 +670,12 @@
     }
 
     function closeTakeModal() { document.getElementById('takeModalBg').classList.remove('open'); }
-
     function showToast(m) {
       const t = document.getElementById('toastMsg');
       t.textContent = m;
       t.classList.add('show');
       setTimeout(() => t.classList.remove('show'), 2500);
     }
-
     window.onclick = function (e) { if (e.target.classList.contains('modal-bg')) e.target.classList.remove('open'); }
 
     renderFoods();
