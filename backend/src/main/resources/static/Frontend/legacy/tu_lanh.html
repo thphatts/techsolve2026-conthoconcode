@@ -572,12 +572,33 @@
   </div>
 
   <script>
-    const foods = [
-      { icon: '🥚', name: 'Trứng gà', qty: 7, unit: 'quả', exp: '12/05/2026', status: 'ok' },
-      { icon: '🍅', name: 'Cà chua', qty: 3, unit: 'quả', exp: '10/05/2026', status: 'wn' },
-      { icon: '🥛', name: 'Sữa tươi', qty: 1, unit: 'hộp', exp: '09/05/2026', status: 'dn' },
-      { icon: '🥦', name: 'Bông cải', qty: 1, unit: 'cây', exp: '15/05/2026', status: 'ok' }
+    const defaultFoods = [
+      { icon: '🥚', name: 'Trứng gà', qty: 7, unit: 'quả', exp: '2026-05-12' },
+      { icon: '🍅', name: 'Cà chua', qty: 3, unit: 'quả', exp: '2026-05-10' },
+      { icon: '🥛', name: 'Sữa tươi', qty: 1, unit: 'hộp', exp: '2026-05-09' },
+      { icon: '🥦', name: 'Bông cải', qty: 1, unit: 'cây', exp: '2026-05-15' }
     ];
+
+    let foods = [];
+    try {
+      const stored = localStorage.getItem('fridgeItems');
+      if (stored) foods = JSON.parse(stored);
+      else foods = defaultFoods; // Fallback nếu chưa có gì
+    } catch(e) { foods = defaultFoods; }
+
+    function saveFoods() {
+      localStorage.setItem('fridgeItems', JSON.stringify(foods));
+    }
+
+    function getStatus(exp) {
+      const d = Math.round((new Date(exp) - new Date()) / (1000 * 60 * 60 * 24));
+      return d < 0 ? 'dn' : d <= 3 ? 'wn' : 'ok';
+    }
+
+    function formatExp(exp) {
+      const d = new Date(exp);
+      return d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    }
 
     let activeIdx = null;
     let takeQty = 1;
@@ -600,9 +621,10 @@
     function updateChart() {
       let good = 0, warn = 0, danger = 0;
       foods.forEach(f => {
-        if (f.status === 'ok') good += f.qty;
-        else if (f.status === 'wn') warn += f.qty;
-        else if (f.status === 'dn') danger += f.qty;
+        const st = getStatus(f.exp);
+        if (st === 'ok') good += Number(f.qty);
+        else if (st === 'wn') warn += Number(f.qty);
+        else if (st === 'dn') danger += Number(f.qty);
       });
       const total = good + warn + danger;
       document.getElementById('val-good').textContent = good;
@@ -617,17 +639,19 @@
 
     function renderFoods() {
       const list = document.getElementById('foodList');
-      list.innerHTML = foods.map((f, i) => `
+      list.innerHTML = foods.map((f, i) => {
+        const st = getStatus(f.exp);
+        return `
         <div class="fi pixel-box">
           <div class="ficon">${f.icon}</div>
           <div class="finfo">
             <div class="fname">${f.name}</div>
-            <div class="fmeta">${f.qty} ${f.unit} · HH: ${f.exp}</div>
+            <div class="fmeta">${f.qty} ${f.unit} · HH: ${formatExp(f.exp)}</div>
           </div>
-          <span class="fbadge ${f.status}">${f.status === 'ok' ? 'Tốt' : (f.status === 'wn' ? 'Sắp hết' : 'Hết hạn!')}</span>
+          <span class="fbadge ${st}">${st === 'ok' ? 'Tốt' : (st === 'wn' ? 'Sắp hết' : 'Hết hạn!')}</span>
           <button class="take-btn pixel-box-sm pixel-hover" onclick="openTakeModal(${i})">🔍 Lấy ra</button>
         </div>
-      `).join('');
+      `}).join('');
     }
 
     function openWalletModal() { document.getElementById('walletModalBg').classList.add('open'); }
@@ -663,6 +687,7 @@
       const f = foods[activeIdx];
       f.qty -= takeQty;
       if (f.qty <= 0) foods.splice(activeIdx, 1);
+      saveFoods(); // Cập nhật localStorage
       closeTakeModal();
       renderFoods();
       updateChart();

@@ -342,6 +342,43 @@
 
       // BUG-8 fix: Nút "Add to Fridge" → toast + navigate thật sự
       document.getElementById('saveToFridgeBtn').addEventListener('click', () => {
+        let items = [];
+        try {
+          const raw = sessionStorage.getItem('scannedItems');
+          if (raw) items = JSON.parse(raw);
+        } catch (e) {
+          console.error('Parse scannedItems error:', e);
+        }
+
+        if (items && items.length > 0) {
+          // Chuyển đổi format AI -> format tủ lạnh
+          const newFoods = items.map(item => {
+            const expDate = new Date();
+            if (item.estimated_expiry_days) {
+              expDate.setDate(expDate.getDate() + item.estimated_expiry_days);
+            } else {
+              expDate.setDate(expDate.getDate() + 7); // Mặc định 7 ngày
+            }
+            return {
+              icon: getEmoji(item.product_name),
+              name: item.product_name || '(Không tên)',
+              qty: item.quantity || 1,
+              unit: 'món',
+              exp: expDate.toISOString().split('T')[0] // YYYY-MM-DD
+            };
+          });
+
+          // Lấy tủ lạnh hiện tại
+          let existing = [];
+          try {
+            const rawExisting = localStorage.getItem('fridgeItems');
+            if (rawExisting) existing = JSON.parse(rawExisting);
+          } catch(e) {}
+          
+          existing = [...newFoods, ...existing];
+          localStorage.setItem('fridgeItems', JSON.stringify(existing));
+        }
+
         sessionStorage.removeItem('scannedItems');
         showToast('🎉 Đã thêm vào tủ lạnh!');
         setTimeout(() => { window.location.href = 'tu_lanh.html'; }, 900);

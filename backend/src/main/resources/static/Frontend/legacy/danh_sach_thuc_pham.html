@@ -580,18 +580,29 @@
 
   <script>
     // ── Data ──────────────────────────────
-    const foods = [
-      { icon: '🥚', bg: '#1a2e1a', name: 'Trứng gà', qty: '6 quả', exp: '2026-05-12', status: 'ok' },
-      { icon: '🍅', bg: '#2e1a1a', name: 'Cà chua', qty: '4 quả', exp: '2026-05-10', status: 'warn' },
-      { icon: '🥛', bg: '#1a1a2e', name: 'Sữa tươi', qty: '1 hộp', exp: '2026-05-09', status: 'danger' },
-      { icon: '🥦', bg: '#1e2a1a', name: 'Bông cải xanh', qty: '1 cây', exp: '2026-05-15', status: 'ok' },
-      { icon: '🧀', bg: '#2a2210', name: 'Phô mai', qty: '200g', exp: '2026-05-11', status: 'warn' },
-      { icon: '🍗', bg: '#2e1e0a', name: 'Thịt gà', qty: '500g', exp: '2026-05-13', status: 'ok' },
-      { icon: '🐟', bg: '#0a1e2e', name: 'Cá hồi', qty: '300g', exp: '2026-05-10', status: 'warn' },
-      { icon: '🥕', bg: '#2e1a0a', name: 'Cà rốt', qty: '5 củ', exp: '2026-05-18', status: 'ok' },
-      { icon: '🍋', bg: '#2a2a0a', name: 'Chanh', qty: '4 quả', exp: '2026-05-20', status: 'ok' },
-      { icon: '🧅', bg: '#2a1e0a', name: 'Hành tây', qty: '2 củ', exp: '2026-05-25', status: 'ok' },
+    const defaultFoods = [
+      { icon: '🥚', name: 'Trứng gà', qty: 6, unit: 'quả', exp: '2026-05-12' },
+      { icon: '🍅', name: 'Cà chua', qty: 4, unit: 'quả', exp: '2026-05-10' },
+      { icon: '🥛', name: 'Sữa tươi', qty: 1, unit: 'hộp', exp: '2026-05-09' },
+      { icon: '🥦', name: 'Bông cải xanh', qty: 1, unit: 'cây', exp: '2026-05-15' },
+      { icon: '🧀', name: 'Phô mai', qty: 200, unit: 'g', exp: '2026-05-11' },
+      { icon: '🍗', name: 'Thịt gà', qty: 500, unit: 'g', exp: '2026-05-13' },
+      { icon: '🐟', name: 'Cá hồi', qty: 300, unit: 'g', exp: '2026-05-10' },
+      { icon: '🥕', name: 'Cà rốt', qty: 5, unit: 'củ', exp: '2026-05-18' },
+      { icon: '🍋', name: 'Chanh', qty: 4, unit: 'quả', exp: '2026-05-20' },
+      { icon: '🧅', name: 'Hành tây', qty: 2, unit: 'củ', exp: '2026-05-25' },
     ];
+
+    let foods = [];
+    try {
+      const stored = localStorage.getItem('fridgeItems');
+      if (stored) foods = JSON.parse(stored);
+      else foods = defaultFoods; // Fallback
+    } catch(e) { foods = defaultFoods; }
+
+    function saveFoods() {
+      localStorage.setItem('fridgeItems', JSON.stringify(foods));
+    }
 
     let currentTab = 'all';
     let searchQ = '';
@@ -609,9 +620,11 @@
     function updateStats() {
       let good = 0, warn = 0, danger = 0;
       foods.forEach(f => {
-        if (f.status === 'ok') good++;
-        else if (f.status === 'warn') warn++;
-        else if (f.status === 'danger') danger++;
+        const d = daysLeft(f.exp);
+        const status = d < 0 ? 'danger' : d <= 3 ? 'warn' : 'ok';
+        if (status === 'ok') good++;
+        else if (status === 'warn') warn++;
+        else if (status === 'danger') danger++;
       });
       document.getElementById('s-good').textContent = good;
       document.getElementById('s-warn').textContent = warn;
@@ -621,7 +634,9 @@
     function renderList() {
       const list = document.getElementById('foodList');
       let data = foods.filter(f => {
-        if (currentTab !== 'all' && f.status !== currentTab) return false;
+        const d = daysLeft(f.exp);
+        const status = d < 0 ? 'danger' : d <= 3 ? 'warn' : 'ok';
+        if (currentTab !== 'all' && status !== currentTab) return false;
         if (searchQ && !f.name.toLowerCase().includes(searchQ.toLowerCase())) return false;
         return true;
       });
@@ -634,23 +649,24 @@
       list.innerHTML = data.map(f => {
         const d = daysLeft(f.exp);
         const dText = d < 0 ? `Đã hết hạn ${Math.abs(d)} ngày` : d === 0 ? 'Hôm nay hết hạn!' : `Còn ${d} ngày`;
-        const dcls = f.status;
+        const status = d < 0 ? 'danger' : d <= 3 ? 'warn' : 'ok';
+        const dcls = status;
         const expFmt = new Date(f.exp).toLocaleDateString('vi-VN');
 
-        const borderClass = f.status === 'ok' ? 'ok-item' : (f.status === 'warn' ? 'warn-item' : 'danger-item');
-        const badgeClass = f.status === 'ok' ? 'ok' : (f.status === 'warn' ? 'wn' : 'dn');
+        const borderClass = status === 'ok' ? 'ok-item' : (status === 'warn' ? 'warn-item' : 'danger-item');
+        const badgeClass = status === 'ok' ? 'ok' : (status === 'warn' ? 'wn' : 'dn');
 
         return `<div class="fi ${borderClass}">
       <div class="ficon">${f.icon}</div>
       <div class="finfo">
         <div class="fname">${f.name}</div>
         <div class="fmeta">
-          <span>📦 ${f.qty}</span>
+          <span>📦 ${f.qty} ${f.unit}</span>
           <span>📅 HH: ${expFmt}</span>
         </div>
         <div class="days ${dcls}">${dText}</div>
       </div>
-      <span class="fbadge ${badgeClass}">${statusLabel(f.status)}</span>
+      <span class="fbadge ${badgeClass}">${statusLabel(status)}</span>
     </div>`;
       }).join('');
     }
@@ -679,13 +695,15 @@
 
     function addFood() {
       const name = document.getElementById('mName').value.trim();
-      const qty = document.getElementById('mQty').value.trim();
+      const qtyInput = document.getElementById('mQty').value.trim();
       const exp = document.getElementById('mExp').value;
-      if (!name || !qty || !exp) { alert('Vui lòng điền đầy đủ thông tin!'); return; }
-      const d = daysLeft(exp);
-      const status = d < 0 ? 'danger' : d <= 3 ? 'warn' : 'ok';
+      if (!name || !qtyInput || !exp) { alert('Vui lòng điền đầy đủ thông tin!'); return; }
+      
+      const qty = parseInt(qtyInput) || 1;
+      const unit = qtyInput.replace(/[0-9]/g, '').trim() || 'món';
 
-      foods.unshift({ icon: '🍱', bg: '#1a1a2a', name, qty, exp, status });
+      foods.unshift({ icon: '🍱', name, qty, unit, exp });
+      saveFoods(); // Cập nhật localStorage
       closeModal();
       renderList();
       updateStats();
