@@ -127,7 +127,7 @@
         const data = await response.json();
 
         if (response.ok) {
-          showToast(mode === 'login' ? "✅ Đăng nhập thành công!" : "✅ Đăng ký thành công!");
+          showToast(mode === 'login' ? "Đăng nhập thành công!" : " Đăng ký thành công!");
           
           // Lưu JWT Token và thông tin cần thiết vào localStorage
           if (data.token)   localStorage.setItem('jwt_token', data.token);
@@ -139,10 +139,10 @@
             window.location.href = 'index.html'; 
           }, 1000);
         } else {
-          showToast("❌ " + (data.message || "Có lỗi xảy ra"));
+          showToast(" " + (data.message || "Có lỗi xảy ra"));
         }
       } catch (err) {
-        showToast("❌ Lỗi kết nối Server!");
+        showToast(" Lỗi kết nối Server!");
       }
     });
 

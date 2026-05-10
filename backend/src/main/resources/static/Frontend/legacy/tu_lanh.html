@@ -448,9 +448,9 @@
 <body>
   <div class="phone">
     <div class="sb">
-      <span>10:09</span>
+      <span></span>
       <div class="notch"></div>
-      <span>🔋 87%</span>
+      <span></span>
     </div>
 
     <header class="header">
@@ -465,7 +465,7 @@
 
 
     <div class="chart-box pixel-box">
-      <span class="chart-title">📊 Tình trạng thực phẩm</span>
+      <span class="chart-title">Tình trạng thực phẩm</span>
       <div class="chart-cols">
         <div class="chart-col">
           <span class="chart-val" id="val-good" style="color:#4ade80">0</span>
@@ -492,11 +492,11 @@
     </div>
 
     <div class="stats">
-      <div class="sc pixel-box"><span class="sv" id="stat-total" style="color:var(--cyan)">🥦 11</span><span
+      <div class="sc pixel-box"><span class="sv" id="stat-total" style="color:var(--cyan)"></span><span
           class="sl">Thực phẩm</span></div>
-      <div class="sc pixel-box"><span class="sv" id="stat-warn" style="color:var(--warn)">⚠️ 3</span><span
+      <div class="sc pixel-box"><span class="sv" id="stat-warn" style="color:var(--warn)">z</span><span
           class="sl">Sắp hết</span></div>
-      <div class="sc pixel-box"><span class="sv" style="color:#c471ed">🌡️ 4°C</span><span class="sl">Nhiệt độ</span>
+      <div class="sc pixel-box"><span class="sv" style="color:#c471ed"></span><span class="sl">Nhiệt độ</span>
       </div>
     </div>
 
@@ -509,7 +509,7 @@
     </div>
 
     <div class="sec-hdr">
-      <h2>📋 Thực phẩm trong tủ</h2>
+      <h2>Thực phẩm trong tủ</h2>
       <a href="Danh_sach_thuc_pham.html">Xem tất cả →</a>
     </div>
     <div class="food-list" id="foodList"></div>
@@ -575,10 +575,10 @@
 
   <script>
     const defaultFoods = [
-      { icon: '🥚', name: 'Trứng gà', qty: 7, unit: 'quả', exp: '2026-05-12', price: 3500 },
-      { icon: '🍅', name: 'Cà chua', qty: 3, unit: 'quả', exp: '2026-05-10', price: 4000 },
-      { icon: '🥛', name: 'Sữa tươi', qty: 1, unit: 'hộp', exp: '2026-05-09', price: 35000 },
-      { icon: '🥦', name: 'Bông cải', qty: 1, unit: 'cây', exp: '2026-05-15', price: 15000 }
+      { icon: '', name: 'Trứng gà', qty: 7, unit: 'quả', exp: '2026-05-12', price: 3500 },
+      { icon: '', name: 'Cà chua', qty: 3, unit: 'quả', exp: '2026-05-10', price: 4000 },
+      { icon: '', name: 'Sữa tươi', qty: 1, unit: 'hộp', exp: '2026-05-09', price: 35000 },
+      { icon: '', name: 'Bông cải', qty: 1, unit: 'cây', exp: '2026-05-15', price: 15000 }
     ];
 
     let foods = [];
@@ -632,8 +632,8 @@
       document.getElementById('val-good').textContent = good;
       document.getElementById('val-warn').textContent = warn;
       document.getElementById('val-danger').textContent = danger;
-      document.getElementById('stat-total').textContent = `🥦 ${total}`;
-      document.getElementById('stat-warn').textContent = `⚠️ ${warn}`;
+      document.getElementById('stat-total').textContent = ` ${total}`;
+      document.getElementById('stat-warn').textContent = ` ${warn}`;
       document.getElementById('bar-good').style.height = total > 0 ? `${(good / total) * 100}%` : '0%';
       document.getElementById('bar-warn').style.height = total > 0 ? `${(warn / total) * 100}%` : '0%';
       document.getElementById('bar-danger').style.height = total > 0 ? `${(danger / total) * 100}%` : '0%';
@@ -697,11 +697,11 @@
       if (d === 1) {
         if (takeQty < f.qty) {
           takeQty++;
-          if (takeQty === f.qty) showToast('⚠️ Tủ lạnh cần thêm thực phẩm');
-        } else showToast('⚠️ Tủ lạnh cần thêm thực phẩm');
+          if (takeQty === f.qty) showToast(' Tủ lạnh cần thêm thực phẩm');
+        } else showToast(' Tủ lạnh cần thêm thực phẩm');
       } else if (d === -1) {
         if (takeQty > 0) takeQty--;
-        else showToast('⚠️ Tủ lạnh cần thêm thực phẩm');
+        else showToast(' Tủ lạnh cần thêm thực phẩm');
       }
       document.getElementById('tmQty').textContent = takeQty;
     }
@@ -725,7 +725,7 @@
       closeTakeModal();
       renderFoods();
       updateChart();
-      showToast(`✅ Đã lấy ${takeQty} ${f.unit} ${f.name}`);
+      showToast(` Đã lấy ${takeQty} ${f.unit} ${f.name}`);
     }
 
     function closeTakeModal() { document.getElementById('takeModalBg').classList.remove('open'); }

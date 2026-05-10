@@ -475,6 +475,13 @@
       padding: 3px 8px; border-radius: 10px;
       flex-shrink: 0;
     }
+    .expiry-select {
+      font-family: 'Nunito', sans-serif;
+      font-size: 11px; font-weight: 700; color: #00aa77;
+      background: #e6fff5; border: 1px solid #00aa77;
+      border-radius: 4px; padding: 1px 4px; outline: none;
+      margin: 0 4px; cursor: pointer;
+    }
 
     .panel-empty {
       text-align: center; padding: 28px 20px;
@@ -587,23 +594,23 @@
     const API_RECEIPT = `${BASE_URL}/api/v1/scan/receipt`;
 
     const EMOJI_MAP = [
-      { keys: ['cà chua','tomato'],              emoji: '🍅' },
-      { keys: ['thịt bò','bò','beef'],           emoji: '🥩' },
-      { keys: ['thịt gà','gà','chicken'],        emoji: '🍗' },
-      { keys: ['thịt heo','heo','pork'],          emoji: '🥓' },
-      { keys: ['cá','fish'],                       emoji: '🐟' },
-      { keys: ['sữa','milk'],                      emoji: '🥛' },
-      { keys: ['trứng','egg'],                     emoji: '🥚' },
-      { keys: ['rau','cải','salad'],               emoji: '🥬' },
-      { keys: ['táo','apple'],                     emoji: '🍎' },
-      { keys: ['chuối','banana'],                  emoji: '🍌' },
-      { keys: ['cam','orange'],                    emoji: '🍊' },
-      { keys: ['xoài','mango'],                    emoji: '🥭' },
-      { keys: ['nước','water'],                   emoji: '🥤' },
-      { keys: ['phô mai','cheese'],               emoji: '🧀' },
-      { keys: ['bơ','butter'],                     emoji: '🧈' }, // BUG-12 fix: 🧨→🧈
-      { keys: ['bánh','bread'],                    emoji: '🍞' },
-      { keys: ['mì','noodle'],                     emoji: '🍜' },
+      { keys: ['cà chua','tomato'],              emoji: '' },
+      { keys: ['thịt bò','bò','beef'],           emoji: '' },
+      { keys: ['thịt gà','gà','chicken'],        emoji: '' },
+      { keys: ['thịt heo','heo','pork'],          emoji: '' },
+      { keys: ['cá','fish'],                       emoji: '' },
+      { keys: ['sữa','milk'],                      emoji: '' },
+      { keys: ['trứng','egg'],                     emoji: '' },
+      { keys: ['rau','cải','salad'],               emoji: '' },
+      { keys: ['táo','apple'],                     emoji: '' },
+      { keys: ['chuối','banana'],                  emoji: '' },
+      { keys: ['cam','orange'],                    emoji: '' },
+      { keys: ['xoài','mango'],                    emoji: '' },
+      { keys: ['nước','water'],                   emoji: '' },
+      { keys: ['phô mai','cheese'],               emoji: '' },
+      { keys: ['bơ','butter'],                     emoji: '' }, // BUG-12 fix: 🧨→🧈
+      { keys: ['bánh','bread'],                    emoji: '' },
+      { keys: ['mì','noodle'],                     emoji: '' },
     ];
 
     function getEmoji(name) {
@@ -611,7 +618,7 @@
       for (const { keys, emoji } of EMOJI_MAP) {
         if (keys.some(k => n.includes(k))) return emoji;
       }
-      return '🍱';
+      return '';
     }
 
     function calcExpiry(days) {
@@ -645,7 +652,7 @@
         camStream.srcObject = stream;
         await camStream.play();
       } catch (err) {
-        showToast('❌ Không thể truy cập camera');
+        showToast('Không thể truy cập camera');
       }
     }
     function stopCamera() {
@@ -692,8 +699,6 @@
         detectedItems = aiResult.items || [];
 
         camLoading.classList.remove('show');
-
-        // ✅ Thoát khỏi màn hình camera, rồi show preview kết quả
         stopCamera();
         camModal.classList.remove('show');
 
@@ -702,7 +707,7 @@
         setTimeout(() => resultPanel.classList.add('open'), 50);
       } catch (err) {
         camLoading.classList.remove('show');
-        showToast('❌ Lỗi AI: ' + err.message);
+        showToast(' Lỗi AI: ' + err.message);
       }
     }
 
@@ -720,13 +725,6 @@
       }
       itemCount.textContent = `${items.length} sản phẩm`;
       items.forEach((item, i) => {
-        const expiry = calcExpiry(item.estimated_expiry_days);
-        const meta = [
-          item.quantity ? `x${item.quantity}` : '',
-          expiry        ? `HSD: ${expiry}`    : '',
-          item.category || ''
-        ].filter(Boolean).join(' · ');
-
         const row = document.createElement('div');
         row.className = 'item-row';
         row.style.animationDelay = `${i * 55}ms`;
@@ -734,7 +732,20 @@
           <div class="item-emoji">${getEmoji(item.product_name)}</div>
           <div class="item-info">
             <div class="item-name">${item.product_name || '(Không tên)'}</div>
-            ${meta ? `<div class="item-meta">${meta}</div>` : ''}
+            <div class="item-meta">
+              ${item.quantity ? `x${item.quantity}` : ''}
+              <select class="expiry-select" onchange="updateItemExpiry(${i}, this.value)">
+                <option value="${item.estimated_expiry_days || 7}" hidden>⏳ ${item.estimated_expiry_days || 7} ngày</option>
+                <option value="${item.estimated_expiry_days || 7}">🤖 AI đề xuất (${item.estimated_expiry_days || 7} ngày)</option>
+                <option value="1">1 ngày</option>
+                <option value="3">3 ngày</option>
+                <option value="5">5 ngày</option>
+                <option value="7">1 tuần</option>
+                <option value="14">2 tuần</option>
+                <option value="30">1 tháng</option>
+              </select>
+              ${item.category ? `· ${item.category}` : ''}
+            </div>
           </div>
           ${item.price ? `<div class="item-price">${Number(item.price).toLocaleString('vi-VN')}đ</div>` : ''}
         `;
@@ -782,7 +793,7 @@
     document.getElementById('saveFridgeBtn').addEventListener('click', () => {
       if (detectedItems.length === 0) { showToast('Không có sản phẩm!'); return; }
       sessionStorage.setItem('scannedItems', JSON.stringify(detectedItems));
-      showToast('✅ Đã lưu! Đang chuyển trang...');
+      showToast('Đã lưu! Đang chuyển trang...');
       setTimeout(() => window.location.href = 'food_list.html', 800);
     });
 
@@ -793,6 +804,13 @@
       t.classList.add('show');
       setTimeout(() => t.classList.remove('show'), 2500);
     }
+    window.updateItemExpiry = function(index, days) {
+       let items = JSON.parse(sessionStorage.getItem('scannedItems') || '[]');
+       if (items[index]) {
+           items[index].estimated_expiry_days = parseInt(days);
+           sessionStorage.setItem('scannedItems', JSON.stringify(items));
+       }
+    };
   </script>
 </body>
 
