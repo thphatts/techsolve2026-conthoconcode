@@ -38,7 +38,7 @@ cameraInput.addEventListener('change', async (event) => {
   const file = event.target.files[0];
   if (!file) return;
 
-  showToast('⏳ Đang phân tích ảnh qua AI...');
+  showToast('Đang phân tích ảnh qua AI...');
   goToFridge();
   startScanAnimation();
 
@@ -62,14 +62,14 @@ cameraInput.addEventListener('change', async (event) => {
 
     if (response.ok) {
         const data = await response.json();
-        showToast('✅ Quét hoàn tất! Đã lưu thông tin từ hóa đơn.');
+        showToast(' Quét hoàn tất! Đã lưu thông tin từ hóa đơn.');
         fetchFridgeItems(); // Reload danh sách tủ lạnh
     } else {
-        showToast('❌ Xử lý ảnh thất bại!');
+        showToast(' Xử lý ảnh thất bại!');
     }
   } catch (error) {
       console.error("Lỗi gọi API Scan:", error);
-      showToast('❌ Lỗi kết nối đến máy chủ!');
+      showToast('Lỗi kết nối đến máy chủ!');
   } finally {
       cameraInput.value = ''; // Reset input để có thể chụp tiếp
   }
@@ -90,14 +90,14 @@ backBtn.addEventListener('click', goToHome);
 
 // Nút Camera quét ở bottom nav home
 btnCamera.addEventListener('click', () => {
-  showToast('📷 Đang khởi động camera...');
+  showToast(' Đang khởi động camera...');
   cameraInput.click();
 });
 
 
 // Nút Ví - Tích hợp API Lấy User Profile thay vì Hardcode
 btnWallet.addEventListener('click', async () => {
-  showToast('⏳ Đang tải thông tin ví...');
+  showToast(' Đang tải thông tin ví...');
   const userId = localStorage.getItem("userId") || 1; 
   const token = localStorage.getItem("jwt_token");
 
@@ -111,12 +111,12 @@ btnWallet.addEventListener('click', async () => {
       if (response.ok) {
           const userData = await response.json();
           const balance = userData.walletBalance || userData.totalPoints || 0;
-          showToast(`👜 Ví của bạn: ${balance} đ/điểm`);
+          showToast(` Ví của bạn: ${balance} đ/điểm`);
       } else {
-          showToast('❌ Lỗi tải thông tin ví!');
+          showToast('Lỗi tải thông tin ví!');
       }
   } catch (error) {
-      showToast('❌ Lỗi kết nối API!');
+      showToast(' Lỗi kết nối API!');
   }
 });
 
@@ -124,7 +124,7 @@ btnWallet.addEventListener('click', async () => {
 const fab = document.querySelector('#view-fridge .fab');
 if (fab) {
   fab.addEventListener('click', () => {
-    showToast('📷 Đang khởi động camera...');
+    showToast(' Đang khởi động camera...');
     cameraInput.click();
   });
 }
@@ -154,7 +154,7 @@ if (sBtn) {
         }
     } catch (error) {
         console.error("Lỗi lấy công thức", error);
-        showToast('❌ Không tải được công thức!');
+        showToast(' Không tải được công thức!');
     }
   });
 }
@@ -227,7 +227,7 @@ function startScanAnimation() {
   setTimeout(() => {
     scanLine.style.animationDuration = '2s';
     scanLine.style.boxShadow = '0 0 8px #00e5a0';
-    showToast('✅ Quét xong! Tìm thấy 12 món.');
+    showToast('Quét xong! Tìm thấy 12 món.');
   }, 1200);
 }
 
@@ -264,7 +264,7 @@ async function fetchFridgeItems() {
             const items = await response.json();
             // Tạm thời chỉ hiển thị Toast thông báo số lượng thực tế
             // TODO: Bạn có thể code thêm logic parse `items` thành HTML (thẻ div .food-item) và render vào DOM
-            showToast(`❄️ Tủ lạnh đang có ${items.length} món đồ.`);
+            showToast(` Tủ lạnh đang có ${items.length} món đồ.`);
         }
     } catch (error) {
         console.error("Lỗi tải danh sách tủ lạnh:", error);

@@ -160,13 +160,13 @@
       margin-bottom: 25px;
       /* Đẩy tiêu đề lên cao, tạo khoảng trống cho số 8, 3, 1 */
       text-transform: uppercase;
+      display: block;
     }
 
     .chart-cols {
       display: flex;
       align-items: flex-end;
       justify-content: space-around;
-      height: 90px;
       gap: 14px;
     }
 
@@ -574,19 +574,11 @@
   </div>
 
   <script>
-    const defaultFoods = [
-      { icon: '', name: 'Trứng gà', qty: 7, unit: 'quả', exp: '2026-05-12', price: 3500 },
-      { icon: '', name: 'Cà chua', qty: 3, unit: 'quả', exp: '2026-05-10', price: 4000 },
-      { icon: '', name: 'Sữa tươi', qty: 1, unit: 'hộp', exp: '2026-05-09', price: 35000 },
-      { icon: '', name: 'Bông cải', qty: 1, unit: 'cây', exp: '2026-05-15', price: 15000 }
-    ];
-
     let foods = [];
     try {
       const stored = localStorage.getItem('fridgeItems');
       if (stored) foods = JSON.parse(stored);
-      else foods = defaultFoods; // Fallback nếu chưa có gì
-    } catch(e) { foods = defaultFoods; }
+    } catch(e) { foods = []; }
 
     function saveFoods() {
       localStorage.setItem('fridgeItems', JSON.stringify(foods));

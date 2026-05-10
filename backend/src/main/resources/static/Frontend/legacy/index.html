@@ -566,7 +566,7 @@
       <!-- Loading overlay (bên trong modal) -->
       <div class="cam-loading" id="camLoading">
         <div class="cam-spinner"></div>
-        <div class="cam-loading-text">🤖 AI đang phân tích...<br/>Vui lòng chờ</div>
+        <div class="cam-loading-text">AI đang phân tích...<br/>Vui lòng chờ</div>
       </div>
     </div>
 
@@ -580,8 +580,8 @@
       </div>
       <div class="panel-list" id="itemList"></div>
       <div class="panel-footer">
-        <button class="btn-rescan" id="rescanBtn">📷 Chụp lại</button>
-        <button class="btn-save"   id="saveFridgeBtn">🧊 Lưu vào tủ</button>
+        <button class="btn-rescan" id="rescanBtn">Chụp lại</button>
+        <button class="btn-save"   id="saveFridgeBtn">Lưu vào tủ</button>
       </div>
     </div>
 
@@ -594,24 +594,23 @@
     const API_RECEIPT = `${BASE_URL}/api/v1/scan/receipt`;
 
     const EMOJI_MAP = [
-      { keys: ['cà chua','tomato'],              emoji: '' },
-      { keys: ['thịt bò','bò','beef'],           emoji: '' },
-      { keys: ['thịt gà','gà','chicken'],        emoji: '' },
-      { keys: ['thịt heo','heo','pork'],          emoji: '' },
-      { keys: ['cá','fish'],                       emoji: '' },
-      { keys: ['sữa','milk'],                      emoji: '' },
-      { keys: ['trứng','egg'],                     emoji: '' },
-      { keys: ['rau','cải','salad'],               emoji: '' },
-      { keys: ['táo','apple'],                     emoji: '' },
-      { keys: ['chuối','banana'],                  emoji: '' },
-      { keys: ['cam','orange'],                    emoji: '' },
-      { keys: ['xoài','mango'],                    emoji: '' },
-      { keys: ['nước','water'],                   emoji: '' },
-      { keys: ['phô mai','cheese'],               emoji: '' },
-      { keys: ['bơ','butter'],                     emoji: '' }, // BUG-12 fix: 🧨→🧈
-      { keys: ['bánh','bread'],                    emoji: '' },
-      { keys: ['mì','noodle'],                     emoji: '' },
-    ];
+      { keys: ['cà chua','tomato'],              emoji: '🍅' },
+      { keys: ['thịt bò','bò','beef'],           emoji: '🥩' },
+      { keys: ['thịt gà','gà','chicken'],        emoji: '🍗' },
+      { keys: ['thịt heo','heo','pork'],          emoji: '🥓' },
+      { keys: ['cá','fish'],                       emoji: '🐟' },
+      { keys: ['sữa','milk'],                      emoji: '🥛' },
+      { keys: ['trứng','egg'],                     emoji: '🥚' },
+      { keys: ['rau','cải','salad'],               emoji: '🥬' },
+      { keys: ['táo','apple'],                     emoji: '🍎' },
+      { keys: ['chuối','banana'],                  emoji: '🍌' },
+      { keys: ['cam','orange'],                    emoji: '🍊' },
+      { keys: ['xoài','mango'],                    emoji: '🥭' },
+      { keys: ['nước','water'],                   emoji: '🥤' },
+      { keys: ['phô mai','cheese'],               emoji: '🧀' },
+      { keys: ['bơ','butter'],                     emoji: '🧈' }, // BUG-12 fix: 🧨→🧈
+      { keys: ['bánh','bread'],                    emoji: '🍞' },
+      { keys: ['mì','noodle'],                     emoji: '🍜' },];
 
     function getEmoji(name) {
       const n = (name || '').toLowerCase();

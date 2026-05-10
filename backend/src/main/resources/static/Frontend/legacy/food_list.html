@@ -233,36 +233,35 @@
     //  Map tên sản phẩm → Emoji icon
     // ============================================================
     const EMOJI_MAP = [
-      { keys: ['cà chua', 'tomato'],              emoji: '' },
-      { keys: ['thịt bò', 'bò', 'beef'],          emoji: '' },
-      { keys: ['thịt gà', 'gà', 'chicken'],       emoji: '' },
-      { keys: ['thịt heo', 'heo', 'pork'],        emoji: '' },
-      { keys: ['cá', 'fish'],                      emoji: '' },
-      { keys: ['sữa', 'milk'],                     emoji: '' },
-      { keys: ['trứng', 'egg'],                    emoji: '' },
-      { keys: ['rau', 'cải', 'salad', 'lettuce'], emoji: '' },
-      { keys: ['táo', 'apple'],                    emoji: '' },
-      { keys: ['chuối', 'banana'],                 emoji: '' },
-      { keys: ['cam', 'orange'],                   emoji: '' },
-      { keys: ['xoài', 'mango'],                   emoji: '' },
-      { keys: ['nước', 'water', 'drink'],          emoji: '' },
-      { keys: ['phô mai', 'cheese'],               emoji: '' },
-      { keys: ['bơ', 'butter'],                    emoji: '' },
-      { keys: ['bánh', 'bread'],                   emoji: '' },
-      { keys: ['mì', 'noodle', 'pasta'],           emoji: '' },
-      { keys: ['tỏi', 'garlic'],                   emoji: '' },
-      { keys: ['hành', 'onion'],                   emoji: '' },
-      { keys: ['cà rốt', 'carrot'],                emoji: '' },
-      { keys: ['ớt', 'pepper'],                    emoji: '' },
-      { keys: ['dưa', 'cucumber', 'melon'],        emoji: '' },
-    ];
+      { keys: ['cà chua', 'tomato'],              emoji: '🍅' },
+      { keys: ['thịt bò', 'bò', 'beef'],          emoji: '🥩' },
+      { keys: ['thịt gà', 'gà', 'chicken'],       emoji: '🍗' },
+      { keys: ['thịt heo', 'heo', 'pork'],        emoji: '🥓' },
+      { keys: ['cá', 'fish'],                      emoji: '🐟' },
+      { keys: ['sữa', 'milk'],                     emoji: '🥛' },
+      { keys: ['trứng', 'egg'],                    emoji: '🥚' },
+      { keys: ['rau', 'cải', 'salad', 'lettuce'], emoji: '🥬' },
+      { keys: ['táo', 'apple'],                    emoji: '🍎' },
+      { keys: ['chuối', 'banana'],                 emoji: '🍌' },
+      { keys: ['cam', 'orange'],                   emoji: '🍊' },
+      { keys: ['xoài', 'mango'],                   emoji: '🥭' },
+      { keys: ['nước', 'water', 'drink'],          emoji: '🥤' },
+      { keys: ['phô mai', 'cheese'],               emoji: '🧀' },
+      { keys: ['bơ', 'butter'],                    emoji: '🧈' },
+      { keys: ['bánh', 'bread'],                   emoji: '🍞' },
+      { keys: ['mì', 'noodle', 'pasta'],           emoji: '🍜' },
+      { keys: ['tỏi', 'garlic'],                   emoji: '🧄' },
+      { keys: ['hành', 'onion'],                   emoji: '🧅' },
+      { keys: ['cà rốt', 'carrot'],                emoji: '🥕' },
+      { keys: ['ớt', 'pepper'],                    emoji: '🌶️' },
+      { keys: ['dưa', 'cucumber', 'melon'],        emoji: '🍉' },];
 
     function getEmoji(name) {
       const n = (name || '').toLowerCase();
       for (const { keys, emoji } of EMOJI_MAP) {
         if (keys.some(k => n.includes(k))) return emoji;
       }
-      return '';
+            return '🍱';
     }
 
     // ============================================================
